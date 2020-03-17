@@ -1,6 +1,6 @@
 # @winwin/hexo-editor
 
-An online hexo blog editor. 
+An online hexo blog editor.
 
 See also [hexo-editor-client](https://github.com/YuJianghao/winwin-hexo-editor-client), [hexo-editor-server](https://github.com/YuJianghao/winwin-hexo-editor-server) and [hexo-editor-sdk](https://github.com/YuJianghao/winwin-hexo-editor-sdk).
 
