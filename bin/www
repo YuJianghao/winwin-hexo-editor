@@ -12,7 +12,7 @@ env(path.join(__dirname, '../.env.local'))
  * Module dependencies.
  */
 
-var app = require('../app')
+var app = require('../src/app')
 var debug = require('debug')('hexo-editor:server')
 var http = require('http')
 
