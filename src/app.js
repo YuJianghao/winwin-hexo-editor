@@ -12,13 +12,6 @@ const token = require('./token')
 
 // error handler
 onerror(app)
-app.use(async (ctx, next) => {
-  try {
-    await next()
-  } catch (err) {
-    if (err.status !== 401) throw err
-  }
-})
 
 // cors
 app.use(cors())
