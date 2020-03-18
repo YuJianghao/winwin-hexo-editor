@@ -11,6 +11,7 @@
   <link href="https://cdn.bootcss.com/aos/2.3.4/aos.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/aos/2.3.4/aos.js"></script>
   <script src="https://cdn.bootcss.com/rellax/1.12.1/rellax.min.js"></script>
+  <script src="https://cdn.bootcss.com/parallax.js/1.5.0/parallax.min.js"></script>
 </head>
 
 <body>
@@ -94,14 +95,11 @@
       </div>
     </div>
   </section>
-  <section class="sec screen rellax" data-rellax-speed="3">
-    <div class="container">
-      <img src="./images/editingpage.png">
-    </div>
+  <section class="sec screen parallax-window" data-parallax="scroll" data-image-src="./images/editingpage.jpg" data-z-index="2" data-speed="0.5" bleed="10">
   </section>
-  <section class="sec feature rellax" data-rellax-speed="7">
+  <section class="sec feature">
     <div class="container">
-      <ul data-aos-offset="-700" data-aos="fade-right" data-aos-duration="500">
+      <ul data-aos-offset="100" data-aos="fade-right" data-aos-duration="500">
         <li>文章增删改、发布和取消</li>
         <li>Markdown自动补全</li>
         <li>多级分类和多标签</li>
@@ -111,8 +109,8 @@
         <li>自定义鉴权中间件</li>
         <li>和其他你需要但我没想到的内容</li>
       </ul>
-      <img src="./images/feature.png" data-aos-offset="-700" data-aos="fade-left" data-aos-duration="500"
-        data-aos-delay="150">
+      <img src="./images/feature.png" data-aos-offset="100" data-aos="fade-left" data-aos-duration="500"
+        data-aos-delay="300">
     </div>
     <div id="installation" style="visibility: hidden;"></div>
   </section>
