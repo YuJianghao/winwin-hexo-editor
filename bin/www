@@ -6,7 +6,6 @@
 const path = require('path')
 const env = require('node-env-file')
 env(path.join(__dirname, '../.env'))
-env(path.join(__dirname, '../.env.local'))
 
 /**
  * Module dependencies.
