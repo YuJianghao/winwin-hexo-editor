@@ -68,6 +68,8 @@ Then open `http://localhost:5777` from your browser.
 
 ### With custom server address
 
+> Temporary solution: In every files at `./public` : replace every `http://localhost:5777` with your server address like `http://blabla.com`
+
 You need to build your own `@winwin/hexo-editor-client` with server address correctly setup. See build guide in [this repo](https://github.com/YuJianghao/winwin-hexo-editor-client).
 
 If you have questions maybe you can find answers in [How to deploy service with custom server address, instead of localhost?](https://github.com/YuJianghao/winwin-hexo-editor/issues/1) Commet it if no answer found!
