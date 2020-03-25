@@ -30,6 +30,8 @@ An online hexo blog editor by winwin2011
 
 ## Installation
 
+### With localhost
+
 **For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
 
 Download source
@@ -63,6 +65,13 @@ npm run dev
 ```
 
 Then open `http://localhost:5777` from your browser.
+
+### With custom server address
+
+You need to build your own `@winwin/hexo-editor-client` with server address correctly setup. See build guide in [this repo](https://github.com/YuJianghao/winwin-hexo-editor-client).
+
+If you have questions maybe you can find answers in [How to deploy service with custom server address, instead of localhost?](https://github.com/YuJianghao/winwin-hexo-editor/issues/1) Commet it if no answer found!
+
 
 ## Options
 
