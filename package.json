@@ -1,6 +1,6 @@
 {
   "name": "hexo-editor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "start": "node bin/www",
     "dev": "./node_modules/.bin/nodemon -i ./data bin/www",
