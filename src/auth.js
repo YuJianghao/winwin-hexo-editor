@@ -64,11 +64,12 @@ exports.basicAuth = async function (ctx, next) {
 
 exports.getToken = async function (ctx, next) {
   // set id and token type into jwt payload
-  var token = jwt.sign({ id: ctx.state.id, type: 'access' }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
-  var refreshToken = jwt.sign({ id: ctx.state.id, type: 'refresh' }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_REFRESH })
+  const id = ctx.state.id || ctx.state.user.id
+  var token = jwt.sign({ id, type: 'access' }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
+  var refreshToken = jwt.sign({ id, type: 'refresh' }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_REFRESH })
   ctx.body = {
     success: true,
     message: 'success',
-    data: { id: ctx.state.id, token, refreshToken }
+    data: { id, token, refreshToken }
   }
 }
