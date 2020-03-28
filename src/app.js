@@ -4,6 +4,7 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
+const compose = require('koa-compose')
 const cors = require('koa-cors')
 const path = require('path')
 
@@ -12,6 +13,21 @@ const token = require('./token')
 
 // error handler
 onerror(app)
+app.use(async (ctx, next) => {
+  try {
+    await next()
+  } catch (err) {
+    ctx.status = err.status || 500
+    ctx.body = {
+      success: false,
+      message: err.message
+    }
+    if (ctx.status === 500) {
+      ctx.body.message = 'server internal error, try again later'
+      console.log(err)
+    }
+  }
+})
 
 // cors
 app.use(cors())
@@ -35,7 +51,7 @@ app.use(async (ctx, next) => {
 // hexo-editor-server
 require('@winwin/hexo-editor-server')(app, {
   base: process.env.HEXO_SERVER_BASE,
-  auth: auth.jwtAuth
+  auth: compose([auth.jwtAuth, auth.requestAccessToken])
 })
 
 // routes
