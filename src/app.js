@@ -8,6 +8,7 @@ const compose = require('koa-compose')
 const cors = require('koa-cors')
 const path = require('path')
 
+const config = require('./loadConfig')
 const auth = require('./auth')
 const token = require('./token')
 
@@ -49,7 +50,8 @@ app.use(async (ctx, next) => {
 
 // hexo-editor-server
 require('@winwin/hexo-editor-server')(app, {
-  base: process.env.HEXO_SERVER_BASE,
+  hexoRoot: config.hexoRoot,
+  base: config.hexoServerBase,
   auth: compose([auth.jwtAuth, auth.requestAccessToken])
 })
 

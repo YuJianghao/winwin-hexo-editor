@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Load env
+ * load config
  */
-const path = require('path')
-const env = require('node-env-file')
-env(path.join(__dirname, '../.env'))
+const config = require('../src/loadConfig')
 
 /**
  * Module dependencies.
@@ -19,7 +17,7 @@ var http = require('http')
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000')
+var port = normalizePort(config.port || '3000')
 // app.set('port', port);
 
 /**
