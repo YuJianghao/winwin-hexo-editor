@@ -12,6 +12,28 @@ exports.jwtAuth = koaJwt({ secret: process.env.JWT_SECRET })
 // after jwtAuth payload is set inside ctx.state.user
 // payload should be { id: ObjectId }
 
+exports.requestAccessToken = async function (ctx, next) {
+  if (ctx.state.user.type === 'refresh') {
+    const err = new Error()
+    err.status = 400
+    err.name = 'Require Access token'
+    err.message = 'Access Token is required.'
+    throw err
+  }
+  await next()
+}
+
+exports.requestRefreshToken = async function (ctx, next) {
+  if (ctx.state.user.type === 'access') {
+    const err = new Error()
+    err.status = 400
+    err.name = 'Require Refresh token'
+    err.message = 'Refresh Token is required.'
+    throw err
+  }
+  await next()
+}
+
 exports.basicAuth = async function (ctx, next) {
   // get name and pass from reqest header
   var user = auth(ctx.request)
@@ -41,11 +63,12 @@ exports.basicAuth = async function (ctx, next) {
 }
 
 exports.getToken = async function (ctx, next) {
-  // set id into jwt payload
-  var token = jwt.sign({ id: ctx.state.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
+  // set id and token type into jwt payload
+  var token = jwt.sign({ id: ctx.state.id, type: 'access' }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
+  var refreshToken = jwt.sign({ id: ctx.state.id, type: 'refresh' }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_REFRESH })
   ctx.body = {
     success: true,
     message: 'success',
-    data: { id: ctx.state.id, token }
+    data: { id: ctx.state.id, token, refreshToken }
   }
 }
