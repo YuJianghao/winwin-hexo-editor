@@ -98,7 +98,9 @@ inquirer
         }
         git.reset('hard')
         console.log(chalk.blue.bold('Installing...'))
-        // replace address
+        await replace(path.join(process.cwd(), 'public'),
+          'http://localhost:5777',
+          answers.hexoServerAddress)
         console.clear()
         console.log(chalk.green.bold('Finished!'))
         console.log('You can modify your config by editing ' + chalk.blue.bold('config.user.js'))
@@ -122,6 +124,27 @@ inquirer
       // Something else when wrong
     }
   })
+
+async function replace (file, src, dest) {
+  const data = await fs.promises.readdir(file)
+  await data.forEach(async item => {
+    const itemPath = path.join(file, item)
+    let isDir = await fs.promises.lstat(itemPath)
+    isDir = isDir.isDirectory()
+    if (isDir) {
+      logger('dir:', itemPath)
+      await replace(itemPath, src, dest)
+    } else {
+      const content = await fs.promises.readFile(itemPath, 'utf-8')
+      const newContent = content.replace(src, dest)
+      if (newContent !== content) {
+        logger('file:', itemPath)
+        await fs.promises.writeFile(itemPath, newContent)
+      }
+    }
+  })
+}
+
 function checkIsBlog (blog) {
   const message = `Path \`${blog}\` isn't a hexo blog folder!`
   try {
