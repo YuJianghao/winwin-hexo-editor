@@ -8,7 +8,7 @@
 
 ## 截图 | Screenshots
 
-[请访问主页](https://winwin_2011.gitee.io/winwin-hexo-editor/) | [Please visit homepage](https://yujianghao.github.io/winwin-hexo-editor/)
+[请访问主页](https://winwin_2011.gitee.io/winwin-hexo-editor/) | [Please visit homepage](https://winwin_2011.gitee.io/winwin-hexo-editor/)
 
 [移动客户端](https://github.com/maomishen/winwin-hexo-editor-mobile) | [Mobile client](https://github.com/maomishen/winwin-hexo-editor-mobile)
 
