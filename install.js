@@ -99,7 +99,7 @@ inquirer
         git.reset('hard')
         console.log(chalk.blue.bold('Installing...'))
         await replace(path.join(process.cwd(), 'public'),
-          'http://localhost:5777',
+          /http:\/\/localhost:5777/g,
           answers.hexoServerAddress)
         console.clear()
         console.log(chalk.green.bold('Finished!'))
