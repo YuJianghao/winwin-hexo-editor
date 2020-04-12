@@ -50,6 +50,7 @@ app.use(async (ctx, next) => {
 
 // hexo-editor-server
 require('@winwin/hexo-editor-server')(app, {
+  hexoRoot: process.env.HEXO_ROOT,
   base: process.env.HEXO_SERVER_BASE,
   auth: compose([auth.jwtAuth, auth.requestAccessToken])
 })
