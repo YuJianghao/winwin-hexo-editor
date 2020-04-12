@@ -36,6 +36,11 @@ body{
   background: #4172cf;
   opacity: 0.7;
 }
+.gitee-corner{
+  position: absolute;
+  left: 0;
+  transform: rotate(-90deg);
+}
 .sec.welcome .container{
   display:  flex;
   flex-direction: row;
