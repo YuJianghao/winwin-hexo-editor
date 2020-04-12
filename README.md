@@ -6,7 +6,7 @@
 
 <img src="https://img.shields.io/npm/v/@winwin/hexo-editor-client?label=%40winwin%2Fhexo-editor-client&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-server?label=%40winwin%2Fhexo-editor-server&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-sdk?label=%40winwin%2Fhexo-editor-sdk&style=flat-square">
 
-## 截图 | Schreenshots
+## 截图 | Screenshots
 
 [请访问主页](https://winwin_2011.gitee.io/winwin-hexo-editor/) | [Please visit homepage](https://yujianghao.github.io/winwin-hexo-editor/)
 
