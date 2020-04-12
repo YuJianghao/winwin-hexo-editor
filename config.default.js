@@ -1,6 +1,6 @@
 module.exports = {
   port: 5777,
-  hexoServerBase: 'hexoeditorserver',
+  hexoServerAddress: 'http://localhost:5777',
   hexoRoot: '',
   jwtSecret: 'secret',
   jwtExpire: '1h',

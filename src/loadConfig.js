@@ -6,8 +6,5 @@ let config = require('../config.default')
 if (fs.existsSync(path.join(process.cwd(), 'config.user.js'))) {
   const userConfig = require('../config.user')
   config = Object.assign(config, userConfig)
-  console.log('using user config')
-} else {
-  console.log('using default config')
 }
 module.exports = config
