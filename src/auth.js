@@ -3,12 +3,13 @@ const koaJwt = require('koa-jwt')
 const jwt = require('jsonwebtoken')
 const JSONdb = require('simple-json-db')
 const fs = require('fs')
+const config = require('./loadConfig')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
 const db = new JSONdb('./data/db.json')
-db.set('name', process.env.HEXO_EDITOR_USERNAME)
-db.set('pass', process.env.HEXO_EDITOR_PASSWORD)
+db.set('name', config.username)
+db.set('pass', config.password)
 
-exports.jwtAuth = koaJwt({ secret: process.env.JWT_SECRET })
+exports.jwtAuth = koaJwt({ secret: config.jwtSecret })
 // after jwtAuth payload is set inside ctx.state.user
 // payload should be { id: ObjectId }
 
@@ -64,11 +65,12 @@ exports.basicAuth = async function (ctx, next) {
 
 exports.getToken = async function (ctx, next) {
   // set id and token type into jwt payload
-  var token = jwt.sign({ id: ctx.state.id, type: 'access' }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
-  var refreshToken = jwt.sign({ id: ctx.state.id, type: 'refresh' }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_REFRESH })
+  const id = ctx.state.id || ctx.state.user.id
+  var token = jwt.sign({ id, type: 'access' }, config.jwtSecret, { expiresIn: config.jwtExpire })
+  var refreshToken = jwt.sign({ id, type: 'refresh' }, config.jwtSecret, { expiresIn: config.jwtRefresh })
   ctx.body = {
     success: true,
     message: 'success',
-    data: { id: ctx.state.id, token, refreshToken }
+    data: { id, token, refreshToken }
   }
 }
