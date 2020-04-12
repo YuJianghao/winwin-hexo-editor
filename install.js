@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
-// const git = require('simple-git')(process.cwd())
+const git = require('simple-git/promise')(process.cwd())
 const config = require('./src/loadConfig')
 const { exec } = require('child_process')
 const logger = require('debug')('hexo-editor:installer')
@@ -86,13 +86,17 @@ inquirer
     const p = exec('npx eslint config.user.js --fix')
     console.clear()
     console.log(chalk.blue.bold('Saving settings'))
-    p.on('close', () => {
+    p.on('close', async () => {
       try {
         if (answers.update) {
           console.log(chalk.blue.bold('Fetching updates'))
-          // git.pull()
+          try {
+            await git.pull()
+          } catch (_) {
+            await git.pull('gitee', 'master')
+          }
         }
-        // git.reset('hard')
+        git.reset('hard')
         console.log(chalk.blue.bold('Installing...'))
         // replace address
         console.clear()
