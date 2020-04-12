@@ -8,6 +8,12 @@ const { exec } = require('child_process')
 const logger = require('debug')('hexo-editor:installer')
 
 console.clear()
+console.log(chalk.blue.bold(
+  fs.readFileSync(
+    require('path').join(__dirname, './assets/logo.art'),
+    'utf8'
+  )) + chalk.blue.bold.underline('/ WINWIN HEXO EDITOR ') +
+  chalk.blue.bold('/\n'))
 inquirer
   .prompt([
     {
