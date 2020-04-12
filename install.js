@@ -96,7 +96,7 @@ inquirer
             await git.pull('gitee', 'master')
           }
         }
-        git.reset('hard')
+        await git.reset('hard')
         console.log(chalk.blue.bold('Installing...'))
         await replace(path.join(process.cwd(), 'public'),
           /http:\/\/localhost:5777/g,
