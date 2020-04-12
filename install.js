@@ -47,6 +47,7 @@ inquirer
     },
     {
       name: 'jwtSecret',
+      message: 'Secret Key?' + chalk.blue('Like a password, can be anything you like.'),
       default: config.jwtSecret || 'secret',
       prefix: chalk.blue('?')
     },
