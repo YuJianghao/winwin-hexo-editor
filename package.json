@@ -4,7 +4,8 @@
   "scripts": {
     "start": "node bin/www",
     "dev": "./node_modules/.bin/nodemon -i ./data bin/www",
-    "prd": "pm2 start bin/www",
+    "prd": "pm2 start bin/www --name ww-hexo-editor",
+    "stop": "pm2 stop ww-hexo-editor",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
