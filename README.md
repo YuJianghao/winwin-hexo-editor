@@ -10,6 +10,8 @@
 
 [请访问主页](https://winwin_2011.gitee.io/winwin-hexo-editor/) | [Please visit homepage](https://yujianghao.github.io/winwin-hexo-editor/)
 
+[移动客户端](https://github.com/maomishen/winwin-hexo-editor-mobile) | [Mobile client](https://github.com/maomishen/winwin-hexo-editor-mobile)
+
 ![Main page](https://cdn.yujianghao.cn/Zc8QgOwVQQrsmCVp.png)
 
 ## 功能 | Feature
@@ -30,11 +32,11 @@
 
 ## 安装 | Installation
 
-### 本地使用 | With localhost
+> **没有Hexo和Node.js经验的同学可以查看[手把手教学](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
+>
+> **For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
 
-**没有Hexo和Node.js经验的同学可以查看[手把手教学](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
-
-**For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
+### 默认安装 | Default installation
 
 下载源码 | Download source
 
@@ -49,10 +51,12 @@ cd winwin-hexo-editor
 npm install
 ```
 
-在`./env`文件中设置你的hexo目录 | Setup your hexo blog path in `./env` file
+运行安装程序 | Run Installer
 
-```.env
-HEXO_ROOT='' # path to your blog folder
+可以使用默认值 | You can use default settings.
+
+```bash
+node ./install.js
 ```
 
 开始运行 | Start
@@ -75,40 +79,73 @@ npm run dev
 
 ### 使用自定义服务器 | With custom server address
 
-> 临时解决方案：首先完成本地运行所需的所有步骤。然后在`./public`路径下将每一个文件的`http://localhost:5777`替换为你自己的服务地址（服务地址的结构应该看起来和`http://blabla.com`差不多）
->
-> Temporary solution: First finish every step as Use With Localhost required. Then, in every files at `./public` : replace every `http://localhost:5777` with your server address like `http://blabla.com`
+运行安装程序 | Run Installer
 
-You need to build your own `@winwin/hexo-editor-client` with server address correctly setup. See build guide in [this repo](https://github.com/YuJianghao/winwin-hexo-editor-client).
+```bash
+node ./install.js
+```
 
-If you have questions maybe you can find answers in [How to deploy service with custom server address, instead of localhost?](https://github.com/YuJianghao/winwin-hexo-editor/issues/1) Commet it if no answer found!
+在安装程序中指定`Your hexo-editor server address?`为你的服务器地址，一般类似`http://blabla.com`。
 
+Set `Your hexo-editor server address?` to your server address like `http://blabla.com`.
 
 ## 选项 | Options
 
-所有选项都通过`./.env`文件设定，包括`username`, `password` 和 `HEXO_ROOT`。详细说明请查看`./.env`文件
+所有选项都通过安装程序设定 | All options are set through installer.
 
-All options are set through `./.env` file, inlcluding `username`, `password` and `HEXO_ROOT`. See .env file for details.
+```js
+module.exports = {
+  port: 5777,
+  hexoServerAddress: 'http://localhost:5777',
+  hexoRoot: '',         // 博客文件夹目录 | hexo blog folder path
+  jwtSecret: 'secret',  // 密钥 | secret
+  jwtExpire: '1h',      // 操作过期时间 | access expire time
+  jwtRefresh: '7d',     // 登录过期时间 | login expire time
+  username: 'admin',
+  password: 'admin'
+}
+```
 
-## 更新客户端和服务器 | Update client and server
+## 更新 | Update
 
-根据[@winwin/hexo-editor-client](https://github.com/YuJianghao/winwin-hexo-editor-client)自行构建最新版的客户端然后将分发分拣拷贝到`./public`目录下
 
-You can build latest [@winwin/hexo-editor-client](https://github.com/YuJianghao/winwin-hexo-editor-client) yourself and copy distribution files to `./public`.
+运行安装程序 | Run Installer
 
-运行`npm install @winwin/hexo-editor-server`来更新[@winwin/hexo-editor-server](https://github.com/YuJianghao/winwin-hexo-editor-client)
+```bash
+node ./install.js
+```
 
-You can update [@winwin/hexo-editor-server](https://github.com/YuJianghao/winwin-hexo-editor-client) by simply run `npm install @winwin/hexo-editor-server`
+在第一步中指定需要更新 | Set update to yes at very first step
+
+```bash
+installer > Update hexo-editor? Yes
+```
+
+在安装程序结束后重启 | Restart after finishing install
+
+```bash
+pm2 restart hexoeditor
+```
+
+## 支持 | Support
+
+[Gitee Wiki](https://gitee.com/winwin_2011/winwin-hexo-editor/wikis/pages)
+
+[Github Wiki](https://github.com/YuJianghao/winwin-hexo-editor/wiki#faq)
 
 ## 贡献 | Contribute
 
-欢迎各种各样的PR（魔改也是可以的！）| All kinds of PR are welcomed, including crazy change!
+欢迎各种各样的PR（魔改也是可以的！）
+
+All kinds of PR are welcomed, including crazy change!
 
 如果这项目帮到你了，点个爱的五角星呗~
 
 If this project helped you a bit, please leave a ⭐ with your ❤ :p!
 
 ## 致谢 | Acknowledgement
+
+感谢和我一起扣代码的[maomishen](https://github.com/maomishen/)小伙伴！
 
 [hexo-client](https://github.com/gaoyoubo/hexo-client) by [gaoyoubo](https://github.com/gaoyoubo), [homepage](https://www.mspring.org/tags/HexoClient/)
 
