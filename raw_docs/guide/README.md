@@ -99,12 +99,6 @@ installer > Update hexo-editor? Yes
 pm2 restart hexoeditor
 ```
 
-## 支持 | Support
-
-[Gitee Wiki](https://gitee.com/winwin_2011/winwin-hexo-editor/wikis/pages)
-
-[Github Wiki](https://github.com/YuJianghao/winwin-hexo-editor/wiki#faq)
-
 ## 贡献 | Contribute
 
 欢迎各种各样的PR（魔改也是可以的！）
