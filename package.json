@@ -1,6 +1,6 @@
 {
   "name": "hexo-editor",
-  "version": "0.1.4",
+  "version": "0.1.9",
   "scripts": {
     "start": "export NODE_ENV=production && node bin/www",
     "dev": "export DEBUG='hexo*' && ./node_modules/.bin/nodemon -i ./data bin/www",
