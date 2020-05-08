@@ -94,6 +94,7 @@ inquirer
     console.log(chalk.blue.bold('Saving settings'))
     p.on('close', async () => {
       try {
+        await git.reset('hard')
         if (answers.update) {
           console.log(chalk.blue.bold('Fetching updates'))
           try {
@@ -102,7 +103,6 @@ inquirer
             await git.pull('gitee', 'master')
           }
         }
-        await git.reset('hard')
         console.log(chalk.blue.bold('Installing...'))
         await replace(path.join(process.cwd(), 'public'),
           /http:\/\/localhost:5777/g,
