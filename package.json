@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@winwin/hexo-editor-client": "0.0.4",
-    "@winwin/hexo-editor-server": "^0.1.7",
+    "@winwin/hexo-editor-server": "^0.1.8",
     "basic-auth": "^2.0.1",
     "chalk": "^3.0.0",
     "debug": "^4.1.1",
