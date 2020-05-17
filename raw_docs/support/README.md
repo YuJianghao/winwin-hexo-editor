@@ -1,5 +1,11 @@
 # FAQ
 
+## 升级失败 ｜ Update fail
+
+大部分升级失败可以通过`git reset --hard && git pull && node ./install.js`解决
+
+Most of it can be solved by running `git reset --hard && git pull && node ./install.js`
+
 ## 部署失败 ｜ Deploy fail
 
 **为什么我不能部署博客？503错误？**
