@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.bootcss.com/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./index.css">
+  <title>Winwin's Hexo Editor</title>
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <link href="https://cdn.bootcss.com/aos/2.3.4/aos.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/aos/2.3.4/aos.js"></script>
+  <script src="https://cdn.bootcss.com/rellax/1.12.1/rellax.min.js"></script>
+  <script src="https://cdn.bootcss.com/parallax.js/1.5.0/parallax.min.js"></script>
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?f1f00500f2037ffcd31a361a556caa9e";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+</head>
+
+<body>
+  <section class="sec welcome rellax" data-rellax-speed="-7">
+    <div class="float bg"></div>
+    <div class="float cube rellax" data-rellax-speed="-10"></div>
+    <a href='https://gitee.com/winwin_2011/winwin-hexo-editor' class="gitee-corner"><img src='https://gitee.com/nobodyknowme/FloatWindowDemo/widgets/widget_1.svg?color=4172cf' alt='Fork me on Gitee'></img></a>
+    <!-- <a href="https://github.com/YuJianghao/winwin-hexo-editor" class="github-corner"
+      aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250"
+        style="fill:#70B7FD; color:#fff; position: absolute; top: 0; border: 0; left: 0; transform: scale(-1, 1);"
+        aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path
+          d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+          fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path
+          d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+          fill="currentColor" class="octo-body"></path>
+      </svg></a> -->
+    <style>
+      .github-corner:hover .octo-arm {
+        animation: octocat-wave 560ms ease-in-out
+      }
+
+      @keyframes octocat-wave {
+
+        0%,
+        100% {
+          transform: rotate(0)
+        }
+
+        20%,
+        60% {
+          transform: rotate(-25deg)
+        }
+
+        40%,
+        80% {
+          transform: rotate(10deg)
+        }
+      }
+
+      @media (max-width:500px) {
+        .github-corner:hover .octo-arm {
+          animation: none
+        }
+
+        .github-corner .octo-arm {
+          animation: octocat-wave 560ms ease-in-out
+        }
+      }
+    </style>
+    <div class="container">
+      <div class="content">
+        <h1>在自己的服务器上搭建<br />Hexo博客编辑器</h1>
+        <div class="subtitle">或者仅在本地运行</div>
+        <div>
+          <a href="https://winwin_2011.gitee.io/winwin-hexo-editor/guide/" class="action">现在开始</a>
+        </div>
+      </div>
+      <img class="browser" src="./images/browser-ui-mock.png" alt="">
+    </div>
+  </section>
+  <section class="sec intro" data-parallax="scroll">
+    <h2 data-aos="fade-in" data-aos-duration="500">在一个地方在线完成所有Hexo任务</h2>
+    <div class="container">
+      <div class="item" data-aos="fade-left" data-aos-duration="500" data-aos-delay="150">
+        <img src="./images/edit.png" alt="编辑">
+        <div class="desc">编辑</div>
+      </div>
+      <div class="item" data-aos="fade-left" data-aos-duration="500" data-aos-delay="300">
+        <img src="./images/organize.png" alt="整理">
+        <div class="desc">整理</div>
+      </div>
+      <div class="item" data-aos="fade-left" data-aos-duration="500" data-aos-delay="450">
+        <img src="./images/deploy.png" alt="发布">
+        <div class="desc">发布</div>
+      </div>
+      <div class="item" data-aos="fade-left" data-aos-duration="500" data-aos-delay="600">
+        <img src="./images/storage.png" alt="存储">
+        <div class="desc">存储</div>
+      </div>
+    </div>
+  </section>
+  <section class="sec screen parallax-window" data-parallax="scroll" data-image-src="./images/editingpage.jpg"
+    data-z-index="2" data-speed="0.5" bleed="10">
+  </section>
+  <section class="sec feature">
+    <div class="container">
+      <ul data-aos-offset="100" data-aos="fade-right" data-aos-duration="500">
+        <li>文章增删改、发布和取消</li>
+        <li>Markdown自动补全</li>
+        <li>多级分类和多标签</li>
+        <li>front-matters</li>
+        <li>git push/reset/pull</li>
+        <li>Hexo generate/deploy/clean</li>
+        <li>自定义鉴权中间件</li>
+        <li>和其他你需要但我没想到的内容</li>
+      </ul>
+      <img src="./images/feature.png" data-aos-offset="100" data-aos="fade-left" data-aos-duration="500"
+        data-aos-delay="300">
+    </div>
+    <div id="installation" style="visibility: hidden;"></div>
+  </section>
+  <section class="sec install">
+    <div class="content">
+      <pre>&gt; echo "Four more lines to install ..."</pre>
+      <pre>&gt; git clone https://github.com/YuJianghao/winwin-hexo-editor</pre>
+      <pre>&gt; cd winwin-hexo-editor</pre>
+      <pre>&gt; export HEXO_ROOT='your_blog_folder_path'</pre>
+      <pre>&gt; npm install && npm start</pre>
+      <p>或查看 <a href="http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/">■简易安装指引</a> 和 <a
+          href="https://github.com/YuJianghao/winwin-hexo-editor">■项目仓库</a></p>
+    </div>
+  </section>
+  <footer>
+    <div>Written by winwin2011 with ❤, leave a ⭐ if this project helped you a bit!</div>
+  </footer>
+</body>
+<script>
+  AOS.init()
+  var rellax = new Rellax('.rellax')
+</script>
+
+</html>
