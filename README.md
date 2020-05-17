@@ -1,102 +1,156 @@
 # @winwin/hexo-editor
 
-An online hexo blog editor by winwin2011
+一个在线hexo博客编辑器 | An online hexo blog editor by winwin2011
 
 <img src="https://img.shields.io/github/package-json/v/yujianghao/winwin-hexo-editor?style=flat-square"><br/>
 
 <img src="https://img.shields.io/npm/v/@winwin/hexo-editor-client?label=%40winwin%2Fhexo-editor-client&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-server?label=%40winwin%2Fhexo-editor-server&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-sdk?label=%40winwin%2Fhexo-editor-sdk&style=flat-square">
 
-## Schreenshots
+## 截图 | Screenshots
 
-[Please visit homepage](https://yujianghao.github.io/winwin-hexo-editor/)
+[请访问主页](https://winwin_2011.gitee.io/winwin-hexo-editor/) | [Please visit homepage](https://winwin_2011.gitee.io/winwin-hexo-editor/)
+
+[移动客户端](https://github.com/maomishen/winwin-hexo-editor-mobile) | [Mobile client](https://github.com/maomishen/winwin-hexo-editor-mobile)
 
 ![Main page](https://cdn.yujianghao.cn/Zc8QgOwVQQrsmCVp.png)
 
-## Feature
+## 功能 | Feature
 
-- [x] Post add/delete/update and preview
-- [x] Post puiblish/unpublish/drafts
-- [x] Markdown editor
-- [x] categories
-- [x] tags
-- [x] git push/reset/pull
-- [x] hexo generate/deploy/clean
-- [x] Basic authentication
+- [x] 文章增删改和预览 | Post add/delete/update and preview
+- [x] 发布和草稿 | Post puiblish/unpublish/drafts
+- [x] Markdown编辑 | Markdown editor
+- [x] 分类 | categories
+- [x] 标签 | tags
+- [x] git同步 | git push/reset/pull
+- [x] hexo命令 | hexo generate/deploy/clean
+- [x] 登录 | Basic authentication
 - [ ] front-matters
-- [ ] Post sort
-- [ ] Search
-- [ ] ~~Image CDN~~(use [picgo](https://picgo.github.io/PicGo-Doc/zh/guide/) instead)
-- [ ] let me know what you need ...
+- [ ] 文章排序 | Post sort
+- [ ] 文章搜索 | Search
+- [ ] ~~图床Image CDN~~(请使用[picgo](https://picgo.github.io/PicGo-Doc/zh/guide/)替代 | use [picgo](https://picgo.github.io/PicGo-Doc/zh/guide/) instead)
+- [ ] 亲，请告诉我您还需要什么 ~ | let me know what you need ...
 
-## Installation
+## 安装 | Installation
 
-### With localhost
+> **没有Hexo和Node.js经验的同学可以查看[手把手教学](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
+>
+> **For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
 
-**For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
+### 默认安装 | Default installation
 
-Download source
+下载源码 | Download source
 
 ```bash
 git clone https://github.com/YuJianghao/winwin-hexo-editor
 ```
 
-Install dependences
+安装依赖 | Install dependences
 
 ```bash
 cd winwin-hexo-editor
 npm install
 ```
 
-Setup your hexo blog path in `./env` file
+运行安装程序 | Run Installer
 
-```.env
-HEXO_ROOT='' # path to your blog folder
-```
-
-Start
+可以使用默认值 | You can use default settings.
 
 ```bash
-# without pm2
+node ./install.js
+```
+
+开始运行 | Start
+
+```bash
+# 不适用pm2 | without pm2
 npm run start
-# with pm2
+
+# 使用pm2 | with pm2
+# 开启 | start
 npm run prd
-# for development
+# 停止 | stop
+npm run stop
+
+# 开发 | for development
 npm run dev
 ```
 
-Then open `http://localhost:5777` from your browser.
+然后用浏览器打开`http://localhost:5777` | Then open `http://localhost:5777` from your browser.
 
-### With custom server address
+### 使用自定义服务器 | With custom server address
 
-> Temporary solution: In every files at `./public` : replace every `http://localhost:5777` with your server address like `http://blabla.com`
+运行安装程序 | Run Installer
 
-You need to build your own `@winwin/hexo-editor-client` with server address correctly setup. See build guide in [this repo](https://github.com/YuJianghao/winwin-hexo-editor-client).
+```bash
+node ./install.js
+```
 
-If you have questions maybe you can find answers in [How to deploy service with custom server address, instead of localhost?](https://github.com/YuJianghao/winwin-hexo-editor/issues/1) Commet it if no answer found!
+在安装程序中指定`Your hexo-editor server address?`为你的服务器地址，一般类似`http://blabla.com`。
+
+Set `Your hexo-editor server address?` to your server address like `http://blabla.com`.
+
+## 选项 | Options
+
+所有选项都通过安装程序设定 | All options are set through installer.
+
+```js
+module.exports = {
+  port: 5777,
+  hexoServerAddress: 'http://localhost:5777',
+  hexoRoot: '',         // 博客文件夹目录 | hexo blog folder path
+  jwtSecret: 'secret',  // 密钥 | secret
+  jwtExpire: '1h',      // 操作过期时间 | access expire time
+  jwtRefresh: '7d',     // 登录过期时间 | login expire time
+  username: 'admin',
+  password: 'admin'
+}
+```
+
+## 更新 | Update
 
 
-## Options
+运行安装程序 | Run Installer
 
-All options are set through `./.env` file, inlcluding `username`, `password` and `HEXO_ROOT`. See .env file for details.
+```bash
+node ./install.js
+```
 
-## Update client and server
+在第一步中指定需要更新 | Set update to yes at very first step
 
-You can build latest [@winwin/hexo-editor-client](https://github.com/YuJianghao/winwin-hexo-editor-client) yourself and copy distribution files to `./public`.
+```bash
+installer > Update hexo-editor? Yes
+```
 
-You can update [@winwin/hexo-editor-server](https://github.com/YuJianghao/winwin-hexo-editor-client) by simply run `npm install @winwin/hexo-editor-server`
+在安装程序结束后重启 | Restart after finishing install
 
-## Contribute
+```bash
+pm2 restart hexoeditor
+```
+
+## 支持 | Support
+
+[Gitee Wiki](https://gitee.com/winwin_2011/winwin-hexo-editor/wikis/pages)
+
+[Github Wiki](https://github.com/YuJianghao/winwin-hexo-editor/wiki#faq)
+
+## 贡献 | Contribute
+
+欢迎各种各样的PR（魔改也是可以的！）
 
 All kinds of PR are welcomed, including crazy change!
 
+如果这项目帮到你了，点个爱的五角星呗~
+
 If this project helped you a bit, please leave a ⭐ with your ❤ :p!
 
-## Acknowledgement
+## 致谢 | Acknowledgement
+
+感谢和我一起扣代码的[maomishen](https://github.com/maomishen/)小伙伴！
 
 [hexo-client](https://github.com/gaoyoubo/hexo-client) by [gaoyoubo](https://github.com/gaoyoubo), [homepage](https://www.mspring.org/tags/HexoClient/)
 
 [hexo-admin](https://github.com/jaredly/hexo-admin) by [jaredly](https://github.com/jaredly), [homepage](https://jaredforsyth.com/hexo-admin/)
 
-I learnt a lot about hexo usage from them!
+感谢他们教会我怎么使用hexo！| I learnt a lot about hexo usage from them!
 
 [Qusar Login Form Card Component](https://gist.github.com/justinatack/39ec7f37064b2e9fa61fbd450cba3826) by [justinatack](https://gist.github.com/justinatack/)

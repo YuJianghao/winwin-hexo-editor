@@ -25,6 +25,7 @@ app.use(async (ctx, next) => {
     }
     if (ctx.status === 500) {
       ctx.body.message = 'server internal error, try again later'
+      console.log(err)
     }
   }
 })

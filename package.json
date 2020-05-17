@@ -2,6 +2,7 @@
   "name": "hexo-editor",
   "version": "0.1.11",
   "scripts": {
+    "stop": "pm2 stop hexoeditor",
     "start": "export NODE_ENV=production && node bin/www",
     "dev": "export DEBUG='hexo*' && ./node_modules/.bin/nodemon -i ./data bin/www",
     "prd": "export NODE_ENV=production && pm2 start bin/www --name hexoeditor",
@@ -37,6 +38,7 @@
     "simple-json-db": "^1.2.2"
   },
   "devDependencies": {
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.1",
+    "vuepress": "^1.4.0"
   }
 }
