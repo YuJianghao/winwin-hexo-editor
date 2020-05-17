@@ -1,6 +1,6 @@
 {
   "name": "hexo-editor",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "scripts": {
     "stop": "pm2 stop hexoeditor",
     "start": "export NODE_ENV=production && node bin/www",
@@ -9,8 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@winwin/hexo-editor-client": "0.0.4",
-    "@winwin/hexo-editor-server": "^0.1.7",
+    "@winwin/hexo-editor-server": "^0.1.9",
     "basic-auth": "^2.0.1",
     "chalk": "^3.0.0",
     "debug": "^4.1.1",
