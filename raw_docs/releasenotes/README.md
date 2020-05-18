@@ -8,7 +8,7 @@
 ### v0.1.11
 
 - hexo-editor-client@v0.1.6
-- hexo-editor-client@v0.1.9
+- hexo-editor-server@v0.1.9
 
 ### v0.1.10
 
