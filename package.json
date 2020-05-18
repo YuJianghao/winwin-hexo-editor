@@ -1,6 +1,6 @@
 {
   "name": "hexo-editor",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "scripts": {
     "stop": "pm2 stop hexoeditor",
     "start": "export NODE_ENV=production && node bin/www",

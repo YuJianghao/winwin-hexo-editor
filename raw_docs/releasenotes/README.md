@@ -1,6 +1,10 @@
 # 更新日志 ｜ Release Notes
 ## hexo-editor
 
+### v0.1.12
+
+- 整理git分支
+
 ### v0.1.11
 
 - hexo-editor-client@v0.1.6
