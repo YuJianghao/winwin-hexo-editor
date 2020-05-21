@@ -40,12 +40,6 @@ inquirer
       prefix: chalk.blue('?')
     },
     {
-      name: 'hexoServerAddress',
-      message: 'Your hexo-editor server address?',
-      default: config.hexoServerAddress || 'http://localhost:5777',
-      prefix: chalk.blue('?')
-    },
-    {
       name: 'jwtSecret',
       message: 'Secret Key?' + chalk.blue('Like a password, can be anything you like.'),
       default: config.jwtSecret || 'secret',
@@ -72,7 +66,7 @@ inquirer
       type: 'password',
       name: 'password',
       message: 'password ' +
-     chalk.blue('default `' + config.password || 'admin' + '`'),
+     chalk.blue('default `' + (config.password || 'admin') + '`'),
       default: config.password || 'admin',
       mask: '*',
       prefix: chalk.blue('?')
@@ -95,6 +89,7 @@ inquirer
     console.log(chalk.blue.bold('Saving settings'))
     p.on('close', async () => {
       try {
+        console.log(chalk.blue.bold('Installing...'))
         await git.reset('hard')
         if (answers.update) {
           console.log(chalk.blue.bold('Fetching updates'))
@@ -104,10 +99,6 @@ inquirer
             await git.pull('gitee', 'master')
           }
         }
-        console.log(chalk.blue.bold('Installing...'))
-        await replace(path.join(process.cwd(), 'public'),
-          /http:\/\/localhost:5777/g,
-          answers.hexoServerAddress)
         console.clear()
         console.log(chalk.green.bold('Finished!'))
         console.log('You can modify your config by editing ' + chalk.blue.bold('config.user.js'))
@@ -131,26 +122,6 @@ inquirer
       // Something else when wrong
     }
   })
-
-async function replace (file, src, dest) {
-  const data = await fs.promises.readdir(file)
-  await data.forEach(async item => {
-    const itemPath = path.join(file, item)
-    let isDir = await fs.promises.lstat(itemPath)
-    isDir = isDir.isDirectory()
-    if (isDir) {
-      logger('dir:', itemPath)
-      await replace(itemPath, src, dest)
-    } else {
-      const content = await fs.promises.readFile(itemPath, 'utf-8')
-      const newContent = content.replace(src, dest)
-      if (newContent !== content) {
-        logger('file:', itemPath)
-        await fs.promises.writeFile(itemPath, newContent)
-      }
-    }
-  })
-}
 
 function checkIsBlog (blog) {
   const message = `Path \`${blog}\` isn't a hexo blog folder!`
