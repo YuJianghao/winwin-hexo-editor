@@ -1,28 +1,47 @@
 {
   "name": "hexo-editor",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.13-1",
   "scripts": {
-    "start": "node bin/www",
-    "dev": "./node_modules/.bin/nodemon bin/www",
-    "prd": "pm2 start bin/www",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "stop": "pm2 stop hexoeditor",
+    "restart": "pm2 restart hexoeditor",
+    "start": "export NODE_ENV=production && node bin/www",
+    "dev": "export DEBUG='hexo*' && ./node_modules/.bin/nodemon -i ./data bin/www",
+    "prd": "export NODE_ENV=production && pm2 start bin/www --name hexoeditor",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "doc:dev": "npx vuepress dev raw_docs",
+    "doc:build": "npx vuepress build raw_docs -d docs"
   },
   "dependencies": {
-    "@winwin/hexo-editor-server": "^0.1.4",
+    "@winwin/hexo-editor-server": "^0.1.9",
+    "basic-auth": "^2.0.1",
+    "chalk": "^3.0.0",
     "debug": "^4.1.1",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-html": "^6.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "inquirer": "^7.1.0",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
+    "koa-compose": "^4.1.0",
     "koa-convert": "^1.2.0",
+    "koa-cors": "0.0.16",
     "koa-json": "^2.0.2",
+    "koa-jwt": "^3.6.0",
     "koa-logger": "^3.2.0",
     "koa-onerror": "^4.1.0",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
-    "koa-views": "^6.2.0",
-    "pug": "^2.0.3"
+    "node-env-file": "^0.1.8",
+    "simple-json-db": "^1.2.2"
   },
   "devDependencies": {
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.1",
+    "vuepress": "^1.4.0"
   }
 }
