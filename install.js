@@ -93,7 +93,16 @@ inquirer
         await git.reset('hard')
         if (answers.update) {
           console.log(chalk.blue.bold('Fetching updates'))
-          await git.pull()
+          try {
+            await git.pull()
+          } catch (err) {
+            console.error(chalk.bgRed.white.bold('Failed information:'))
+            console.error(err)
+            console.error(chalk.bgRed.white.bold('Fetching updates failed'))
+            console.error(chalk.blue.bold('Have you configured your `git pull` command correctly?'))
+            showFAQURL()
+            process.exit(1)
+          }
         }
         console.clear()
         console.log(chalk.green.bold('Finished!'))
@@ -104,8 +113,10 @@ inquirer
         console.log('Have fun :p')
         console.log(chalk.grey('NOTE. If you want to change your hexo-editor server address, you need to run this installer again.'))
       } catch (err) {
-        console.error(chalk.bgRed.white.bold('Install failed'))
+        console.error(chalk.bgRed.white.bold('Failed information:'))
         console.error(err)
+        console.error(chalk.bgRed.white.bold('Installation failed'))
+        showFAQURL()
       }
     })
   })
@@ -118,6 +129,11 @@ inquirer
       // Something else when wrong
     }
   })
+
+function showFAQURL () {
+  console.error(chalk.blue.bold('For more information please visit FAQ at ') +
+    chalk.blue.bold.underline('https://winwin_2011.gitee.io/winwin-hexo-editor/support/'))
+}
 
 function checkIsBlog (blog) {
   const message = `Path \`${blog}\` isn't a hexo blog folder!`
