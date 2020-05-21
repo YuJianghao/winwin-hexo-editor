@@ -2,13 +2,9 @@
 
 ## 安装 | Installation
 
-::: tip 提示
-**没有Hexo和Node.js经验的同学可以查看[手把手教学](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
-:::
-
-::: tip TIP
-**For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
-:::
+> **没有Hexo和Node.js经验的同学可以查看[手把手教学](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
+>
+> **For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
 
 ### 默认安装 | Default installation
 
@@ -27,11 +23,11 @@ npm install
 
 运行安装程序 | Run Installer
 
+可以使用默认值 | You can use default settings.
+
 ```bash
 node ./install.js
 ```
-
-> 可以使用默认值 | You can use default settings.
 
 开始运行 | Start
 
@@ -51,15 +47,13 @@ npm run dev
 
 然后用浏览器打开`http://localhost:5777` | Then open `http://localhost:5777` from your browser.
 
-### 自定义服务器 | Custom Server
+### 使用自定义服务器 | With custom server address
 
-运行安装程序 | Run Installer
+直接使用`http://yourapiaddress:5777`即可。 | Just open `http://yourapiaddress:5777`.
 
-```bash
-node ./install.js
-```
+你需要自行配置你的http服务器反向代理。 | You need to configure your HTTP server proxy.
 
-在安装程序中指定`Your hexo-editor server address?`为你的服务器地址，一般类似`http://blabla.com`。Set `Your hexo-editor server address?` to your server address like `http://blabla.com`.
+<!-- TODO: 教学如何配置反向代理 -->
 
 ## 选项 | Options
 
@@ -68,7 +62,6 @@ node ./install.js
 ```js
 module.exports = {
   port: 5777,
-  hexoServerAddress: 'http://localhost:5777',
   hexoRoot: '',         // 博客文件夹目录 | hexo blog folder path
   jwtSecret: 'secret',  // 密钥 | secret
   jwtExpire: '1h',      // 操作过期时间 | access expire time
@@ -98,6 +91,13 @@ installer > Update hexo-editor? Yes
 ```bash
 pm2 restart hexoeditor
 ```
+
+## 支持 | Support
+
+- [Gitee FAQ](https://winwin_2011.gitee.io/winwin-hexo-editor/support/)
+- [Gitee Issue](https://gitee.com/winwin_2011/winwin-hexo-editor/issues)
+- [Github FAQ](https://yujianghao.github.io/winwin-hexo-editor/support/)
+- [Github Issue](https://github.com/YuJianghao/winwin-hexo-editor/issues)
 
 ## 贡献 | Contribute
 
