@@ -1,12 +1,15 @@
 {
   "name": "hexo-editor",
-  "version": "0.1.12",
+  "version": "0.1.13-0",
   "scripts": {
     "stop": "pm2 stop hexoeditor",
+    "restart": "pm2 restart hexoeditor",
     "start": "export NODE_ENV=production && node bin/www",
     "dev": "export DEBUG='hexo*' && ./node_modules/.bin/nodemon -i ./data bin/www",
     "prd": "export NODE_ENV=production && pm2 start bin/www --name hexoeditor",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "doc:dev": "npx vuepress dev raw_docs",
+    "doc:build":"npx vuepress build raw_docs -d docs"
   },
   "dependencies": {
     "@winwin/hexo-editor-server": "^0.1.9",
