@@ -4,15 +4,15 @@
 
 <img src="https://img.shields.io/github/package-json/v/yujianghao/winwin-hexo-editor?style=flat-square"><br/>
 
-<img src="https://img.shields.io/npm/v/@winwin/hexo-editor-client?label=%40winwin%2Fhexo-editor-client&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-server?label=%40winwin%2Fhexo-editor-server&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-sdk?label=%40winwin%2Fhexo-editor-sdk&style=flat-square">
+<img src="https://img.shields.io/github/package-json/v/YuJianghao/winwin-hexo-editor-client?label=%40winwin%2Fhexo-editor-client&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-server?label=%40winwin%2Fhexo-editor-server&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-sdk?label=%40winwin%2Fhexo-editor-sdk&style=flat-square">
 
 ## 截图 | Screenshots
 
-[请访问主页](https://winwin_2011.gitee.io/winwin-hexo-editor/) | [Please visit homepage](https://winwin_2011.gitee.io/winwin-hexo-editor/)
+[请访问主页](https://winwin_2011.gitee.io/winwin-hexo-editor/) | [Please visit homepage](https://yujianghao.github.io/winwin-hexo-editor/)
 
 [移动客户端](https://github.com/maomishen/winwin-hexo-editor-mobile) | [Mobile client](https://github.com/maomishen/winwin-hexo-editor-mobile)
 
-![Main page](https://cdn.yujianghao.cn/Zc8QgOwVQQrsmCVp.png)
+![Main page](https://cdn.yujianghao.cn/uploads/2020/05/22/Id6dz5jj_winwin-hexo-editor-v0.1.7-safari.png)
 
 ## 功能 | Feature
 
@@ -79,15 +79,11 @@ npm run dev
 
 ### 使用自定义服务器 | With custom server address
 
-运行安装程序 | Run Installer
+直接使用`http://yourapiaddress:5777`即可。 | Just open `http://yourapiaddress:5777`.
 
-```bash
-node ./install.js
-```
+你需要自行配置你的http服务器反向代理。 | You need to configure your HTTP server proxy.
 
-在安装程序中指定`Your hexo-editor server address?`为你的服务器地址，一般类似`http://blabla.com`。
-
-Set `Your hexo-editor server address?` to your server address like `http://blabla.com`.
+<!-- TODO: 教学如何配置反向代理 -->
 
 ## 选项 | Options
 
@@ -96,7 +92,6 @@ Set `Your hexo-editor server address?` to your server address like `http://blabl
 ```js
 module.exports = {
   port: 5777,
-  hexoServerAddress: 'http://localhost:5777',
   hexoRoot: '',         // 博客文件夹目录 | hexo blog folder path
   jwtSecret: 'secret',  // 密钥 | secret
   jwtExpire: '1h',      // 操作过期时间 | access expire time
@@ -129,9 +124,10 @@ pm2 restart hexoeditor
 
 ## 支持 | Support
 
-[Gitee Wiki](https://gitee.com/winwin_2011/winwin-hexo-editor/wikis/pages)
-
-[Github Wiki](https://github.com/YuJianghao/winwin-hexo-editor/wiki#faq)
+- [Gitee FAQ](https://winwin_2011.gitee.io/winwin-hexo-editor/support/)
+- [Gitee Issue](https://gitee.com/winwin_2011/winwin-hexo-editor/issues)
+- [Github FAQ](https://yujianghao.github.io/winwin-hexo-editor/support/)
+- [Github Issue](https://github.com/YuJianghao/winwin-hexo-editor/issues)
 
 ## 贡献 | Contribute
 
