@@ -1,6 +1,12 @@
 # 更新日志 ｜ Release Notes
 ## hexo-editor
 
+### v0.1.13
+
+- hexo-editor-client@v0.1.7
+- 移除硬编码，自动配置API服务地址
+- 优化安装程序体验
+
 ### v0.1.12
 
 - 整理git分支
@@ -46,6 +52,10 @@
 - 更新文档
 
 ## hexo-editor-client
+
+### 0.1.7
+
+- 移除硬编码，自动配置API服务地址
 
 ### v0.1.6
 
