@@ -93,11 +93,7 @@ inquirer
         await git.reset('hard')
         if (answers.update) {
           console.log(chalk.blue.bold('Fetching updates'))
-          try {
-            await git.pull()
-          } catch (_) {
-            await git.pull('gitee', 'master')
-          }
+          await git.pull()
         }
         console.clear()
         console.log(chalk.green.bold('Finished!'))
