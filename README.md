@@ -24,8 +24,8 @@
 - [x] git同步 | git push/reset/pull
 - [x] hexo命令 | hexo generate/deploy/clean
 - [x] 登录 | Basic authentication
+- [x] 文章排序 | Post sort
 - [ ] front-matters
-- [ ] 文章排序 | Post sort
 - [ ] 文章搜索 | Search
 - [ ] ~~图床Image CDN~~(请使用[picgo](https://picgo.github.io/PicGo-Doc/zh/guide/)替代 | use [picgo](https://picgo.github.io/PicGo-Doc/zh/guide/) instead)
 - [ ] 亲，请告诉我您还需要什么 ~ | let me know what you need ...
