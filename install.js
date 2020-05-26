@@ -108,8 +108,8 @@ inquirer
       console.log(chalk.green.bold('Finished!'))
       console.log('You can modify your config by editing ' + chalk.blue.bold('config.user.js'))
       console.log('Run ' + chalk.blue.bold('`npm run prd`') + ' to start')
-      console.log('Run ' + chalk.blue.bold('`pm2 stop hexoeditor`') + ' to stop')
-      console.log('Run ' + chalk.blue.bold('`pm2 restart hexoeditor`') + ' to restart')
+      console.log('Run ' + chalk.blue.bold('`npm run stop`') + ' to stop')
+      console.log('Run ' + chalk.blue.bold('`npm run restart`') + ' to restart')
       console.log('Have fun :p')
       console.log(chalk.grey('NOTE. If you want to change your hexo-editor server address, you need to run this installer again.'))
     } catch (err) {
