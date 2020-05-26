@@ -2,9 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
-const git = require('simple-git/promise')(process.cwd())
 const config = require('./src/loadConfig')
-const { exec } = require('child_process')
+const cp = require('child_process')
 const logger = require('debug')('hexo-editor:installer')
 
 console.clear()
@@ -66,59 +65,59 @@ inquirer
       type: 'password',
       name: 'password',
       message: 'password ' +
-     chalk.blue('default `' + (config.password || 'admin') + '`'),
+        chalk.blue('default `' + (config.password || 'admin') + '`'),
       default: config.password || 'admin',
       mask: '*',
       prefix: chalk.blue('?')
     }
   ])
-  .then(answers => {
-    console.clear()
-    logger('answers: %O', answers)
-    const userConfig = {}
-    const userConfigPath = './config.user.js'
-    Object.keys(config).map(key => {
-      userConfig[key] = answers[key]
-    })
-    if (fs.existsSync(userConfigPath)) {
-      fs.unlinkSync(userConfigPath)
-    }
-    fs.writeFileSync(userConfigPath, 'module.exports =' + JSON.stringify(userConfig).replace(',', ',\n'))
-    const p = exec('npx eslint config.user.js --fix')
-    console.clear()
-    console.log(chalk.blue.bold('Saving settings'))
-    p.on('close', async () => {
-      try {
-        console.log(chalk.blue.bold('Installing...'))
-        await git.reset('hard')
-        if (answers.update) {
-          console.log(chalk.blue.bold('Fetching updates'))
-          try {
-            await git.pull()
-          } catch (err) {
-            console.error(chalk.bgRed.white.bold('Failed information:'))
-            console.error(err)
-            console.error(chalk.bgRed.white.bold('Fetching updates failed'))
-            console.error(chalk.blue.bold('Have you configured your `git pull` command correctly?'))
-            showFAQURL()
-            process.exit(1)
-          }
-        }
-        console.clear()
-        console.log(chalk.green.bold('Finished!'))
-        console.log('You can modify your config by editing ' + chalk.blue.bold('config.user.js'))
-        console.log('Run ' + chalk.blue.bold('`npm run prd`') + ' to start')
-        console.log('Run ' + chalk.blue.bold('`pm2 stop hexoeditor`') + ' to stop')
-        console.log('Run ' + chalk.blue.bold('`pm2 restart hexoeditor`') + ' to restart')
-        console.log('Have fun :p')
-        console.log(chalk.grey('NOTE. If you want to change your hexo-editor server address, you need to run this installer again.'))
-      } catch (err) {
-        console.error(chalk.bgRed.white.bold('Failed information:'))
-        console.error(err)
-        console.error(chalk.bgRed.white.bold('Installation failed'))
-        showFAQURL()
+  .then(async answers => {
+    try {
+      console.clear()
+      logger('answers: %O', answers)
+      const userConfig = {}
+      const userConfigPath = './config.user.js'
+      Object.keys(config).map(key => {
+        userConfig[key] = answers[key]
+      })
+      if (fs.existsSync(userConfigPath)) {
+        fs.unlinkSync(userConfigPath)
       }
-    })
+      fs.writeFileSync(userConfigPath, 'module.exports =' + JSON.stringify(userConfig).replace(',', ',\n'))
+      console.clear()
+      console.log(chalk.blue.bold('Saving settings'))
+      await exec('npx eslint config.user.js --fix')
+      console.log(chalk.blue.bold('Installing...'))
+      await exec('git reset --hard')
+      await exec('git submodule foreach \'git reset --hard\'')
+      if (answers.update) {
+        console.log(chalk.blue.bold('Fetching updates'))
+        try {
+          await exec('git pull')
+          await exec('git submodule sync')
+          await exec('git submodule update --init --recursive')
+        } catch (err) {
+          console.error(chalk.bgRed.white.bold('Failed information:'))
+          console.error(err)
+          console.error(chalk.bgRed.white.bold('Fetching updates failed'))
+          showFAQURL()
+          process.exit(1)
+        }
+      }
+      console.clear()
+      console.log(chalk.green.bold('Finished!'))
+      console.log('You can modify your config by editing ' + chalk.blue.bold('config.user.js'))
+      console.log('Run ' + chalk.blue.bold('`npm run prd`') + ' to start')
+      console.log('Run ' + chalk.blue.bold('`pm2 stop hexoeditor`') + ' to stop')
+      console.log('Run ' + chalk.blue.bold('`pm2 restart hexoeditor`') + ' to restart')
+      console.log('Have fun :p')
+      console.log(chalk.grey('NOTE. If you want to change your hexo-editor server address, you need to run this installer again.'))
+    } catch (err) {
+      console.error(chalk.bgRed.white.bold('Failed information:'))
+      console.error(err)
+      console.error(chalk.bgRed.white.bold('Installation failed'))
+      showFAQURL()
+    }
   })
   .catch(error => {
     if (error.isTtyError) {
@@ -149,4 +148,21 @@ function checkIsBlog (blog) {
     }
     return err.message
   }
+}
+
+function exec (command, options = { log: false, cwd: process.cwd() }) {
+  if (options.log) console.log(command)
+
+  return new Promise((resolve, reject) => {
+    cp.exec(command, { ...options }, (err, stdout, stderr) => {
+      if (err) {
+        err.stdout = stdout
+        err.stderr = stderr
+        reject(err)
+        return
+      }
+
+      resolve({ stdout, stderr })
+    })
+  })
 }
