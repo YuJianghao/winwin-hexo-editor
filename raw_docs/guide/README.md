@@ -14,19 +14,13 @@
 git clone https://github.com/YuJianghao/winwin-hexo-editor
 ```
 
-安装依赖 | Install dependences
-
-```bash
-cd winwin-hexo-editor
-npm install
-```
-
 运行安装程序 | Run Installer
 
 可以使用默认值 | You can use default settings.
 
 ```bash
-node ./install.js
+cd winwin-hexo-editor
+bash install.sh
 ```
 
 开始运行 | Start
@@ -40,6 +34,8 @@ npm run start
 npm run prd
 # 停止 | stop
 npm run stop
+# 重启 | restart
+npm run restart
 
 # 开发 | for development
 npm run dev

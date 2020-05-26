@@ -2,6 +2,11 @@
 
 ## hexo-editor
 
+### v0.2.0
+
+- hexo-editor-client@v0.2.1
+- 改用子模块
+
 ### v0.1.14
 
 - hexo-editor-client@v0.2.0
@@ -58,6 +63,10 @@
 - 更新文档
 
 ## hexo-editor-client
+
+### 0.2.1
+
+- 改用子模块
 
 ### 0.2.0
 
