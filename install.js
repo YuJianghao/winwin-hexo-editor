@@ -88,7 +88,8 @@ inquirer
       console.log(chalk.blue.bold('Saving settings'))
       await exec('npx eslint config.user.js --fix')
       console.log(chalk.blue.bold('Installing...'))
-      await exec('git reset --hard --recurse-submodule')
+      await exec('git reset --hard')
+      await exec('git submodule foreach \'git reset --hard\'')
       if (answers.update) {
         console.log(chalk.blue.bold('Fetching updates'))
         try {
