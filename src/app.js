@@ -39,7 +39,7 @@ app.use(bodyparser({
 }))
 app.use(json())
 app.use(logger())
-app.use(require('koa-static')(path.join(process.cwd(), '/public')))
+app.use(require('koa-static')(path.join(process.cwd(), '/frontend/dist/pwa')))
 
 // logger
 app.use(async (ctx, next) => {
