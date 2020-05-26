@@ -14,10 +14,10 @@ if ! [ -x "$(command -v yarn)" ]; then
     echo 'To continue, you need to install yarn or npm.'
     exit 1
   else
-  if [  -f "$yarnLock" ]; then
-    rm $yarnLock
-  fi
-  # npm i
+    if [  -f "$yarnLock" ]; then
+      rm $yarnLock
+    fi
+    npm i
   fi
 else
   yarn
