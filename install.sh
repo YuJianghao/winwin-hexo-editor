@@ -4,7 +4,8 @@ if ! [ -x "$(command -v git)" ]; then
 fi
 npmLock="package-lock.json"
 yarnLock="yarn.lock"
-if [  -f "$npmLock" ]; then
+freshInsall="installed"
+if [ -f "$npmLock" ]; then
   rm $npmLock
 fi
 if ! [ -x "$(command -v yarn)" ]; then
@@ -14,7 +15,7 @@ if ! [ -x "$(command -v yarn)" ]; then
     echo 'To continue, you need to install yarn or npm.'
     exit 1
   else
-    if [  -f "$yarnLock" ]; then
+    if [ -f "$yarnLock" ]; then
       rm $yarnLock
     fi
     npm i
@@ -24,6 +25,10 @@ else
 fi
 git submodule sync
 git submodule update --init --recursive
+if ! [ -f "$freshInsall" ]; then
+  git submodule foreach 'git pull origin master'
+  touch $freshInsall
+fi
 if ! [ -x "$(command -v node)" ]; then
   echo -e '\033[41;1mError:\033[0m node is not installed.'
   echo 'To continue, you need to install node.'
