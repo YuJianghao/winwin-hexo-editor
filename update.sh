@@ -9,3 +9,9 @@ git pull
 
 . ./scripts/nodeModules.sh
 . ./scripts/submodules.sh
+
+printEndLine
+printGreen "Finished"
+printEndLine
+printGreen "Remember to restart service manually！"
+printEndLine
