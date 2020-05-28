@@ -96,6 +96,7 @@ inquirer
           await exec('git pull')
           await exec('git submodule sync')
           await exec('git submodule update --init --recursive')
+          await exec('git submodule foreach \'git pull origin master\'')
         } catch (err) {
           console.error(chalk.bgRed.white.bold('Failed information:'))
           console.error(err)
