@@ -2,6 +2,10 @@
 
 ## hexo-editor
 
+### v0.3.0
+
+- 添加搜索功能
+
 ### v0.2.1
 
 - 自动更新子模块到最新版
@@ -67,6 +71,12 @@
 - 更新文档
 
 ## hexo-editor-client
+
+### 0.3.0
+
+- Frontmatters支持
+- 文章搜索
+- Refresh token
 
 ### 0.2.2
 

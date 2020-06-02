@@ -16,12 +16,6 @@ console.log(chalk.blue.bold(
 inquirer
   .prompt([
     {
-      type: 'confirm',
-      name: 'update',
-      message: 'Update hexo-editor?',
-      default: false
-    },
-    {
       name: 'hexoRoot',
       message: 'What\'s your hexo blog path? ' + chalk.blue('The same path as your hexo _config.yml file\n'),
       prefix: chalk.blue('?'),
@@ -87,32 +81,19 @@ inquirer
       console.clear()
       console.log(chalk.blue.bold('Saving settings'))
       await exec('npx eslint config.user.js --fix')
-      console.log(chalk.blue.bold('Installing...'))
-      await exec('git reset --hard')
-      await exec('git submodule foreach \'git reset --hard\'')
-      if (answers.update) {
-        console.log(chalk.blue.bold('Fetching updates'))
-        try {
-          await exec('git pull')
-          await exec('git submodule sync')
-          await exec('git submodule update --init --recursive')
-          await exec('git submodule foreach \'git pull origin master\'')
-        } catch (err) {
-          console.error(chalk.bgRed.white.bold('Failed information:'))
-          console.error(err)
-          console.error(chalk.bgRed.white.bold('Fetching updates failed'))
-          showFAQURL()
-          process.exit(1)
-        }
-      }
       console.clear()
       console.log(chalk.green.bold('Finished!'))
-      console.log('You can modify your config by editing ' + chalk.blue.bold('config.user.js'))
-      console.log('Run ' + chalk.blue.bold('`npm run prd`') + ' to start')
+      console.log('Run ' + chalk.blue.bold('`npm start`') + ' to start with node')
+      console.log('Run ' + chalk.blue.bold('`npm run prd`') + ' to start with pm2')
       console.log('Run ' + chalk.blue.bold('`npm run stop`') + ' to stop')
       console.log('Run ' + chalk.blue.bold('`npm run restart`') + ' to restart')
+      console.log('Run ' + chalk.blue.bold('`bash ./update.sh`') + ' to update')
+      console.log('Run ' + chalk.blue.bold('`bash ./setup.sh`') + ' to change settings')
+      console.log(chalk.green.bold('Remember to (re)start your service manually!'))
       console.log('Have fun :p')
-      console.log(chalk.grey('NOTE. If you want to change your hexo-editor server address, you need to run this installer again.'))
+      console.log(chalk.grey('For uninstall:'))
+      console.log(chalk.grey('1) Remove the following folder: ' + process.cwd()))
+      console.log(chalk.grey('2) Stop youre service manually.'))
     } catch (err) {
       console.error(chalk.bgRed.white.bold('Failed information:'))
       console.error(err)

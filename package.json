@@ -1,6 +1,6 @@
 {
   "name": "hexo-editor",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "scripts": {
     "stop": "pm2 stop hexoeditor",
     "restart": "pm2 restart hexoeditor",
@@ -12,7 +12,7 @@
     "doc:build": "npx vuepress build raw_docs -d docs"
   },
   "dependencies": {
-    "@winwin/hexo-editor-server": "^0.1.9",
+    "@winwin/hexo-editor-server": "^0.2.2",
     "basic-auth": "^2.0.1",
     "chalk": "^3.0.0",
     "debug": "^4.1.1",

@@ -44,6 +44,7 @@ app.use(require('koa-static')(path.join(process.cwd(), '/frontend/dist/pwa')))
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()
+  console.log(start.toLocaleString() + '.' + start.getMilliseconds())
   await next()
   const ms = new Date() - start
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
