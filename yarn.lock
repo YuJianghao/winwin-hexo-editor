@@ -1758,10 +1758,10 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@winwin/hexo-editor-server@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.npmjs.org/@winwin/hexo-editor-server/-/hexo-editor-server-0.2.2.tgz#e419779f75a994d8031601c43323f3eab3f409b7"
-  integrity sha512-3fnkEU+OGD2Jc38BtZeaacxMUbL5XcHCpBBuosgS0bqUguu6+AnYpJ4RFpDgRNDmJS4tRD+cxA9QTjhEI1K1bg==
+"@winwin/hexo-editor-server@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.npm.taobao.org/@winwin/hexo-editor-server/download/@winwin/hexo-editor-server-0.2.3.tgz?cache=0&sync_timestamp=1592678741274&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40winwin%2Fhexo-editor-server%2Fdownload%2F%40winwin%2Fhexo-editor-server-0.2.3.tgz#0942a5d9960543441440fdcc988ff55c6a387b29"
+  integrity sha1-CUKl2ZYFQ0QUQP3MmI/1XGo4eyk=
   dependencies:
     debug "^4.1.1"
     hexo "^4.2.0"
