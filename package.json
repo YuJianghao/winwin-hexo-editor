@@ -13,7 +13,7 @@
     "doc:build": "npx vuepress build raw_docs -d docs"
   },
   "dependencies": {
-    "@winwin/hexo-editor-server": "^0.2.3",
+    "@winwin/hexo-editor-server": "^0.2.4",
     "basic-auth": "^2.0.1",
     "chalk": "^3.0.0",
     "debug": "^4.1.1",
