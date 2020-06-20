@@ -2,9 +2,9 @@
 
 ## 升级失败 ｜ Update fail
 
-大部分升级失败可以通过`git reset --hard && git pull && node ./install.js`解决
+大部分升级失败可以通过`git reset --hard && git pull && bash install.sh`解决。如果还是不行，可以选择重新安装。
 
-Most of it can be solved by running `git reset --hard && git pull && node ./install.js`
+Most of it can be solved by running `git reset --hard && git pull && bash install.sh`. If failed, try reinstall.
 
 ## 部署失败 ｜ Deploy fail
 
