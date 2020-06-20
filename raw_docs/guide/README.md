@@ -26,7 +26,7 @@ bash install.sh
 开始运行 | Start
 
 ```bash
-# 不适用pm2 | without pm2
+# 不使用pm2 | without pm2
 npm run start
 
 # 使用pm2 | with pm2
@@ -41,6 +41,8 @@ npm run restart
 npm run dev
 ```
 
+<!-- TODO 如何配置pm2 -->
+
 然后用浏览器打开`http://localhost:5777` | Then open `http://localhost:5777` from your browser.
 
 ### 使用自定义服务器 | With custom server address
@@ -54,6 +56,10 @@ npm run dev
 ## 选项 | Options
 
 所有选项都通过安装程序设定 | All options are set through installer.
+
+```bash
+bash setup.sh
+```
 
 ```js
 module.exports = {
@@ -73,22 +79,12 @@ module.exports = {
 运行安装程序 | Run Installer
 
 ```bash
-node ./install.js
-```
-
-在第一步中指定需要更新 | Set update to yes at very first step
-
-```bash
-installer > Update hexo-editor? Yes
-```
-
-在安装程序结束后重启 | Restart after finishing install
-
-```bash
-pm2 restart hexoeditor
+bash update.sh
 ```
 
 ## 支持 | Support
+
+QQ群：590355610
 
 - [Gitee FAQ](https://winwin_2011.gitee.io/winwin-hexo-editor/support/)
 - [Gitee Issue](https://gitee.com/winwin_2011/winwin-hexo-editor/issues)
