@@ -1,4 +1,10 @@
 # 更新日志 ｜ Release Notes
+
+### v0.3.3
+
+- 修复不能删除frontmatter的bug
+- 一些命名更改
+
 ### v0.3.2
 
 - 修复子模块没有更新的bug
