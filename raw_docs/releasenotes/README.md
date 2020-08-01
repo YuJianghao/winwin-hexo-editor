@@ -1,5 +1,9 @@
 # 更新日志 ｜ Release Notes
 
+### v0.3.4
+
+- 修复不能搜索的bug
+
 ### v0.3.3
 
 - 修复不能删除frontmatter的bug
