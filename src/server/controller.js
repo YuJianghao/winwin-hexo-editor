@@ -68,19 +68,17 @@ exports.reload = async function (ctx, next) {
 }
 
 exports.addPost = async function (ctx, next) {
-  try {
-    const post = await hexo.addPost(ctx.request.body)
-    ctx.body = {
-      success: true,
-      data: {
-        post: post
-      }
-    }
-  } catch (err) {
-    console.error(err)
-    ctx.body = {
-      success: false,
-      message: err.message
+  if (!ctx.request.body.title) {
+    const err = new Error()
+    err.status = 400
+    err.message = 'title is required'
+    throw err
+  }
+  const post = await hexo.addPost(ctx.request.body)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
     }
   }
 }

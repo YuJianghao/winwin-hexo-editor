@@ -54,8 +54,8 @@ app.use(async (ctx, next) => {
 // hexo-editor-server
 require('./server')(app, {
   hexoRoot: config.hexoRoot,
-  base: 'hexoeditorserver',
-  auth: compose([auth.jwtAuth, auth.requestAccessToken])
+  base: 'hexoeditorserver'
+  // auth: compose([auth.jwtAuth, auth.requestAccessToken])
 })
 
 // routes
