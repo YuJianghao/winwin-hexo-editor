@@ -2,7 +2,6 @@ const Hexo = require('./hexo')
 const hexo = new Hexo()
 const Search = require('./search')
 const search = new Search(hexo)
-const Joi = require('@hapi/joi')
 const warn = require('./utils').warn
 const restrictedKeys = require('./info').restrictedKeys
 
@@ -13,15 +12,6 @@ exports.getRestrictedKeys = async function (ctx, next) {
     success: true,
     data: {
       restrictedKeys
-    }
-  }
-}
-
-exports.v = {
-  addPost: {
-    body: {
-      title: Joi.string().required(),
-      slug: Joi.string()
     }
   }
 }

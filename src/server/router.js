@@ -1,4 +1,3 @@
-const validate = require('koa2-validation')
 const controller = require('./controller')
 
 module.exports = router => {
@@ -11,7 +10,7 @@ module.exports = router => {
     controller.getRestrictedKeys)
 
   router.post('/post',
-    validate(controller.v.addPost),
+  // TODO: need validation
     controller.addPost
   )
 
