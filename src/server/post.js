@@ -1,5 +1,4 @@
 const hfm = require('hexo-front-matter')
-const debug = require('debug')('hexo:delete')
 const restrictedKeys = [
   '_id',
   '_content',
@@ -75,8 +74,14 @@ class Post {
     delete this.raw
     delete this.published
     delete this.brief
+    Object.keys(this).map(key => {
+      if (key === 'frontmatters') return
+      if (!restrictedKeys.includes(key)) delete this[key]
+    })
     Object.keys(this.frontmatters).map(key => {
-      this[key] = this.frontmatters[key]
+      if (!restrictedKeys.includes(key)) {
+        this[key] = this.frontmatters[key]
+      }
     })
     delete this.frontmatters
   }
