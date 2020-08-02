@@ -11,6 +11,7 @@ const path = require('path')
 const config = require('./loadConfig')
 const auth = require('./auth')
 const token = require('./token')
+const version = require('./version')
 
 // error handler
 onerror(app)
@@ -59,6 +60,7 @@ require('./server')(app, {
 
 // routes
 app.use(token.routes(), token.allowedMethods())
+app.use(version.routes(), version.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
