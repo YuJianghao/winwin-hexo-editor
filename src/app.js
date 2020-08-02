@@ -51,7 +51,7 @@ app.use(async (ctx, next) => {
 })
 
 // hexo-editor-server
-require('@winwin/hexo-editor-server')(app, {
+require('./server')(app, {
   hexoRoot: config.hexoRoot,
   base: 'hexoeditorserver',
   auth: compose([auth.jwtAuth, auth.requestAccessToken])
