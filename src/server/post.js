@@ -1,5 +1,19 @@
 const hfm = require('hexo-front-matter')
 const debug = require('debug')('hexo:delete')
+const restrictedKeys = [
+  '_id',
+  '_content',
+  'slug',
+  'date',
+  'updated',
+  'raw',
+  'layout',
+  'published',
+  'title',
+  'tags',
+  'category',
+  'categories'
+]
 /**
  * 用于存储不包含hexo默认值的文章信息
  * @class
@@ -18,7 +32,14 @@ class Post {
           if (post[key] !== undefined) { this[key] = post[key] }
         })
       // 混合hexo-front-matters属性
-      if (this.raw) { Object.assign(this, hfm.parse(this.raw)) }
+      if (this.raw) {
+        const data = hfm.parse(this.raw)
+        this.frontmatters = {}
+        Object.keys(data).map(key => {
+          if (restrictedKeys.includes(key)) this[key] = data[key]
+          else this.frontmatters[key] = data[key]
+        })
+      }
       // 转换日期为数字
       Array.from(['date', 'updated']).map(time => {
         if (this[time]) {
@@ -40,23 +61,10 @@ class Post {
   update (obj) {
     Object.keys(obj).map(key => {
       if (key === '_id') return
+      delete this[key]
       this[key] = obj[key]
     })
-    this._delete()
     return this
-  }
-
-  /**
-   * 从列表删除键，键列表被存在`this._whe_delete`内
-   */
-  _delete () {
-    if (!this._whe_delete) return
-    debug(this._whe_delete)
-    this._whe_delete.map(key => {
-      if (key === '_id') return
-      delete this[key]
-    })
-    delete this._whe_delete
   }
 
   /**
@@ -67,6 +75,10 @@ class Post {
     delete this.raw
     delete this.published
     delete this.brief
+    Object.keys(this.frontmatters).map(key => {
+      this[key] = this.frontmatters[key]
+    })
+    delete this.frontmatters
   }
 }
 
