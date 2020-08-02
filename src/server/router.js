@@ -7,6 +7,9 @@ module.exports = router => {
   router.use(controller.defaultErrorHandler)
   router.use(controller.serviceErrorHandler)
 
+  router.get('/restrictedkeys',
+    controller.getRestrictedKeys)
+
   router.post('/post',
     validate(controller.v.addPost),
     controller.addPost

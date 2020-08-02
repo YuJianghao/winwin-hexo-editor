@@ -1,18 +1,6 @@
 const hfm = require('hexo-front-matter')
-const restrictedKeys = [
-  '_id',
-  '_content',
-  'slug',
-  'date',
-  'updated',
-  'raw',
-  'layout',
-  'published',
-  'title',
-  'tags',
-  'category',
-  'categories'
-]
+const debug = require('debug')('hexo:post')
+const restrictedKeys = require('./info').restrictedKeys
 /**
  * 用于存储不包含hexo默认值的文章信息
  * @class
@@ -84,6 +72,7 @@ class Post {
       }
     })
     delete this.frontmatters
+    debug('freeze post', Object.keys(this))
   }
 }
 
