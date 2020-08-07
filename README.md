@@ -4,7 +4,7 @@
 
 <img src="https://img.shields.io/github/package-json/v/yujianghao/winwin-hexo-editor?style=flat-square"><br/>
 
-<img src="https://img.shields.io/github/package-json/v/YuJianghao/winwin-hexo-editor-client?label=%40winwin%2Fhexo-editor-client&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-server?label=%40winwin%2Fhexo-editor-server&style=flat-square"><img src="https://img.shields.io/npm/v/@winwin/hexo-editor-sdk?label=%40winwin%2Fhexo-editor-sdk&style=flat-square">
+<img src="https://img.shields.io/github/package-json/v/YuJianghao/winwin-hexo-editor-client?label=%40winwin%2Fhexo-editor-client&style=flat-square">
 
 ## 截图 | Screenshots
 
@@ -12,7 +12,7 @@
 
 [移动客户端](https://github.com/maomishen/winwin-hexo-editor-mobile) | [Mobile client](https://github.com/maomishen/winwin-hexo-editor-mobile)
 
-![Main page](https://cdn.yujianghao.cn/uploads/2020/05/22/Id6dz5jj_winwin-hexo-editor-v0.1.7-safari.png)
+![Main page](https://cdn.yujianghao.cn/uploads/2020/08/07/VWUwO3J3_Snipaste_2020-08-07_10-52-08.png)
 
 ## 功能 | Feature
 
@@ -27,6 +27,7 @@
 - [x] 文章排序 | Post sort
 - [x] front-matters
 - [x] 文章搜索 | Search
+- [x] 自定义slug | Custom slug
 - [ ] ~~图床Image CDN~~(请使用[picgo](https://picgo.github.io/PicGo-Doc/zh/guide/)替代 | use [picgo](https://picgo.github.io/PicGo-Doc/zh/guide/) instead)
 - [ ] 亲，请告诉我您还需要什么 ~ | let me know what you need ...
 
@@ -74,6 +75,8 @@ npm run dev
 <!-- TODO 如何配置pm2 -->
 
 然后用浏览器打开`http://localhost:5777` | Then open `http://localhost:5777` from your browser.
+
+> 对于windows用户推荐使用WSL，详见[适用于Linux的Windows子系统](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10 )
 
 ### 使用自定义服务器 | With custom server address
 
