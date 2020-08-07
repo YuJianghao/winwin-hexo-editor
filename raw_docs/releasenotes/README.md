@@ -1,5 +1,13 @@
 # 更新日志 ｜ Release Notes
 
+### v0.4.0
+
+- 改善对frontmatters的支持
+- 添加自定义slug
+- 支持修改date和updated
+- 重构应用结构
+- 优化UI
+
 ### v0.3.4
 
 - 修复不能搜索的bug
