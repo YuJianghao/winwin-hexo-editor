@@ -11,6 +11,7 @@ const path = require('path')
 const config = require('./loadConfig')
 const auth = require('./auth')
 const token = require('./token')
+const version = require('./version')
 
 // error handler
 onerror(app)
@@ -51,14 +52,15 @@ app.use(async (ctx, next) => {
 })
 
 // hexo-editor-server
-require('@winwin/hexo-editor-server')(app, {
+require('./server')(app, {
   hexoRoot: config.hexoRoot,
-  base: 'hexoeditorserver',
-  auth: compose([auth.jwtAuth, auth.requestAccessToken])
+  base: 'hexoeditorserver'
+  // auth: compose([auth.jwtAuth, auth.requestAccessToken])
 })
 
 // routes
 app.use(token.routes(), token.allowedMethods())
+app.use(version.routes(), version.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

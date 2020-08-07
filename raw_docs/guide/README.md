@@ -45,6 +45,8 @@ npm run dev
 
 然后用浏览器打开`http://localhost:5777` | Then open `http://localhost:5777` from your browser.
 
+> 对于windows用户推荐使用WSL，详见[适用于Linux的Windows子系统](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10 )
+
 ### 使用自定义服务器 | With custom server address
 
 直接使用`http://yourapiaddress:5777`即可。 | Just open `http://yourapiaddress:5777`.

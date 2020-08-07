@@ -1,6 +1,6 @@
 {
   "name": "hexo-editor",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "scripts": {
     "stop": "pm2 stop hexoeditor",
     "restart": "pm2 restart hexoeditor",
@@ -13,7 +13,6 @@
     "doc:build": "npx vuepress build raw_docs -d docs"
   },
   "dependencies": {
-    "@winwin/hexo-editor-server": "^0.2.4",
     "basic-auth": "^2.0.1",
     "chalk": "^3.0.0",
     "debug": "^4.1.1",
@@ -26,7 +25,10 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "hexo": "^5.0.0",
     "inquirer": "^7.1.0",
+    "is-git-repository": "^2.0.0",
+    "joi": "^17.1.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-compose": "^4.1.0",
@@ -39,7 +41,9 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "node-env-file": "^0.1.8",
-    "simple-json-db": "^1.2.2"
+    "simple-git": "^2.15.0",
+    "simple-json-db": "^1.2.2",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1",
