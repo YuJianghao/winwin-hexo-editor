@@ -196,6 +196,13 @@ exports.deploy = async function (ctx, next) {
   }
 }
 
+exports.generate = async function (ctx, next) {
+  await hexo.generate()
+  ctx.body = {
+    success: true
+  }
+}
+
 exports.clean = async function (ctx, next) {
   await hexo.clean()
   ctx.body = {

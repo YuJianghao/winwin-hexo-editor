@@ -478,7 +478,16 @@ class Hexo {
       throw err
     }
     debug('deploy')
-    return this._runShell('hexo clean;hexo generate -d')
+    return this._runShell('hexo generate -d')
+  }
+
+  /**
+   * 生成网站
+   */
+  async generate () {
+    this._checkReady()
+    debug('generate')
+    return this._runShell('hexo generate')
   }
 
   /**
