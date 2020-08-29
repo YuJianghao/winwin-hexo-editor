@@ -21,3 +21,11 @@ Hexo-editor仅仅帮你运行`hexo deploy`和`git pull/push`，以此来完成�
 Hexo-editor help you configure neither `hexo deploy` command nor `git pull/push` nor any other CI command.You need to configure them manually.
 
 Hexo-editor simply run `hexo g -d` for deploy button, `git reset && git pull` for git sync button and `git add . && git commit && git push` for git save button!
+
+## 载入失败 ｜ Load fail
+
+**为什么遇到了404错误？/Why 404 error?**
+
+ 刷新页面就可以。原因是本地数据过时了，和服务器的文章id无法对应。
+
+Just refresh page. It's because of the outdated data.

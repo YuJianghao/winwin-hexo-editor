@@ -71,6 +71,10 @@ module.exports = router => {
     controller.deploy
   )
 
+  router.post('/generate',
+    controller.generate
+  )
+
   router.post('/clean',
     controller.clean
   )
