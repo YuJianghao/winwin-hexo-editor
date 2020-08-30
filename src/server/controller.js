@@ -169,6 +169,16 @@ exports.removePost = async function (ctx, next) {
   }
 }
 
+exports.removePage = async function (ctx, next) {
+  const post = await hexo.deletePost(ctx.params.id, true)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
 exports.publishPost = async function (ctx, next) {
   const post = await hexo.publishPost(ctx.params.id)
   ctx.body = {

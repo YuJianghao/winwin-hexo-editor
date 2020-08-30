@@ -48,6 +48,11 @@ module.exports = router => {
     controller.removePost
   )
 
+  router.delete('/page/:id/',
+    controller.postNotFoundErrorHandler,
+    controller.removePage
+  )
+
   router.post('/post/:id/publish',
     controller.postNotFoundErrorHandler,
     controller.publishPost

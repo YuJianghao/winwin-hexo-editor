@@ -165,9 +165,10 @@ class Hexo {
   async _remove (ids) {
     var posts = []
     var post = null
-    await Promise.all(ids.map(async id => {
+    await Promise.all(ids.map(async item => {
+      const { id, isPage } = item
       debug('remove', id)
-      post = await this._get(id)
+      post = await this._get(id, isPage)
       // 删除文件
       fs.unlinkSync(post.full_source)
       // 清除数据
@@ -388,19 +389,19 @@ class Hexo {
    * @param {String} _id - 文章id
    * @returns {Post} - 被删除的文章
    */
-  async deletePost (_id, hard = false) {
+  async deletePost (_id, isPage = false, hard = true) {
     this._checkReady()
     if (!_id) throw new Error('_id is required!')
     console.log('delete post', _id)
     if (hard) {
-      var posts = await this._remove([_id])
+      var posts = await this._remove([{ id: _id, isPage }])
       if (posts.length === 0) this._throwPostNotFound()
       if (posts.length > 1) {
         throw new Error('multiple posts found')
       }
       return posts[0]
     } else {
-      const post = await this._get(_id)
+      const post = await this._get(_id, isPage)
       if (!post) this._throwPostNotFound()
       await this._moveFile('_discarded', post)
       await this.hexo.load()
