@@ -30,6 +30,9 @@ class Post {
           else this.frontmatters[key] = data[key]
         })
       }
+      if (post.layout === 'page') {
+        this.path = post.path.slice(0, post.path.length - 5)
+      }
       // 转换日期为数字
       Array.from(['date', 'updated']).map(time => {
         if (this[time]) {
