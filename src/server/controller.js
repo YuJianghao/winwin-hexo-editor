@@ -53,6 +53,7 @@ exports.postNotFoundErrorHandler = async function (ctx, next) {
   try {
     await next()
   } catch (err) {
+    if (process.env.NODE_ENV !== 'production') console.log(err)
     if (err.name === 'Not Found') {
       err.status = 404
     }

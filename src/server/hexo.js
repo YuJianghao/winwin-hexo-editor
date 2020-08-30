@@ -141,9 +141,13 @@ class Hexo {
     // 更新数据
     await this.load()
     // 查询新数据
-    return this.hexo.locals.get('posts').toArray()
+    const p1 = this.hexo.locals.get('posts').toArray()
       .filter(item => pathes.includes(item.full_source))
       .map(doc => new Post(doc))
+    const p2 = this.hexo.locals.get('pages').toArray()
+      .filter(item => pathes.includes(item.full_source))
+      .map(doc => new Post(doc))
+    return p1.concat(p2)
   }
 
   /**
@@ -228,7 +232,13 @@ class Hexo {
     src = new Post(src)
     src.update(post)
     var posts = await this._save([{ post: src, isPage }])
-    if (posts.length === 0) this._throwPostNotFound()
+    if (posts.length === 0) {
+      const err = new Error()
+      err.status = 500
+      err.message = 'Unknown error'
+      err.message = 'Cant find post' + post._id
+      throw err
+    }
     if (posts.length > 1) throw new Error('multiple posts found')
     return posts[0]
   }
@@ -258,7 +268,7 @@ class Hexo {
   async listArticles () {
     this._checkReady()
     debug('list posts', this.hexo.locals.get('posts').toArray().length)
-    await this.hexo.load()
+    await this.load()
     const posts = this.hexo.locals.get('posts')
       .map(doc => new Post(doc)).map(post => {
         post._whe_brief = post._content.slice(0, 200)
@@ -279,7 +289,7 @@ class Hexo {
   async listArticlesRaw () {
     this._checkReady()
     debug('list posts', this.hexo.locals.get('posts').toArray().length)
-    await this.hexo.load()
+    await this.load()
     const posts = this.hexo.locals.get('posts')
       .map(doc => new Post(doc)).map(post => {
         return {
@@ -404,7 +414,7 @@ class Hexo {
       const post = await this._get(_id, isPage)
       if (!post) this._throwPostNotFound()
       await this._moveFile('_discarded', post)
-      await this.hexo.load()
+      await this.load()
       return new Post(post)
     }
   }
@@ -426,7 +436,7 @@ class Hexo {
       err.name = 'Not Found'
       throw err
     }
-    await this.hexo.load()
+    await this.load()
     const post = this.hexo.locals.get('posts')
       .findOne({ slug: doc.slug })
     if (!post) this._throwPostNotFound()
