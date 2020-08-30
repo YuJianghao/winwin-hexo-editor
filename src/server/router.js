@@ -7,7 +7,8 @@ module.exports = router => {
   router.use(controller.serviceErrorHandler)
 
   router.get('/restrictedkeys',
-    controller.getRestrictedKeys)
+    controller.getRestrictedKeys
+  )
 
   router.post('/post',
   // TODO: need validation

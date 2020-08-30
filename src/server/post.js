@@ -1,6 +1,6 @@
 const hfm = require('hexo-front-matter')
 const debug = require('debug')('hexo:post')
-const restrictedKeys = require('./info').restrictedKeys.post
+const restrictedKeys = require('./info').restrictedKeys
 /**
  * 用于存储不包含hexo默认值的文章信息
  * @class
@@ -22,8 +22,11 @@ class Post {
       if (this.raw) {
         const data = hfm.parse(this.raw)
         this.frontmatters = {}
+        let keys
+        if (data.layout === 'page')keys = restrictedKeys.page
+        else keys = restrictedKeys.post
         Object.keys(data).map(key => {
-          if (restrictedKeys.includes(key)) this[key] = data[key]
+          if (keys.includes(key)) this[key] = data[key]
           else this.frontmatters[key] = data[key]
         })
       }
@@ -62,12 +65,13 @@ class Post {
     delete this.raw
     delete this.published
     delete this.brief
+    const keys = this.layout === 'page' ? restrictedKeys.page : restrictedKeys.post
     Object.keys(this).map(key => {
       if (key === 'frontmatters') return
-      if (!restrictedKeys.includes(key)) delete this[key]
+      if (!keys.includes(key)) delete this[key]
     })
     Object.keys(this.frontmatters).map(key => {
-      if (!restrictedKeys.includes(key)) {
+      if (!keys.includes(key)) {
         this[key] = this.frontmatters[key]
       }
     })
