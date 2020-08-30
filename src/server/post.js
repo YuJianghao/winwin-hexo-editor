@@ -1,6 +1,6 @@
 const hfm = require('hexo-front-matter')
 const debug = require('debug')('hexo:post')
-const restrictedKeys = require('./info').restrictedKeys
+const restrictedKeys = require('./info').restrictedKeys.post
 /**
  * 用于存储不包含hexo默认值的文章信息
  * @class
