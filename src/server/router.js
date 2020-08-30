@@ -14,6 +14,11 @@ module.exports = router => {
     controller.addPost
   )
 
+  router.post('/page',
+  // TODO: need validation
+    controller.addPage
+  )
+
   router.get('/posts',
     controller.getPosts
   )
@@ -31,6 +36,11 @@ module.exports = router => {
   router.put('/post/:id/',
     controller.postNotFoundErrorHandler,
     controller.updatePost
+  )
+
+  router.put('/page/:id/',
+    controller.postNotFoundErrorHandler,
+    controller.updatePage
   )
 
   router.delete('/post/:id/',

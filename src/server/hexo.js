@@ -126,9 +126,10 @@ class Hexo {
   async _save (posts) {
     const pathes = []
     var file = null
-    await Promise.all(posts.map(async post => {
-      debug('save', post._id)
-      const src = await this._get(post._id)
+    await Promise.all(posts.map(async item => {
+      const { post, isPage } = item
+      debug('save', post._id, 'isPage', isPage)
+      const src = await this._get(post._id, isPage)
       // 删除源文件
       fs.unlinkSync(src.full_source)
       if (!post.published)post.layout = 'draft'
@@ -180,13 +181,14 @@ class Hexo {
    * 新建一篇文章
    * @param {Post} post - 用于新建的文章
    * @param {Number} [addon=0] - slug的后缀，如果不为零则添加此数字为后缀
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post} - 新建的文章
    * @private
    */
-  async _add (post, addon = 0) {
+  async _add (post, addon = 0, isPage = false) {
     debug('_add with slug', post.slug, Object.keys(post))
     // 存在slug就查询slug是否被占用
-    if (post.slug && this.hexo.locals.get('posts').find({ slug: post.slug }).length) {
+    if (!isPage && post.slug && this.hexo.locals.get('posts').find({ slug: post.slug }).length) {
       // 如果被占用
       if (addon) {
         // 清除后缀
@@ -196,12 +198,17 @@ class Hexo {
       post.slug += (addon + 1)
       return this._add(post, addon + 1)
     }
+    post.published = false
+    if (isPage) {
+      delete post.slug
+      post.layout = 'page'
+    }
     // 创建文件
     const file = await this.hexo.post.create(post)
     // 更新数据
     await this.load()
     // 读取文件
-    return new Post(this.hexo.locals.get('posts')
+    return new Post(this.hexo.locals.get(isPage ? 'pages' : 'posts')
       .findOne({ full_source: file.path }))
   }
 
@@ -209,16 +216,17 @@ class Hexo {
    * 更新文章并存储
    * @param {Post} post - 需要更新的文章及其参数
    * @param {String} post._id - 文章id
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post} - 更新过的文章
    * @private
    */
-  async _update (post) {
+  async _update (post, isPage = false) {
     debug('update', post._id, Object.keys(post))
-    var src = await this._get(post._id)
+    var src = await this._get(post._id, isPage)
     if (!src) return null
     src = new Post(src)
     src.update(post)
-    var posts = await this._save([src])
+    var posts = await this._save([{ post: src, isPage }])
     if (posts.length === 0) this._throwPostNotFound()
     if (posts.length > 1) throw new Error('multiple posts found')
     return posts[0]
@@ -342,12 +350,12 @@ class Hexo {
    * @param {Object} options - 新建参数
    * @param {String} options.title - 文章名
    * @param {String} [options.slug] - 网址，参见[hexo API]{@link https://hexo.io/zh-cn/api/posts}
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post} - 新建的文章
    * @public
    */
-  async addPost (options) {
+  async addPost (options, isPage) {
     this._checkReady()
-    console.log('add post')
     if (!options.title) throw new Error('post.title is required!')
     debug('add post', Object.keys(options))
     var post = new Post(options, false)
@@ -355,8 +363,7 @@ class Hexo {
     delete post._id
     // post.published是计算出来的，不是指定的
     delete post.published
-    post = await this._add(post)
-    console.log('added post', post._id)
+    post = await this._add(post, undefined, isPage)
     return post
   }
 
@@ -365,14 +372,15 @@ class Hexo {
    * @param {Object} options - 更新参数
    * @param {String} options._id - 文章id
    * @param {Array} options._whe_delete - 需要删除的键的数组
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post} - 更新过的文章
    * @public
    */
-  async updatePost (options) {
+  async updatePost (options, isPage) {
     this._checkReady()
     if (!options._id) throw new Error('options._id is required!')
-    console.log('update post', options._id)
-    return this._update(new Post(options, false))
+    console.log('update post', options._id, 'isPage', isPage)
+    return this._update(new Post(options, false), isPage)
   }
 
   /**

@@ -83,6 +83,22 @@ exports.addPost = async function (ctx, next) {
   }
 }
 
+exports.addPage = async function (ctx, next) {
+  if (!ctx.request.body.title) {
+    const err = new Error()
+    err.status = 400
+    err.message = 'title is required'
+    throw err
+  }
+  const post = await hexo.addPost(ctx.request.body, true)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
 exports.getPosts = async function (ctx, next) {
   const posts = await hexo.listArticles()
   ctx.body = {
@@ -125,6 +141,16 @@ exports.getPage = async function (ctx, next) {
 
 exports.updatePost = async function (ctx, next) {
   const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body })
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
+exports.updatePage = async function (ctx, next) {
+  const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body }, true)
   ctx.body = {
     success: true,
     data: {
