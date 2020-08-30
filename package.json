@@ -1,6 +1,6 @@
 {
   "name": "hexo-editor",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "scripts": {
     "stop": "pm2 stop hexoeditor",
     "restart": "pm2 restart hexoeditor",
