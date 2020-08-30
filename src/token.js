@@ -10,6 +10,8 @@ router.get('/refresh', auth.jwtAuth, auth.requestRefreshToken, auth.getToken)
 
 router.post('/apikey', auth.jwtAuth, auth.requestAPIKEY)
 
+router.get('/apikeys', auth.jwtAuth, auth.getAPIKEYInfo)
+
 router.delete('/apikey', require('./lib/koa-parallel')([{
   fn: auth.apiKeyAuth,
   validator: err => err.status === 401
