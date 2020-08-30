@@ -1,5 +1,9 @@
 # 更新日志 ｜ Release Notes
 
+### 0.5.4
+
+- 修复路由bug,again*2
+
 ### 0.5.3
 
 - 修复路由bug,again
