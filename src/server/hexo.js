@@ -132,7 +132,7 @@ class Hexo {
       const src = await this._get(post._id, isPage)
       // 删除源文件
       fs.unlinkSync(src.full_source)
-      if (!post.published)post.layout = 'draft'
+      if (!post.published && !isPage)post.layout = 'draft'
       // 创建新文件
       post.freeze()
       file = await this.hexo.post.create(post)
