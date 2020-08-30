@@ -55,7 +55,12 @@ app.use(async (ctx, next) => {
 require('./server')(app, {
   hexoRoot: config.hexoRoot,
   base: 'hexoeditorserver',
-  auth: compose([auth.jwtAuth, auth.requestAccessToken])
+  auth: require('./lib/koa-parallel')([{
+    fn: auth.apiKeyAuth,
+    validator: err => err.status === 401
+  }, {
+    fn: compose([auth.jwtAuth, auth.requestAccessToken])
+  }])
 })
 
 // routes
