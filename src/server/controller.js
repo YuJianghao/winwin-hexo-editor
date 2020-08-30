@@ -108,6 +108,21 @@ exports.getPost = async function (ctx, next) {
   }
 }
 
+exports.getPage = async function (ctx, next) {
+  const post = await hexo.getPost(ctx.params.id, true)
+  if (post === null) {
+    const err = new Error('Page not found')
+    err.name = 'Not Found'
+    throw err
+  }
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
 exports.updatePost = async function (ctx, next) {
   const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body })
   ctx.body = {

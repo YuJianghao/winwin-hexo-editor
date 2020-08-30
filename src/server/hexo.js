@@ -227,11 +227,13 @@ class Hexo {
   /**
    * 从_id读取数据库文章
    * @param {String} _id - 文章id
+   * @param {Boolean} isPage - 是否是page
    * @returns {_Document} - 文章文档
    * @private
    */
-  async _get (_id) {
-    const query = this.hexo.locals.get('posts').findOne({ _id })
+  async _get (_id, isPage = false) {
+    const name = isPage ? 'pages' : 'posts'
+    const query = this.hexo.locals.get(name).findOne({ _id })
     if (!query) {
       debug('not found', _id)
       this._throwPostNotFound()
@@ -323,14 +325,15 @@ class Hexo {
   /**
    * 获取单篇文章
    * @param {String} _id - 文章id
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post|null} - 文章对象，如果没有则为`null`
    * @public
    */
-  async getPost (_id) {
+  async getPost (_id, isPage = false) {
     this._checkReady()
-    console.log('get post', _id)
+    console.log('get post', _id, 'is page:', isPage)
     if (!_id) throw new Error('_id should be String!')
-    const query = await this._get(_id)
+    const query = await this._get(_id, isPage)
     return query ? new Post(query) : null
   }
 

@@ -23,6 +23,11 @@ module.exports = router => {
     controller.getPost
   )
 
+  router.get('/page/:id/',
+    controller.postNotFoundErrorHandler,
+    controller.getPage
+  )
+
   router.put('/post/:id/',
     controller.postNotFoundErrorHandler,
     controller.updatePost
