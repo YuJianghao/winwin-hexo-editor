@@ -84,7 +84,7 @@ exports.addPost = async function (ctx, next) {
 }
 
 exports.getPosts = async function (ctx, next) {
-  const posts = await hexo.listPosts()
+  const posts = await hexo.listArticles()
   ctx.body = {
     success: true,
     data: {

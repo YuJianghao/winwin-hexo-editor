@@ -244,30 +244,48 @@ class Hexo {
    * @returns {Post[]} - 文章列表
    * @public
    */
-  async listPosts () {
+  async listArticles () {
     this._checkReady()
     debug('list posts', this.hexo.locals.get('posts').toArray().length)
     await this.hexo.load()
-    return this.hexo.locals.get('posts')
+    const posts = this.hexo.locals.get('posts')
       .map(doc => new Post(doc)).map(post => {
         post._whe_brief = post._content.slice(0, 200)
         delete post._content
         delete post.raw
         return post
       })
+    const pages = this.hexo.locals.get('pages')
+      .map(doc => new Post(doc)).map(post => {
+        post._whe_brief = post._content.slice(0, 200)
+        delete post._content
+        delete post.raw
+        return post
+      })
+    return posts.concat(pages)
   }
 
-  async listPostsRaw () {
+  async listArticlesRaw () {
     this._checkReady()
     debug('list posts', this.hexo.locals.get('posts').toArray().length)
     await this.hexo.load()
-    return this.hexo.locals.get('posts')
+    const posts = this.hexo.locals.get('posts')
+      .map(doc => new Post(doc)).map(post => {
+        return {
+          _id: post._id,
+          raw: post.raw,
+          layout: post.layout,
+          published: post.published
+        }
+      })
+    const pages = this.hexo.locals.get('pages')
       .map(doc => new Post(doc)).map(post => {
         return {
           _id: post._id,
           raw: post.raw
         }
       })
+    return posts.concat(pages)
   }
 
   /**
