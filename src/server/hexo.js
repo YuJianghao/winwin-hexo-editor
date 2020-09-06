@@ -310,7 +310,7 @@ class Hexo {
    */
   async getPost (_id) {
     this._checkReady()
-    console.log('get post', _id)
+    debug('get post', _id)
     if (!_id) throw new Error('_id should be String!')
     const query = await this._get(_id)
     return query ? new Post(query) : null

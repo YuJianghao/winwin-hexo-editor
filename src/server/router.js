@@ -18,17 +18,17 @@ module.exports = router => {
     controller.getPosts
   )
 
-  router.get('/post/:id/',
+  router.get('/post/:id',
     controller.postNotFoundErrorHandler,
     controller.getPost
   )
 
-  router.put('/post/:id/',
+  router.put('/post/:id',
     controller.postNotFoundErrorHandler,
     controller.updatePost
   )
 
-  router.delete('/post/:id/',
+  router.delete('/post/:id',
     controller.postNotFoundErrorHandler,
     controller.removePost
   )
