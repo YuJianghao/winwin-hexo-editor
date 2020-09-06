@@ -51,7 +51,7 @@ module.exports = function (app, opts = {}) {
   // apply custom auth middleware
   if (opts.auth) {
     debug('apply custom auth middleware')
-    router.use('/*', opts.auth)
+    router.use(opts.auth)
   }
 
   // setup routes
