@@ -4,7 +4,7 @@ const StorageService = require('../service/StorageService')
 const { initHexo } = require('../server')
 
 exports.updateUser = async (ctx, next) => {
-  const id = ctx.params.id
+  const id = ctx.params.id || ctx.state.user.id
   const username = ctx.request.body.username || config.username
   const password = ctx.request.body.password || config.password
   await ds.updateUser(id, username, password)
@@ -18,8 +18,7 @@ exports.updateUser = async (ctx, next) => {
 }
 
 exports.getUser = async (ctx, next) => {
-  console.log(111)
-  const id = ctx.params.id
+  const id = ctx.params.id || ctx.state.user.id
   const user = await ds.getUser(id)
   ctx.body = {
     success: true,
