@@ -2,11 +2,23 @@
 
 ## 当前版本
 
-添加了api-key支持，用于支持移动端扫码免密码登录。
+更新了api地址
 
-初步的hexo-page支持，应该有很多bug，需要多用用然后测试。主要看老功能是不是依然工作正常
+- GET /token/ -> POST /auth/token
+- GET /token/refresh -> POST /auth/refresh
+- GET /token/apikeys -> GET /auth/apikeys
+- POST /token/apikey -> POST /auth/apikeytoken
+- DELETE /token/apikey -> DELETE /auth/apikey
+- GET /token/apikey -> POST /auth/apikey
+
+重组了鉴权相关的文件结构
 
 ## 更新日志
+
+### v0.6.0-1
+
+- 更新api地址
+- 重组文件结构
 
 ### v0.6.0-0
 
