@@ -22,10 +22,16 @@ class Post {
       if (this.raw) {
         const data = hfm.parse(this.raw)
         this.frontmatters = {}
+        let keys
+        if (data.layout === 'page')keys = restrictedKeys.page
+        else keys = restrictedKeys.post
         Object.keys(data).map(key => {
-          if (restrictedKeys.includes(key)) this[key] = data[key]
+          if (keys.includes(key)) this[key] = data[key]
           else this.frontmatters[key] = data[key]
         })
+      }
+      if (post.layout === 'page') {
+        this.path = post.path.slice(0, post.path.length - 5)
       }
       // 转换日期为数字
       Array.from(['date', 'updated']).map(time => {
@@ -62,12 +68,13 @@ class Post {
     delete this.raw
     delete this.published
     delete this.brief
+    const keys = this.layout === 'page' ? restrictedKeys.page : restrictedKeys.post
     Object.keys(this).map(key => {
       if (key === 'frontmatters') return
-      if (!restrictedKeys.includes(key)) delete this[key]
+      if (!keys.includes(key)) delete this[key]
     })
     Object.keys(this.frontmatters).map(key => {
-      if (!restrictedKeys.includes(key)) {
+      if (!keys.includes(key)) {
         this[key] = this.frontmatters[key]
       }
     })

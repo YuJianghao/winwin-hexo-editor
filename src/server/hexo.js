@@ -126,12 +126,13 @@ class Hexo {
   async _save (posts) {
     const pathes = []
     var file = null
-    await Promise.all(posts.map(async post => {
-      debug('save', post._id)
-      const src = await this._get(post._id)
+    await Promise.all(posts.map(async item => {
+      const { post, isPage } = item
+      debug('save', post._id, 'isPage', isPage)
+      const src = await this._get(post._id, isPage)
       // 删除源文件
       fs.unlinkSync(src.full_source)
-      if (!post.published)post.layout = 'draft'
+      if (!post.published && !isPage)post.layout = 'draft'
       // 创建新文件
       post.freeze()
       file = await this.hexo.post.create(post)
@@ -140,9 +141,13 @@ class Hexo {
     // 更新数据
     await this.load()
     // 查询新数据
-    return this.hexo.locals.get('posts').toArray()
+    const p1 = this.hexo.locals.get('posts').toArray()
       .filter(item => pathes.includes(item.full_source))
       .map(doc => new Post(doc))
+    const p2 = this.hexo.locals.get('pages').toArray()
+      .filter(item => pathes.includes(item.full_source))
+      .map(doc => new Post(doc))
+    return p1.concat(p2)
   }
 
   /**
@@ -164,9 +169,10 @@ class Hexo {
   async _remove (ids) {
     var posts = []
     var post = null
-    await Promise.all(ids.map(async id => {
+    await Promise.all(ids.map(async item => {
+      const { id, isPage } = item
       debug('remove', id)
-      post = await this._get(id)
+      post = await this._get(id, isPage)
       // 删除文件
       fs.unlinkSync(post.full_source)
       // 清除数据
@@ -180,13 +186,14 @@ class Hexo {
    * 新建一篇文章
    * @param {Post} post - 用于新建的文章
    * @param {Number} [addon=0] - slug的后缀，如果不为零则添加此数字为后缀
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post} - 新建的文章
    * @private
    */
-  async _add (post, addon = 0) {
+  async _add (post, addon = 0, isPage = false) {
     debug('_add with slug', post.slug, Object.keys(post))
     // 存在slug就查询slug是否被占用
-    if (post.slug && this.hexo.locals.get('posts').find({ slug: post.slug }).length) {
+    if (!isPage && post.slug && this.hexo.locals.get('posts').find({ slug: post.slug }).length) {
       // 如果被占用
       if (addon) {
         // 清除后缀
@@ -196,12 +203,17 @@ class Hexo {
       post.slug += (addon + 1)
       return this._add(post, addon + 1)
     }
+    post.published = false
+    if (isPage) {
+      delete post.slug
+      post.layout = 'page'
+    }
     // 创建文件
     const file = await this.hexo.post.create(post)
     // 更新数据
     await this.load()
     // 读取文件
-    return new Post(this.hexo.locals.get('posts')
+    return new Post(this.hexo.locals.get(isPage ? 'pages' : 'posts')
       .findOne({ full_source: file.path }))
   }
 
@@ -209,17 +221,26 @@ class Hexo {
    * 更新文章并存储
    * @param {Post} post - 需要更新的文章及其参数
    * @param {String} post._id - 文章id
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post} - 更新过的文章
    * @private
    */
-  async _update (post) {
+  async _update (post, isPage = false) {
     debug('update', post._id, Object.keys(post))
-    var src = await this._get(post._id)
+    var src = await this._get(post._id, isPage)
     if (!src) return null
+    console.log(src)
     src = new Post(src)
     src.update(post)
-    var posts = await this._save([src])
-    if (posts.length === 0) this._throwPostNotFound()
+    var posts = await this._save([{ post: src, isPage }])
+    console.log(posts[0])
+    if (posts.length === 0) {
+      const err = new Error()
+      err.status = 500
+      err.message = 'Unknown error'
+      err.message = 'Cant find post' + post._id
+      throw err
+    }
     if (posts.length > 1) throw new Error('multiple posts found')
     return posts[0]
   }
@@ -227,11 +248,13 @@ class Hexo {
   /**
    * 从_id读取数据库文章
    * @param {String} _id - 文章id
+   * @param {Boolean} isPage - 是否是page
    * @returns {_Document} - 文章文档
    * @private
    */
-  async _get (_id) {
-    const query = this.hexo.locals.get('posts').findOne({ _id })
+  async _get (_id, isPage = false) {
+    const name = isPage ? 'pages' : 'posts'
+    const query = this.hexo.locals.get(name).findOne({ _id })
     if (!query) {
       debug('not found', _id)
       this._throwPostNotFound()
@@ -244,30 +267,48 @@ class Hexo {
    * @returns {Post[]} - 文章列表
    * @public
    */
-  async listPosts () {
+  async listArticles () {
     this._checkReady()
     debug('list posts', this.hexo.locals.get('posts').toArray().length)
-    await this.hexo.load()
-    return this.hexo.locals.get('posts')
+    await this.load()
+    const posts = this.hexo.locals.get('posts')
       .map(doc => new Post(doc)).map(post => {
         post._whe_brief = post._content.slice(0, 200)
         delete post._content
         delete post.raw
         return post
       })
+    const pages = this.hexo.locals.get('pages')
+      .map(doc => new Post(doc)).map(post => {
+        post._whe_brief = post._content.slice(0, 200)
+        delete post._content
+        delete post.raw
+        return post
+      })
+    return posts.concat(pages)
   }
 
-  async listPostsRaw () {
+  async listArticlesRaw () {
     this._checkReady()
     debug('list posts', this.hexo.locals.get('posts').toArray().length)
-    await this.hexo.load()
-    return this.hexo.locals.get('posts')
+    await this.load()
+    const posts = this.hexo.locals.get('posts')
+      .map(doc => new Post(doc)).map(post => {
+        return {
+          _id: post._id,
+          raw: post.raw,
+          layout: post.layout,
+          published: post.published
+        }
+      })
+    const pages = this.hexo.locals.get('pages')
       .map(doc => new Post(doc)).map(post => {
         return {
           _id: post._id,
           raw: post.raw
         }
       })
+    return posts.concat(pages)
   }
 
   /**
@@ -305,14 +346,15 @@ class Hexo {
   /**
    * 获取单篇文章
    * @param {String} _id - 文章id
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post|null} - 文章对象，如果没有则为`null`
    * @public
    */
-  async getPost (_id) {
+  async getPost (_id, isPage = false) {
     this._checkReady()
-    debug('get post', _id)
+    debug('get post', _id, 'is page:', isPage)
     if (!_id) throw new Error('_id should be String!')
-    const query = await this._get(_id)
+    const query = await this._get(_id, isPage)
     return query ? new Post(query) : null
   }
 
@@ -321,12 +363,12 @@ class Hexo {
    * @param {Object} options - 新建参数
    * @param {String} options.title - 文章名
    * @param {String} [options.slug] - 网址，参见[hexo API]{@link https://hexo.io/zh-cn/api/posts}
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post} - 新建的文章
    * @public
    */
-  async addPost (options) {
+  async addPost (options, isPage) {
     this._checkReady()
-    console.log('add post')
     if (!options.title) throw new Error('post.title is required!')
     debug('add post', Object.keys(options))
     var post = new Post(options, false)
@@ -334,8 +376,7 @@ class Hexo {
     delete post._id
     // post.published是计算出来的，不是指定的
     delete post.published
-    post = await this._add(post)
-    console.log('added post', post._id)
+    post = await this._add(post, undefined, isPage)
     return post
   }
 
@@ -344,14 +385,15 @@ class Hexo {
    * @param {Object} options - 更新参数
    * @param {String} options._id - 文章id
    * @param {Array} options._whe_delete - 需要删除的键的数组
+   * @param {Boolean} isPage - 是否是page
    * @returns {Post} - 更新过的文章
    * @public
    */
-  async updatePost (options) {
+  async updatePost (options, isPage) {
     this._checkReady()
     if (!options._id) throw new Error('options._id is required!')
-    console.log('update post', options._id)
-    return this._update(new Post(options, false))
+    console.log('update post', options._id, 'isPage', isPage)
+    return this._update(new Post(options, false), isPage)
   }
 
   /**
@@ -359,22 +401,22 @@ class Hexo {
    * @param {String} _id - 文章id
    * @returns {Post} - 被删除的文章
    */
-  async deletePost (_id, hard = false) {
+  async deletePost (_id, isPage = false, hard = true) {
     this._checkReady()
     if (!_id) throw new Error('_id is required!')
     console.log('delete post', _id)
     if (hard) {
-      var posts = await this._remove([_id])
+      var posts = await this._remove([{ id: _id, isPage }])
       if (posts.length === 0) this._throwPostNotFound()
       if (posts.length > 1) {
         throw new Error('multiple posts found')
       }
       return posts[0]
     } else {
-      const post = await this._get(_id)
+      const post = await this._get(_id, isPage)
       if (!post) this._throwPostNotFound()
       await this._moveFile('_discarded', post)
-      await this.hexo.load()
+      await this.load()
       return new Post(post)
     }
   }
@@ -396,7 +438,7 @@ class Hexo {
       err.name = 'Not Found'
       throw err
     }
-    await this.hexo.load()
+    await this.load()
     const post = this.hexo.locals.get('posts')
       .findOne({ slug: doc.slug })
     if (!post) this._throwPostNotFound()

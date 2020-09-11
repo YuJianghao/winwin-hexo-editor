@@ -53,6 +53,7 @@ exports.postNotFoundErrorHandler = async function (ctx, next) {
   try {
     await next()
   } catch (err) {
+    if (process.env.NODE_ENV !== 'production') console.log(err)
     if (err.name === 'Not Found') {
       err.status = 404
     }
@@ -83,8 +84,24 @@ exports.addPost = async function (ctx, next) {
   }
 }
 
+exports.addPage = async function (ctx, next) {
+  if (!ctx.request.body.title) {
+    const err = new Error()
+    err.status = 400
+    err.message = 'title is required'
+    throw err
+  }
+  const post = await hexo.addPost(ctx.request.body, true)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
 exports.getPosts = async function (ctx, next) {
-  const posts = await hexo.listPosts()
+  const posts = await hexo.listArticles()
   ctx.body = {
     success: true,
     data: {
@@ -108,6 +125,21 @@ exports.getPost = async function (ctx, next) {
   }
 }
 
+exports.getPage = async function (ctx, next) {
+  const post = await hexo.getPost(ctx.params.id, true)
+  if (post === null) {
+    const err = new Error('Page not found')
+    err.name = 'Not Found'
+    throw err
+  }
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
 exports.updatePost = async function (ctx, next) {
   const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body })
   ctx.body = {
@@ -118,8 +150,28 @@ exports.updatePost = async function (ctx, next) {
   }
 }
 
+exports.updatePage = async function (ctx, next) {
+  const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body }, true)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
 exports.removePost = async function (ctx, next) {
   const post = await hexo.deletePost(ctx.params.id)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
+exports.removePage = async function (ctx, next) {
+  const post = await hexo.deletePost(ctx.params.id, true)
   ctx.body = {
     success: true,
     data: {

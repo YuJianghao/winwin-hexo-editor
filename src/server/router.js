@@ -7,11 +7,17 @@ module.exports = router => {
   router.use(controller.serviceErrorHandler)
 
   router.get('/restrictedkeys',
-    controller.getRestrictedKeys)
+    controller.getRestrictedKeys
+  )
 
   router.post('/post',
   // TODO: need validation
     controller.addPost
+  )
+
+  router.post('/page',
+  // TODO: need validation
+    controller.addPage
   )
 
   router.get('/posts',
@@ -23,14 +29,29 @@ module.exports = router => {
     controller.getPost
   )
 
-  router.put('/post/:id',
+  router.get('/page/:id/',
+    controller.postNotFoundErrorHandler,
+    controller.getPage
+  )
+
+  router.put('/post/:id/',
     controller.postNotFoundErrorHandler,
     controller.updatePost
   )
 
-  router.delete('/post/:id',
+  router.put('/page/:id/',
+    controller.postNotFoundErrorHandler,
+    controller.updatePage
+  )
+
+  router.delete('/post/:id/',
     controller.postNotFoundErrorHandler,
     controller.removePost
+  )
+
+  router.delete('/page/:id/',
+    controller.postNotFoundErrorHandler,
+    controller.removePage
   )
 
   router.post('/post/:id/publish',
