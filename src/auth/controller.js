@@ -3,13 +3,13 @@ const koaJwt = require('koa-jwt')
 const jwt = require('jsonwebtoken')
 const JSONdb = require('simple-json-db')
 const fs = require('fs')
-const config = require('./loadConfig')
+const config = require('../loadConfig')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
 const db = new JSONdb('./data/db.json')
 db.set('name', config.username)
 db.set('pass', config.password)
 const debug = require('debug')('hexo-editor:server')
-const storageService = require('./service/StorageService')
+const storageService = require('../service/StorageService')
 
 function resolveAuthorizationHeader (ctx) {
   if (!ctx.header || !ctx.header.authorization) {

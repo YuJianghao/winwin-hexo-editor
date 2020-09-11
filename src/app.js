@@ -9,8 +9,8 @@ const cors = require('koa-cors')
 const path = require('path')
 
 const config = require('./loadConfig')
-const auth = require('./auth')
-const token = require('./token')
+const authController = require('./auth/controller')
+const authRouter = require('./auth/router')
 const version = require('./version')
 
 // error handler
@@ -47,15 +47,15 @@ require('./server')(app, {
   hexoRoot: config.hexoRoot,
   base: 'hexoeditorserver',
   auth: require('./lib/koa-parallel')([{
-    fn: auth.apiKeyAuth,
+    fn: authController.apiKeyAuth,
     validator: err => err.status === 401
   }, {
-    fn: compose([auth.jwtAuth, auth.requestAccessToken])
+    fn: compose([authController.jwtAuth, authController.requestAccessToken])
   }])
 })
 
 // routes
-app.use(token.routes(), token.allowedMethods())
+app.use(authRouter.routes(), authRouter.allowedMethods())
 app.use(version.routes(), version.allowedMethods())
 
 // error-handling
