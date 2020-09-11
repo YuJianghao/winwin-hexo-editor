@@ -2,18 +2,19 @@
 
 ## 当前版本
 
-更新了api地址
-
-- GET /token/ -> POST /auth/token
-- GET /token/refresh -> POST /auth/refresh
-- GET /token/apikeys -> GET /auth/apikeys
-- POST /token/apikey -> POST /auth/apikeytoken
-- DELETE /token/apikey -> DELETE /auth/apikey
-- GET /token/apikey -> POST /auth/apikey
-
-重组了鉴权相关的文件结构
+主要重构了状态管理和路由，需要验证整体的稳定性。更新了api文档，添加了swagger，在`/apidoc`路径下可以直接访问文档
 
 ## 更新日志
+
+### v0.6.0-2
+
+- 修复：登录页死循环问题
+- 修复：路径结尾的斜杠导致的路由问题
+- 改进：清除一些无用代码
+- 改进：优化路由
+- 改进：优化状态管理
+- 更新：更新version的api地址
+- 更新：更新api文档
 
 ### v0.6.0-1
 
