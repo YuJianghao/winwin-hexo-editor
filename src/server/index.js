@@ -14,7 +14,7 @@ const router = require('koa-router')()
  * @param {Function} [opts.auth] - custom authentication middleware
  * @returns {void}
  */
-module.exports = function (app, opts = {}) {
+exports.hexoeditorserver = function (app, opts = {}) {
   debug('module opts input', opts)
 
   if (!app) {
@@ -23,14 +23,6 @@ module.exports = function (app, opts = {}) {
     console.error('Use `hexoeditorserver(app)` instead')
     throw new Error('koa app required')
   }
-
-  if (!opts.hexoRoot) {
-    // check if hexoRoot set
-    console.error('hexoRoot is required!')
-    throw new Error('hexoRoot is required!')
-  }
-  const hexo = require('./controller').hexo
-  hexo.init(opts.hexoRoot)
 
   if (opts.base) {
     const reg = /^\/?([a-zA-Z0-9]+\/?)?$/i
@@ -59,4 +51,9 @@ module.exports = function (app, opts = {}) {
 
   // setup router
   app.use(router.routes(), router.allowedMethods())
+}
+
+exports.initHexo = async (hexoRoot) => {
+  const hexo = require('./controller').hexo
+  return hexo.init(hexoRoot)
 }

@@ -3,7 +3,7 @@
 /**
  * load config
  */
-const config = require('../src/loadConfig')
+const config = require('../config.default')
 
 /**
  * Module dependencies.

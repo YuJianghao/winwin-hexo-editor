@@ -101,8 +101,8 @@ class Hexo {
    */
   _checkReady () {
     if (!this.ready) {
-      debug('initiating, try again later')
-      const err = new Error('Hexo initiating, try again later')
+      debug('Hexo uninitiated, try again later')
+      const err = new Error('Hexo uninitiated, try again later')
       err.name = 'Hexo Init'
       throw err
     }

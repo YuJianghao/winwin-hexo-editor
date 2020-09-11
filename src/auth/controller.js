@@ -1,15 +1,24 @@
 const auth = require('basic-auth')
-const koaJwt = require('koa-jwt')
 const jwt = require('jsonwebtoken')
-const JSONdb = require('simple-json-db')
 const fs = require('fs')
-const config = require('../loadConfig')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
-const db = new JSONdb('./data/db.json')
-db.set('name', config.username)
-db.set('pass', config.password)
 const debug = require('debug')('hexo-editor:server')
-const storageService = require('../service/StorageService')
+const StorageService = require('../service/StorageService')
+const { ds } = require('../service')
+
+class AuthError extends Error {
+  constructor (message, code) {
+    super(message || code)
+    Error.captureStackTrace(this)
+    this.code = code
+    this.status = 401
+  }
+}
+AuthError.prototype.name = 'AuthError'
+AuthError.AuthticationError = 'AuthticationError'
+AuthError.NO_APIKEY = 'NO_APIKEY'
+AuthError.NO_BEARER_TOKEN = 'NO_BEARER_TOKEN'
+AuthError.API_TOKEN_EXPIRE = 'API_TOKEN_EXPIRE'
 
 function resolveAuthorizationHeader (ctx) {
   if (!ctx.header || !ctx.header.authorization) {
@@ -31,34 +40,25 @@ function resolveAuthorizationHeader (ctx) {
 
 exports.apiKeyAuth = async function (ctx, next) {
   const apikey = resolveAuthorizationHeader(ctx)
-  let err
   if (!apikey) {
-    err = new Error()
-    err.status = 401
-    err.message = 'APIKEY required'
+    ctx.throw(new AuthError('APIKEY is required', AuthError.NO_APIKEY))
   } else {
-    const availableAPIKEYS = storageService.getAvailableAPIKEY()
+    const availableAPIKEYS = StorageService.getAvailableAPIKEY()
     if (availableAPIKEYS.includes(apikey)) {
       debug('apikey auth pass')
-      storageService.setAPIKEYLastUsed(apikey)
+      StorageService.setAPIKEYLastUsed(apikey)
       ctx.state.apikey = apikey
       await next()
     } else {
       debug('APIKEY not available')
-      err = new Error()
-      err.status = 401
-      err.message = 'Authentication Error'
+      ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
-  }
-  if (err) {
-    debug('apikey auth fail')
-    throw err
   }
 }
 
 const tokens = {}
 exports.requestAPIKEY = async function (ctx, next) {
-  const token = jwt.sign({ issueat: new Date().valueOf(), type: 'apikeytoken' }, config.apikeySecret, { expiresIn: '5min' })
+  const token = jwt.sign({ issueat: new Date().valueOf(), type: 'apikeytoken' }, StorageService.getApikeySecret(), { expiresIn: '5min' })
   tokens[token] = true
   ctx.body = {
     success: true,
@@ -71,10 +71,10 @@ exports.requestAPIKEY = async function (ctx, next) {
 exports.removeAPIKEY = async function (ctx, next) {
   if (ctx.state.apikey) {
     const apikey = ctx.state.apikey
-    storageService.removeAPIKEY(apikey)
+    StorageService.removeAPIKEY(apikey)
   } else {
     const issuedAt = ctx.request.body.issuedAt
-    storageService.removeAPIKEYByIssuedAt(issuedAt)
+    StorageService.removeAPIKEYByIssuedAt(issuedAt)
   }
   ctx.body = {
     success: true
@@ -86,7 +86,7 @@ exports.getAPIKEY = async function (ctx, next) {
   const apikey = jwt.sign({ issueat: new Date().valueOf(), type: 'apikey' }, 's' + Math.random())
   const deviceType = ctx.request.body.deviceType || 'unknown'
   const deviceSystem = ctx.request.body.deviceSystem || 'unknown'
-  storageService.addAPIKEY({ apikey, deviceType, deviceSystem })
+  StorageService.addAPIKEY({ apikey, deviceType, deviceSystem })
   ctx.body = {
     success: true,
     data: {
@@ -100,25 +100,46 @@ exports.getAPIKEYInfo = async function (ctx, next) {
   ctx.body = {
     success: true,
     data: {
-      apikeys: storageService.getAPIKEYInfo()
+      apikeys: StorageService.getAPIKEYInfo()
     }
   }
 }
 
-exports.apiKeyJwtAuth = koaJwt({
-  secret: config.apikeySecret,
-  isRevoked: (ctx, decodedToken, token) => {
-    if (!Object.keys(tokens).includes(token)) return true
-    else {
+exports.apiKeyJwtAuth = async function (ctx, next) {
+  const token = resolveAuthorizationHeader(ctx)
+  if (!token) {
+    ctx.throw(new AuthError('APIKEY is required', AuthError.NO_APIKEY))
+  } else {
+    let decoded
+    try {
+      decoded = jwt.verify(token, StorageService.getApikeySecret())
+    } catch (e) {
+      ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
+    }
+    if (!Object.keys(tokens).includes(token)) {
+      ctx.throw(new AuthError('APIKEY token expired', AuthError.API_TOKEN_EXPIRE))
+    } else {
       delete tokens[token]
-      return false
+      ctx.state.user = decoded
+      await next()
     }
   }
-})
+}
 
-exports.jwtAuth = koaJwt({ secret: config.jwtSecret })
-// after jwtAuth payload is set inside ctx.state.user
-// payload should be { id: ObjectId }
+exports.jwtAuth = async function (ctx, next) {
+  const token = resolveAuthorizationHeader(ctx)
+  if (!token) {
+    ctx.throw(new AuthError('Bearer token required', AuthError.NO_BEARER_TOKEN))
+  } else {
+    try {
+      const decoded = jwt.verify(token, StorageService.getJwtSecret())
+      ctx.state.user = decoded
+      await next()
+    } catch (err) {
+      ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
+    }
+  }
+}
 
 exports.requestAccessToken = async function (ctx, next) {
   if (ctx.state.user.type === 'refresh') {
@@ -154,7 +175,7 @@ exports.basicAuth = async function (ctx, next) {
     }
   } else {
     // find if user exist in database
-    var valid = db.get('name') === user.name && db.get('pass') === user.pass
+    var valid = await ds.hasUser(user.name, user.pass)
     // var query = await User.find(user)
     if (valid) {
       // if user exist then set id
@@ -173,8 +194,8 @@ exports.basicAuth = async function (ctx, next) {
 exports.getToken = async function (ctx, next) {
   // set id and token type into jwt payload
   const id = ctx.state.id || ctx.state.user.id
-  var token = jwt.sign({ id, type: 'access' }, config.jwtSecret, { expiresIn: config.jwtExpire })
-  var refreshToken = jwt.sign({ id, type: 'refresh' }, config.jwtSecret, { expiresIn: config.jwtRefresh })
+  var token = jwt.sign({ id, type: 'access' }, StorageService.getJwtSecret(), { expiresIn: StorageService.getJwtExpire() })
+  var refreshToken = jwt.sign({ id, type: 'refresh' }, StorageService.getJwtSecret(), { expiresIn: StorageService.getJwtRefresh() })
   ctx.body = {
     success: true,
     message: 'success',

@@ -1,6 +1,12 @@
 const JSONdb = require('simple-json-db')
 const path = require('path')
-const APIKEYS = 'apikeys'
+const APIKEYS = 'APIKEYS'
+const JWT_SECRET = 'JWT_SECRET'
+const JW_EXPIRE = 'JW_EXPIRE'
+const JW_REFRESH = 'JW_REFRESH'
+const APIKEY_SECRET = 'APIKEY_SECRET'
+const HEXO_ROOT = 'HEXO_ROOT'
+const INSTALLED = 'INSTALLED'
 class StorageService {
   constructor () {
     this._db = new JSONdb(path.resolve(process.cwd(), './data/db.json'))
@@ -17,6 +23,11 @@ class StorageService {
 
   sync () {
     this._db.sync()
+  }
+
+  clear () {
+    this._db.JSON({})
+    this.sync()
   }
 
   /**
@@ -70,6 +81,60 @@ class StorageService {
       delete obj.apikey
       return obj
     })
+  }
+
+  setJwtSecret (secret) {
+    this._db.set(JWT_SECRET, secret)
+    this.sync()
+  }
+
+  getJwtSecret () {
+    return this._db.get(JWT_SECRET)
+  }
+
+  setJwtExpire (expire) {
+    this._db.set(JW_EXPIRE, expire)
+    this.sync()
+  }
+
+  getJwtExpire () {
+    return this._db.get(JW_EXPIRE)
+  }
+
+  setJwtRefresh (refresh) {
+    this._db.set(JW_REFRESH, refresh)
+    this.sync()
+  }
+
+  getJwtRefresh () {
+    return this._db.get(JW_REFRESH)
+  }
+
+  setApikeySecret (secret) {
+    this._db.set(APIKEY_SECRET, secret)
+    this.sync()
+  }
+
+  getApikeySecret () {
+    return this._db.get(APIKEY_SECRET)
+  }
+
+  setHexoRoot (secret) {
+    this._db.set(HEXO_ROOT, secret)
+    this.sync()
+  }
+
+  getHexoRoot () {
+    return this._db.get(HEXO_ROOT)
+  }
+
+  markInstalled () {
+    this._db.set(INSTALLED, true)
+    this._db.sync()
+  }
+
+  isInstalled () {
+    return this._db.get(INSTALLED)
   }
 }
 module.exports = new StorageService()

@@ -8,10 +8,11 @@ const compose = require('koa-compose')
 const cors = require('koa-cors')
 const path = require('path')
 
-const config = require('./loadConfig')
 const authController = require('./auth/controller')
 const authRouter = require('./auth/router')
 const version = require('./version')
+const StorageService = require('./service/StorageService')
+const { hexoeditorserver, initHexo } = require('./server')
 
 // error handler
 onerror(app)
@@ -50,9 +51,17 @@ swaggerKoa.use(serveStatic(pathToSwaggerUi))
 app.use(mount('/apidoc', swaggerKoa))
 app.use(serveStatic(path.join(process.cwd(), '/frontend/dist/pwa')))
 
+// install
+const isInstalled = StorageService.isInstalled()
+if (!isInstalled) {
+  const install = require('./install')
+  app.use(install.routes(), install.allowedMethods())
+} else {
+  initHexo(StorageService.getHexoRoot())
+}
+
 // hexo-editor-server
-require('./server')(app, {
-  hexoRoot: config.hexoRoot,
+hexoeditorserver(app, {
   base: 'hexoeditorserver',
   auth: require('./lib/koa-parallel')([{
     fn: authController.apiKeyAuth,
