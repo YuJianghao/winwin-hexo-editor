@@ -1,5 +1,7 @@
 const auth = require('basic-auth')
 const jwt = require('jsonwebtoken')
+const compose = require('koa-compose')
+const parallel = require('../lib/koa-parallel')
 const fs = require('fs')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
 const debug = require('debug')('hexo-editor:server')
@@ -175,11 +177,12 @@ exports.basicAuth = async function (ctx, next) {
     }
   } else {
     // find if user exist in database
-    var valid = await ds.hasUser(user.name, user.pass)
+    var dbuser = await ds.hasUser(user.name, user.pass)
     // var query = await User.find(user)
-    if (valid) {
+    if (dbuser) {
       // if user exist then set id
-      ctx.state.id = user.name
+      ctx.state.id = dbuser._id
+      ctx.state.name = dbuser.username
       await next()
     } else {
       ctx.status = 401
@@ -194,11 +197,19 @@ exports.basicAuth = async function (ctx, next) {
 exports.getToken = async function (ctx, next) {
   // set id and token type into jwt payload
   const id = ctx.state.id || ctx.state.user.id
-  var token = jwt.sign({ id, type: 'access' }, StorageService.getJwtSecret(), { expiresIn: StorageService.getJwtExpire() })
-  var refreshToken = jwt.sign({ id, type: 'refresh' }, StorageService.getJwtSecret(), { expiresIn: StorageService.getJwtRefresh() })
+  const name = ctx.state.name || ctx.state.user.name
+  var token = jwt.sign({ id, name, type: 'access' }, StorageService.getJwtSecret(), { expiresIn: StorageService.getJwtExpire() })
+  var refreshToken = jwt.sign({ id, name, type: 'refresh' }, StorageService.getJwtSecret(), { expiresIn: StorageService.getJwtRefresh() })
   ctx.body = {
     success: true,
     message: 'success',
-    data: { id, token, refreshToken }
+    data: { id, name, token, refreshToken }
   }
 }
+
+exports.apikeyOrJwt = parallel([{
+  fn: exports.apiKeyAuth,
+  validator: err => err.status === 401
+}, {
+  fn: compose([exports.jwtAuth, exports.requestAccessToken])
+}])

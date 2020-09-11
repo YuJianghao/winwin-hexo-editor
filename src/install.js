@@ -19,7 +19,7 @@ router.post('/do', async (ctx, next) => {
   const APIKEY_SECRET = ctx.request.body.APIKEY_SECRET || config.apikeySecret
   try {
     await ds.clear()
-    await ds.adduser(username, password)
+    await ds.addUser(username, password)
     StorageService.clear()
     StorageService.setJwtSecret(JWT_SECRET)
     StorageService.setJwtExpire(JW_EXPIRE)
@@ -28,7 +28,7 @@ router.post('/do', async (ctx, next) => {
     StorageService.setHexoRoot(HEXO_ROOT)
     StorageService.markInstalled()
     await initHexo(HEXO_ROOT)
-    ctx.body = 'install'
+    ctx.body = 'installed'
   } catch (err) {
     ctx.status = 400
     ctx.body = {

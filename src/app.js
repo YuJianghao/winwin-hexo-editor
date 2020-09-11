@@ -4,12 +4,12 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
-const compose = require('koa-compose')
 const cors = require('koa-cors')
 const path = require('path')
 
 const authController = require('./auth/controller')
 const authRouter = require('./auth/router')
+const settings = require('./settings/router')
 const version = require('./version')
 const StorageService = require('./service/StorageService')
 const { hexoeditorserver, initHexo } = require('./server')
@@ -63,16 +63,12 @@ if (!isInstalled) {
 // hexo-editor-server
 hexoeditorserver(app, {
   base: 'hexoeditorserver',
-  auth: require('./lib/koa-parallel')([{
-    fn: authController.apiKeyAuth,
-    validator: err => err.status === 401
-  }, {
-    fn: compose([authController.jwtAuth, authController.requestAccessToken])
-  }])
+  auth: authController.apikeyOrJwt
 })
 
 // routes
 app.use(authRouter.routes(), authRouter.allowedMethods())
+app.use(settings.routes(), settings.allowedMethods())
 app.use(version.routes(), version.allowedMethods())
 
 // error-handling

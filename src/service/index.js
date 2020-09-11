@@ -65,13 +65,18 @@ class DataService {
     await this.save()
   }
 
-  async adduser (username, password) {
+  async addUser (username, password) {
     const User = this.model('User')
     if (User.findOne({ username })) {
       throw new DataServiceError('duplicate user:' + username, DataServiceError.USER_EXIST)
     }
     await User.insertOne({ username, password })
     await this.save()
+  }
+
+  async getUser (id) {
+    const User = this.model('User')
+    return User.findOne({ _id: id })
   }
 
   async updateUser (id, username, password) {
@@ -81,6 +86,7 @@ class DataService {
     update.password = password
     try {
       await User.updateById(id, update)
+      await this.save()
     } catch (err) {
       if (err.name === WarehouseError.ID_NOT_EXIST) {
         throw new DataServiceError('user not exists', DataServiceError.USER_NOT_EXIST)
@@ -92,9 +98,9 @@ class DataService {
   async hasUser (username, password) {
     const User = this.model('User')
     if (password) {
-      return !!User.findOne({ username, password })
+      return User.findOne({ username, password })
     } else {
-      return !!User.findOne({ username })
+      return User.findOne({ username })
     }
   }
 }
