@@ -5553,6 +5553,14 @@ koa-logger@^3.2.1:
     humanize-number "0.0.2"
     passthrough-counter "^1.0.0"
 
+koa-mount@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npm.taobao.org/koa-mount/download/koa-mount-4.0.0.tgz#e0265e58198e1a14ef889514c607254ff386329c"
+  integrity sha1-4CZeWBmOGhTviJUUxgclT/OGMpw=
+  dependencies:
+    debug "^4.0.1"
+    koa-compose "^4.1.0"
+
 koa-onerror@^4.1.0:
   version "4.1.0"
   resolved "https://registry.npm.taobao.org/koa-onerror/download/koa-onerror-4.1.0.tgz#7949c7651941e67b11813bf1fad03c2d34470b1c"
@@ -8585,6 +8593,11 @@ svgo@^1.0.0:
     stable "^0.1.8"
     unquote "~1.1.1"
     util.promisify "~1.0.0"
+
+swagger-ui-dist@^3.33.0:
+  version "3.33.0"
+  resolved "https://registry.npm.taobao.org/swagger-ui-dist/download/swagger-ui-dist-3.33.0.tgz#a34b5b7b6ce22dee28f7cbe6a60e0ba7e47750b6"
+  integrity sha1-o0tbe2ziLe4o98vmpg4Lp+R3ULY=
 
 table@^5.2.3:
   version "5.4.6"

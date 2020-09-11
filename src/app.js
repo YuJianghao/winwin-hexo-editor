@@ -40,7 +40,15 @@ app.use(bodyparser({
 }))
 app.use(json())
 app.use(logger())
-app.use(require('koa-static')(path.join(process.cwd(), '/frontend/dist/pwa')))
+
+// static resources
+const serveStatic = require('koa-static')
+const mount = require('koa-mount')
+const pathToSwaggerUi = path.join(__dirname, '../swagger-ui-dist')
+const swaggerKoa = new Koa()
+swaggerKoa.use(serveStatic(pathToSwaggerUi))
+app.use(mount('/apidoc', swaggerKoa))
+app.use(serveStatic(path.join(process.cwd(), '/frontend/dist/pwa')))
 
 // hexo-editor-server
 require('./server')(app, {
