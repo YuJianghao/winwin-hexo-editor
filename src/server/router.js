@@ -29,27 +29,27 @@ module.exports = router => {
     controller.getPost
   )
 
-  router.get('/page/:id/',
+  router.get('/page/:id',
     controller.postNotFoundErrorHandler,
     controller.getPage
   )
 
-  router.put('/post/:id/',
+  router.put('/post/:id',
     controller.postNotFoundErrorHandler,
     controller.updatePost
   )
 
-  router.put('/page/:id/',
+  router.put('/page/:id',
     controller.postNotFoundErrorHandler,
     controller.updatePage
   )
 
-  router.delete('/post/:id/',
+  router.delete('/post/:id',
     controller.postNotFoundErrorHandler,
     controller.removePost
   )
 
-  router.delete('/page/:id/',
+  router.delete('/page/:id',
     controller.postNotFoundErrorHandler,
     controller.removePage
   )
