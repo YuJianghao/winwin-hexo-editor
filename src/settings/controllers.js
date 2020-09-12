@@ -49,7 +49,7 @@ exports.getUser = async (ctx, next) => {
   }
 }
 
-exports.hexo = async (ctx, next) => {
+exports.setHexoInfo = async (ctx, next) => {
   const HEXO_ROOT = ctx.request.body.HEXO_ROOT
   try {
     StorageService.setHexoRoot(HEXO_ROOT)
@@ -63,6 +63,16 @@ exports.hexo = async (ctx, next) => {
       success: false,
       message: err.message
     }
+  }
+}
+
+exports.getHexoInfo = async (ctx, next) => {
+  const HEXO_ROOT = StorageService.getHexoRoot()
+  ctx.body = {
+    success: false,
+    data: [
+      HEXO_ROOT
+    ]
   }
 }
 
