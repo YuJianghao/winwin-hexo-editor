@@ -136,10 +136,10 @@ exports.jwtAuth = async function (ctx, next) {
     try {
       const decoded = jwt.verify(token, StorageService.getJwtSecret())
       ctx.state.user = decoded
-      await next()
     } catch (err) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
+    await next()
   }
 }
 

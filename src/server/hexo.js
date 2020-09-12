@@ -9,6 +9,15 @@ const Post = require('./post')
 const debug = require('debug')('hexo')
 const { warn, error } = require('./utils')
 
+class HexoError extends Error {
+  constructor (message, code) {
+    super(message)
+    Error.captureStackTrace(this)
+    this.code = code
+  }
+}
+HexoError.NOT_BLOG_ROOT = 'INVALID_ROOT'
+
 /**
  * 用于和hexo交互的模型
  * @class
@@ -28,22 +37,23 @@ class Hexo {
    * 如果没有依赖hexo或者没有`_config.yml`则视为不是博客目录
    * @private
    */
-  _checkIsBlog () {
+  _checkIsBlog (cwd) {
     try {
-      const file = fs.readFileSync(path.join(this.cwd, 'package.json'))
+      const file = fs.readFileSync(path.join(cwd, 'package.json'))
       const packageJSON = JSON.parse(file)
-      const err = new Error(`${this.cwd} isn't a hexo blog folder!`)
-      if (!packageJSON.dependencies.hexo) throw err
-      fs.readFileSync(path.join(this.cwd, '_config.yml'))
+      const err = new Error()
+      err.message = `${cwd} isn't a hexo blog folder!`
+      if (!packageJSON.dependencies.hexo) throw new HexoError(`${cwd} isn't a hexo blog folder!`, HexoError.NOT_BLOG_ROOT)
+      fs.readFileSync(path.join(cwd, '_config.yml'))
     } catch (err) {
       if (err.code === 'ENOENT') {
-        err.message = `${this.cwd} isn't a hexo blog folder!`
+        const e = new HexoError(`${cwd} isn't a hexo blog folder!`, HexoError.NOT_BLOG_ROOT)
+        e.data = {
+          path: path.join(process.cwd(), cwd)
+        }
+        throw e
       }
       error(err.message)
-      if (process.env.NODE_ENV !== 'test') {
-        error('exiting...')
-        process.exit(1)
-      }
       throw err
     }
   }
@@ -66,8 +76,8 @@ class Hexo {
    */
   async init (cwd) {
     if (!cwd) throw new Error('Hexo Root is required!')
+    this._checkIsBlog(cwd)
     this.cwd = cwd
-    this._checkIsBlog()
     debug('starting ...')
     await this._checkCanDeploy()
     this.isGit = isGit(this.cwd)
@@ -633,4 +643,4 @@ class Hexo {
   }
 }
 
-module.exports = Hexo
+module.exports = { Hexo, HexoError }

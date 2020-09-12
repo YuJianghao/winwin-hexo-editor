@@ -12,7 +12,10 @@ const authRouter = require('./auth/router')
 const settings = require('./settings/router')
 const version = require('./version')
 const StorageService = require('./service/StorageService')
-const { hexoeditorserver, initHexo } = require('./server')
+const {
+  hexoeditorserver,
+  initHexo
+} = require('./server')
 
 // error handler
 onerror(app)
@@ -57,7 +60,9 @@ if (!isInstalled) {
   const install = require('./install')
   app.use(install.routes(), install.allowedMethods())
 } else {
-  initHexo(StorageService.getHexoRoot())
+  initHexo(StorageService.getHexoRoot()).catch(_ => {
+    console.log('\x1b[31mHexo init failed, check your HEXO_ROOT settings first!')
+  })
 }
 
 // hexo-editor-server

@@ -1,4 +1,4 @@
-const Hexo = require('./hexo')
+const { Hexo } = require('./hexo')
 const hexo = new Hexo()
 const Search = require('./search')
 const search = new Search(hexo)

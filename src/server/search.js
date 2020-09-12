@@ -1,4 +1,4 @@
-const Hexo = require('./hexo')
+const { Hexo } = require('./hexo')
 const debug = require('debug')('hexo:search')
 
 class Search {

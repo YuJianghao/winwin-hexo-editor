@@ -1,13 +1,13 @@
 const { ds, DataServiceError } = require('../service')
 const StorageService = require('../service/StorageService')
-const { initHexo } = require('../server')
 const SettingsError = require('./errors')
+const { HexoError } = require('../server/hexo')
 
 exports.errorHandler = async (ctx, next) => {
   try {
     await next()
   } catch (err) {
-    switch (err.name) {
+    switch (err.code) {
       case DataServiceError.USER_NOT_EXIST:
         err.status = 404
         break
@@ -17,8 +17,17 @@ exports.errorHandler = async (ctx, next) => {
       case SettingsError.INVALID_PARAMS:
         err.status = 400
         break
+      case HexoError.NOT_BLOG_ROOT:
+        ctx.status = 404
+        ctx.body = {
+          success: false,
+          message: err.message,
+          data: err.data
+        }
+        break
+      default:
+        throw err
     }
-    throw err
   }
 }
 
@@ -51,18 +60,9 @@ exports.getUser = async (ctx, next) => {
 
 exports.setHexoInfo = async (ctx, next) => {
   const HEXO_ROOT = ctx.request.body.HEXO_ROOT
-  try {
-    StorageService.setHexoRoot(HEXO_ROOT)
-    await initHexo(HEXO_ROOT)
-    ctx.body = {
-      success: true
-    }
-  } catch (err) {
-    ctx.status = 400
-    ctx.body = {
-      success: false,
-      message: err.message
-    }
+  await StorageService.setHexoRoot(HEXO_ROOT)
+  ctx.body = {
+    success: true
   }
 }
 

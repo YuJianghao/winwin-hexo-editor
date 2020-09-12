@@ -25,7 +25,7 @@ router.post('/do', async (ctx, next) => {
     StorageService.setJwtExpire(JW_EXPIRE)
     StorageService.setJwtRefresh(JW_REFRESH)
     StorageService.setApikeySecret(APIKEY_SECRET)
-    StorageService.setHexoRoot(HEXO_ROOT)
+    await StorageService.setHexoRoot(HEXO_ROOT)
     StorageService.markInstalled()
     await initHexo(HEXO_ROOT)
     ctx.body = 'installed'

@@ -1,5 +1,6 @@
 const JSONdb = require('simple-json-db')
 const path = require('path')
+const { initHexo } = require('../server')
 const APIKEYS = 'APIKEYS'
 const JWT_SECRET = 'JWT_SECRET'
 const JW_EXPIRE = 'JW_EXPIRE'
@@ -123,9 +124,16 @@ class StorageService {
     return this._db.get(APIKEY_SECRET)
   }
 
-  setHexoRoot (secret) {
-    if (!secret) return
-    this._db.set(HEXO_ROOT, secret)
+  async setHexoRoot (hexoRoot) {
+    if (!hexoRoot) return
+    const originalHexoRoot = this.getHexoRoot()
+    this._db.set(HEXO_ROOT, hexoRoot)
+    try {
+      await initHexo(hexoRoot)
+    } catch (err) {
+      this._db.set(HEXO_ROOT, originalHexoRoot)
+      throw err
+    }
     this.sync()
   }
 
