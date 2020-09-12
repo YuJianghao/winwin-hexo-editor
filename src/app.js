@@ -4,14 +4,18 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
-const compose = require('koa-compose')
 const cors = require('koa-cors')
 const path = require('path')
 
-const config = require('./loadConfig')
 const authController = require('./auth/controller')
 const authRouter = require('./auth/router')
+const settings = require('./settings/router')
 const version = require('./version')
+const StorageService = require('./service/StorageService')
+const {
+  hexoeditorserver,
+  initHexo
+} = require('./server')
 
 // error handler
 onerror(app)
@@ -50,20 +54,26 @@ swaggerKoa.use(serveStatic(pathToSwaggerUi))
 app.use(mount('/apidoc', swaggerKoa))
 app.use(serveStatic(path.join(process.cwd(), '/frontend/dist/pwa')))
 
+// install
+const isInstalled = StorageService.isInstalled()
+if (!isInstalled) {
+  const install = require('./install')
+  app.use(install.routes(), install.allowedMethods())
+} else {
+  initHexo(StorageService.getHexoRoot()).catch(_ => {
+    console.log('\x1b[31mHexo init failed, check your HEXO_ROOT settings first!')
+  })
+}
+
 // hexo-editor-server
-require('./server')(app, {
-  hexoRoot: config.hexoRoot,
+hexoeditorserver(app, {
   base: 'hexoeditorserver',
-  auth: require('./lib/koa-parallel')([{
-    fn: authController.apiKeyAuth,
-    validator: err => err.status === 401
-  }, {
-    fn: compose([authController.jwtAuth, authController.requestAccessToken])
-  }])
+  auth: authController.apikeyOrJwt
 })
 
 // routes
 app.use(authRouter.routes(), authRouter.allowedMethods())
+app.use(settings.routes(), settings.allowedMethods())
 app.use(version.routes(), version.allowedMethods())
 
 // error-handling

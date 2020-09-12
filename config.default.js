@@ -1,4 +1,10 @@
-module.exports = {
+let user
+try {
+  user = require('./config.user')
+} catch (err) {
+  user = {}
+}
+module.exports = Object.assign({
   port: 5777,
   hexoRoot: '',
   apikeySecret: 'apikey',
@@ -7,4 +13,4 @@ module.exports = {
   jwtRefresh: '7d',
   username: 'admin',
   password: 'admin'
-}
+}, user)

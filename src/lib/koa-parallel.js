@@ -38,18 +38,14 @@ function compose (middleware) {
       const fn = middleware[i].fn
       const validator = middleware[i].validator || function () { return true }
       try {
-        try {
-          const res = await fn(context, next)
-          return Promise.resolve(res)
-        } catch (err) {
-          if (i + 1 < middleware.length && validator(err)) {
-            return dispatch(i + 1)
-          } else {
-            return Promise.reject(err)
-          }
-        }
+        const res = await fn(context, next)
+        return Promise.resolve(res)
       } catch (err) {
-        return Promise.reject(err)
+        if (i + 1 < middleware.length && validator(err)) {
+          return dispatch(i + 1)
+        } else {
+          return Promise.reject(err)
+        }
       }
     }
   }
