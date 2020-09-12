@@ -5,6 +5,7 @@
 
 const debug = require('debug')('hexo-editor-server')
 const router = require('koa-router')()
+const { HexoError } = require('./hexo')
 
 /**
  * mount hexo-editor-server to koa app
@@ -57,3 +58,5 @@ exports.initHexo = async (hexoRoot) => {
   const hexo = require('./controller').hexo
   return hexo.init(hexoRoot)
 }
+
+exports.HexoError = HexoError
