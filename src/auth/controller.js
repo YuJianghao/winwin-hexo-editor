@@ -139,6 +139,9 @@ exports.jwtAuth = async function (ctx, next) {
     } catch (err) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
+    if (!await ds.hasUserById(ctx.state.user.id)) {
+      ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
+    }
     await next()
   }
 }
