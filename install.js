@@ -67,7 +67,13 @@ async function install () {
 
   // #region Install Dependences
   printer.printSection('Install Dependences')
-  const cmd = hasYarn ? 'yarn' : 'npm install'
+  let cmd = 'yarn'
+  if (fs.existsSync('./package-lock.json') || !hasYarn) {
+    if (hasYarn) {
+      printer.info('package-lock.json found, use npm')
+    }
+    cmd = 'npm install'
+  }
   try {
     printer.info('Dependences installing')
     await Executer.run(cmd)

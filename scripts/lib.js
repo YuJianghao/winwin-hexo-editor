@@ -21,19 +21,19 @@ exports.Printer = class Printer {
   }
 
   success () {
-    console.log(chalk.green.bold(`[${this.prefix || 'SUCCESS'}]`), ...arguments)
+    console.log(chalk.green(`[${this.prefix || 'SUCCESS'}]`), ...arguments)
   }
 
   info () {
-    console.log(chalk.blue.bold(`[${this.prefix || 'INFO'}]`), ...arguments)
+    console.log(chalk.blue(`[${this.prefix || 'INFO'}]`), ...arguments)
   }
 
   warn () {
-    console.log(chalk.yellow.bold(`[${this.prefix || 'WARN'}]`), ...arguments)
+    console.log(chalk.yellow(`[${this.prefix || 'WARN'}]`), ...arguments)
   }
 
   error () {
-    console.log(chalk.red.bold(`[${this.prefix || 'ERROR'}]`), ...arguments)
+    console.log(chalk.red(`[${this.prefix || 'ERROR'}]`), ...arguments)
   }
 
   clear () {
