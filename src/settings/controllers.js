@@ -70,9 +70,9 @@ exports.getHexoInfo = async (ctx, next) => {
   const HEXO_ROOT = StorageService.getHexoRoot()
   ctx.body = {
     success: false,
-    data: [
+    data: {
       HEXO_ROOT
-    ]
+    }
   }
 }
 
