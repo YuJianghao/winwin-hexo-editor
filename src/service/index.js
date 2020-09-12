@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const registerModels = require('./register_models')
+const config = require('../../config.default')
 const Database = require('warehouse')
 const WarehouseError = require('warehouse/lib/error')
 const DB_VERSION = 1
@@ -82,8 +83,8 @@ class DataService {
   async updateUser (id, username, password) {
     const User = this.model('User')
     const update = {}
-    update.username = username
-    update.password = password
+    update.username = username || config.username
+    update.password = password || config.password
     try {
       await User.updateById(id, update)
       await this.save()

@@ -4,6 +4,7 @@ const { apikeyOrJwt } = require('../auth/controller')
 const router = new Router()
 
 router.use(apikeyOrJwt)
+router.use(controllers.errorHandler)
 
 router.prefix('/settings')
 
@@ -14,6 +15,6 @@ router.put('/user/:id', controllers.updateUser)
 
 router.put('/hexo', controllers.hexo)
 
-router.put('/auth', controllers.auth)
+router.put('/security', controllers.security)
 
 module.exports = router

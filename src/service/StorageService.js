@@ -84,6 +84,7 @@ class StorageService {
   }
 
   setJwtSecret (secret) {
+    if (!secret) return
     this._db.set(JWT_SECRET, secret)
     this.sync()
   }
@@ -93,6 +94,7 @@ class StorageService {
   }
 
   setJwtExpire (expire) {
+    if (!expire) return
     this._db.set(JW_EXPIRE, expire)
     this.sync()
   }
@@ -102,6 +104,7 @@ class StorageService {
   }
 
   setJwtRefresh (refresh) {
+    if (!refresh) return
     this._db.set(JW_REFRESH, refresh)
     this.sync()
   }
@@ -111,6 +114,7 @@ class StorageService {
   }
 
   setApikeySecret (secret) {
+    if (!secret) return
     this._db.set(APIKEY_SECRET, secret)
     this.sync()
   }
@@ -120,6 +124,7 @@ class StorageService {
   }
 
   setHexoRoot (secret) {
+    if (!secret) return
     this._db.set(HEXO_ROOT, secret)
     this.sync()
   }
