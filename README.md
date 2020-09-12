@@ -28,7 +28,7 @@
 - [x] front-matters
 - [x] 文章搜索 | Search
 - [x] 自定义slug | Custom slug
-- [ ] ~~图床Image CDN~~(请使用[picgo](https://picgo.github.io/PicGo-Doc/zh/guide/)替代 | use [picgo](https://picgo.github.io/PicGo-Doc/zh/guide/) instead)
+- [ ] ~~图床Image CDN~~(请使用[cloudreve](https://cloudreve.org/)替代 | use [cloudreve](https://cloudreve.org/) instead)
 - [ ] 亲，请告诉我您还需要什么 ~ | let me know what you need ...
 
 ## 安装 | Installation
@@ -39,19 +39,21 @@
 
 ### 默认安装 | Default installation
 
-下载源码 | Download source
+下载源码和依赖 | Download source and Dependences
 
 ```bash
 git clone https://github.com/YuJianghao/winwin-hexo-editor
+cd winwin-hexo-editor
+yarn
+# npm install # 或者使用npm | or use npm
 ```
+
+> 推荐使用yarn, yarn is recommended for package management
 
 运行安装程序 | Run Installer
 
-可以使用默认值 | You can use default settings.
-
 ```bash
-cd winwin-hexo-editor
-bash install.sh
+node install.js
 ```
 
 开始运行 | Start
@@ -76,44 +78,32 @@ npm run dev
 
 然后用浏览器打开`http://localhost:5777` | Then open `http://localhost:5777` from your browser.
 
-> 对于windows用户推荐使用WSL，详见[适用于Linux的Windows子系统](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10 )
+> **如果你是windows用户**
+>
+> - 本程序未在windows环境下测试。理论上可以运行。
+> - 推荐使用WSL，详见[适用于Linux的Windows子系统](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10 )
 
 ### 使用自定义服务器 | With custom server address
 
 直接使用`http://yourapiaddress:5777`即可。 | Just open `http://yourapiaddress:5777`.
 
+### 使用域名 ｜ With domain
+
 你需要自行配置你的http服务器反向代理。 | You need to configure your HTTP server proxy.
 
 <!-- TODO: 教学如何配置反向代理 -->
 
-## 选项 | Options
-
-所有选项都通过安装程序设定 | All options are set through installer.
-
-```bash
-bash setup.sh
-```
-
-```js
-module.exports = {
-  port: 5777,
-  hexoRoot: '',         // 博客文件夹目录 | hexo blog folder path
-  jwtSecret: 'secret',  // 密钥 | secret
-  jwtExpire: '1h',      // 操作过期时间 | access expire time
-  jwtRefresh: '7d',     // 登录过期时间 | login expire time
-  username: 'admin',
-  password: 'admin'
-}
-```
-
 ## 更新 | Update
 
-
-运行安装程序 | Run Installer
-
 ```bash
-bash update.sh
+node update.js
 ```
+
+## 卸载 | Uninstall
+
+只需要完整删除`winwin-hexo-editor`目录。`winwin-hexo-editor`不会对系统其他文件做任何更改。
+
+Just delete entire `winwin-hexo-editor` folder. `winwin-hexo-editor` has never changed other files.
 
 ## 支持 | Support
 
