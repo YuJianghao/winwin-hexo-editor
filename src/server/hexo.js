@@ -18,6 +18,13 @@ class HexoError extends Error {
 HexoError.prototype.name = 'HexoError'
 HexoError.NOT_BLOG_ROOT = 'NOT_BLOG_ROOT'
 HexoError.EMPTY_HEXO_ROOT = 'EMPTY_HEXO_ROOT'
+HexoError.POST_NOT_FOUND = 'POST_NOT_FOUND'
+HexoError.UNINITIALIZED = 'UNINITIALIZED'
+HexoError.CANT_DEPLOY = 'CANT_DEPLOY'
+HexoError.GIT_CANT_SAVE = 'GIT_CANT_SAVE'
+HexoError.GIT_CANT_SYNC = 'GIT_CANT_SYNC'
+HexoError.BAD_PARAMS = 'BAD_PARAMS'
+HexoError.NOT_GIT_REPO = 'NOT_GIT_REPO'
 
 /**
  * 用于和hexo交互的模型
@@ -41,12 +48,10 @@ class Hexo {
    */
   _checkIsBlog (cwd) {
     logger.debug('try HEXO_ROOT', cwd)
+    let file
     try {
-      const file = fs.readFileSync(path.join(cwd, 'package.json'))
-      const packageJSON = JSON.parse(file)
-      const err = new Error()
-      err.message = `${cwd} isn't a hexo blog folder!`
-      if (!packageJSON.dependencies.hexo) throw new HexoError(`${cwd} isn't a hexo blog folder!`, HexoError.NOT_BLOG_ROOT)
+      // 检查是否有对应文件
+      file = fs.readFileSync(path.join(cwd, 'package.json'))
       fs.readFileSync(path.join(cwd, '_config.yml'))
     } catch (err) {
       if (err.code === 'ENOENT') {
@@ -59,6 +64,9 @@ class Hexo {
       }
       throw err
     }
+    // 检查是否有hexo依赖
+    const packageJSON = JSON.parse(file)
+    if (!packageJSON.dependencies.hexo) throw new HexoError(`${cwd} isn't a hexo blog folder!`, HexoError.NOT_BLOG_ROOT)
   }
 
   /**
@@ -67,13 +75,13 @@ class Hexo {
    * @private
    */
   async _checkCanDeploy () {
-    logger.debug('check bolg can deploy')
+    logger.debug('checing blog can deploy')
     const hexoConfigYML = YAML.parse(fs.readFileSync(path.join(this.cwd, '_config.yml')).toString())
     this.canDeploy = hexoConfigYML.deploy && hexoConfigYML.deploy.type
     if (!this.canDeploy) {
       logger.warn(`Hexo deploy config not exists in ${this.cwd}. Can't deploy blog.`)
     } else {
-      logger.debug('can deploy')
+      logger.debug('blog can deploy')
     }
   }
 
@@ -122,9 +130,7 @@ class Hexo {
   _checkReady () {
     if (!this.ready) {
       logger.warn('Hexo uninitiated, try again later')
-      const err = new Error('Hexo uninitiated, try again later')
-      err.name = 'Hexo Init'
-      throw err
+      throw new HexoError('Hexo uninitiated, try again later', HexoError.UNINITIALIZED)
     }
   }
 
@@ -135,6 +141,15 @@ class Hexo {
   async load () {
     logger.debug('load data')
     await this.hexo.load()
+  }
+
+  unlinkSync () {
+    try {
+      this.unlinkSync(...arguments)
+    } catch (err) {
+      logger.error('fail to delete fail:', ...arguments)
+      throw err
+    }
   }
 
   /**
@@ -151,7 +166,7 @@ class Hexo {
       logger.info('save', post._id, 'isPage', isPage)
       const src = await this._get(post._id, isPage)
       // 删除源文件
-      fs.unlinkSync(src.full_source)
+      this.unlinkSync(src.full_source)
       if (!post.published && !isPage)post.layout = 'draft'
       // 创建新文件
       post.freeze()
@@ -175,9 +190,7 @@ class Hexo {
    * @private
    */
   _throwPostNotFound () {
-    const err = new Error('post not found !')
-    err.name = 'Not Found'
-    throw err
+    throw new HexoError('post not found', HexoError.POST_NOT_FOUND)
   }
 
   /**
@@ -194,7 +207,7 @@ class Hexo {
       logger.info('remove', id)
       post = await this._get(id, isPage)
       // 删除文件
-      fs.unlinkSync(post.full_source)
+      this.unlinkSync(post.full_source)
       // 清除数据
       await this.load()
       posts.push(new Post(post))
@@ -371,7 +384,7 @@ class Hexo {
   async getPost (_id, isPage = false) {
     this._checkReady()
     logger.info('get post', _id, 'is page:', isPage)
-    if (!_id) throw new Error('_id should be String!')
+    if (!_id) throw new HexoError('_id should be String!', HexoError.BAD_PARAMS)
     const query = await this._get(_id, isPage)
     return query ? new Post(query) : null
   }
@@ -387,7 +400,7 @@ class Hexo {
    */
   async addPost (options, isPage) {
     this._checkReady()
-    if (!options.title) throw new Error('post.title is required!')
+    if (!options.title) throw new HexoError('post.title is required!', HexoError.BAD_PARAMS)
     logger.info('add post', Object.keys(options))
     var post = new Post(options, false)
     // 新文章不能指定`_id`
@@ -453,8 +466,7 @@ class Hexo {
     try {
       await this.hexo.post.publish({ slug: doc.slug }, true)
     } catch (err) {
-      err.name = 'Not Found'
-      throw err
+      this._throwPostNotFound()
     }
     await this.load()
     const post = this.hexo.locals.get('posts')
@@ -523,7 +535,7 @@ class Hexo {
       fs.mkdir(folder)
     }
     fs.writeFile(des, post.raw)
-    fs.unlinkSync(src)
+    this.unlinkSync(src)
   }
 
   /**
@@ -532,10 +544,7 @@ class Hexo {
   async deploy () {
     this._checkReady()
     if (!this.canDeploy) {
-      const err = new Error()
-      err.name = 'Hexo Cant Deploy'
-      err.message = 'No deploy config found. Can\'t deploy.'
-      throw err
+      throw new HexoError('No deploy config found. Can\'t deploy.', HexoError.CANT_DEPLOY)
     }
     logger.info('deploy')
     return this._runShell('hexo generate -d')
@@ -572,12 +581,12 @@ class Hexo {
       })
       // 打印正常的后台可执行程序输出
       workProcess.stdout.on('data', function (data) {
-        console.log(data)
+        logger.info(data)
       })
 
       // 打印错误的后台可执行程序输出
       workProcess.stderr.on('data', function (data) {
-        console.log(data)
+        logger.error(data)
       })
 
       // 退出之后的输出
@@ -585,6 +594,8 @@ class Hexo {
         if (code === 0) {
           resolve(0)
         } else {
+          logger.error('failed to run command', cmd)
+          logger.error(code, signal)
           reject(code, signal)
         }
       })
@@ -596,9 +607,7 @@ class Hexo {
    * @private
    */
   _notGitRepo () {
-    const err = new Error(`${this.cwd} isn't a git repository`)
-    err.name = 'Not git repo'
-    throw err
+    throw new HexoError(`${this.cwd} isn't a git repository`, HexoError.NOT_GIT_REPO)
   }
 
   /**
@@ -612,9 +621,7 @@ class Hexo {
       await this.git.pull()
     } catch (err) {
       if (err.message.indexOf('no tracking information') >= 0) {
-        err.status = 503
-        err.message = 'No configured remote origin. Reset only.'
-        err.name = 'Git Cant Sync'
+        throw new HexoError('No configured remote origin. Reset only.', HexoError.GIT_CANT_SYNC)
       }
       throw err
     }
@@ -627,7 +634,6 @@ class Hexo {
     logger.info('reset git')
     if (!this.isGit) this._notGitRepo()
     await this.git.reset('hard')
-    return Promise.resolve()
   }
 
   /**
@@ -642,9 +648,7 @@ class Hexo {
       await this.git.push()
     } catch (err) {
       if (err.message.indexOf('No configured push destination') >= 0) {
-        err.status = 503
-        err.message = 'No configured push destination'
-        err.name = 'Git Cant Save'
+        throw new HexoError('No configured push destination', HexoError.GIT_CANT_SAVE)
       }
       throw err
     }

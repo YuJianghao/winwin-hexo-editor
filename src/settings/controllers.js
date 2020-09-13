@@ -24,7 +24,7 @@ exports.errorHandler = async (ctx, next) => {
           message: err.message,
           data: err.data
         }
-        break
+        return
       case HexoError.EMPTY_HEXO_ROOT:
         ctx.status = 404
         ctx.body = {
@@ -33,9 +33,8 @@ exports.errorHandler = async (ctx, next) => {
           data: err.data
         }
         break
-      default:
-        throw err
     }
+    throw err
   }
 }
 

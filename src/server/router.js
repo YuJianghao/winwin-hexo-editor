@@ -3,8 +3,7 @@ const controller = require('./controller')
 module.exports = router => {
   router.all('/', (ctx, next) => { ctx.body = 'Greeting guys!' })
 
-  router.use(controller.defaultErrorHandler)
-  router.use(controller.serviceErrorHandler)
+  router.use(controller.errorHandler)
 
   router.get('/restrictedkeys',
     controller.getRestrictedKeys
@@ -25,42 +24,34 @@ module.exports = router => {
   )
 
   router.get('/post/:id',
-    controller.postNotFoundErrorHandler,
     controller.getPost
   )
 
   router.get('/page/:id',
-    controller.postNotFoundErrorHandler,
     controller.getPage
   )
 
   router.put('/post/:id',
-    controller.postNotFoundErrorHandler,
     controller.updatePost
   )
 
   router.put('/page/:id',
-    controller.postNotFoundErrorHandler,
     controller.updatePage
   )
 
   router.delete('/post/:id',
-    controller.postNotFoundErrorHandler,
     controller.removePost
   )
 
   router.delete('/page/:id',
-    controller.postNotFoundErrorHandler,
     controller.removePage
   )
 
   router.post('/post/:id/publish',
-    controller.postNotFoundErrorHandler,
     controller.publishPost
   )
 
   router.post('/post/:id/unpublish',
-    controller.postNotFoundErrorHandler,
     controller.unpublishPost
   )
 
