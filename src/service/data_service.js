@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const logger = require('log4js').getLogger('DataService')
 const registerModels = require('./register_models')
 const config = require('../../config.default')
 const Database = require('warehouse')
@@ -20,6 +21,7 @@ DataServiceError.prototype.name = 'DataServiceError'
 DataServiceError.INITIATING = 'INITIATING'
 DataServiceError.USER_EXIST = 'USER_EXIST'
 DataServiceError.USER_NOT_EXIST = 'USER_NOT_EXIST'
+DataServiceError.SAVE_FAIL = 'SAVE_FAIL'
 
 class DataService {
   constructor () {
@@ -27,10 +29,18 @@ class DataService {
     this.init()
   }
 
+  /**
+   * 可能的错误: other
+   */
   async init () {
     // create database file
-    if (!fs.existsSync(path.resolve(__dirname, DB_PATH))) {
-      fs.mkdirSync(path.resolve(__dirname, DB_PATH))
+    try {
+      if (!fs.existsSync(path.resolve(__dirname, DB_PATH))) {
+        fs.mkdirSync(path.resolve(__dirname, DB_PATH))
+      } // 写文件可能失败
+    } catch (err) {
+      logger.error('fail to create database folder')
+      throw err
     }
     // create database
     this.database = new Database({
@@ -50,8 +60,16 @@ class DataService {
     if (!this.ready) throw new DataServiceError('service initiating', DataServiceError.INITIATING)
   }
 
+  /**
+   * 可能的错误：other
+   */
   save () {
-    return this.database.save()
+    try {
+      return this.database.save()
+    } catch (err) {
+      logger.error('fail to save database')
+      throw err
+    }
   }
 
   model (name, schema) {
@@ -66,6 +84,11 @@ class DataService {
     await this.save()
   }
 
+  /**
+   * 可能的错误：DataServiceError.USER_EXIST
+   * @param {String} username 用户名
+   * @param {String} password 密码
+   */
   async addUser (username, password) {
     const User = this.model('User')
     if (User.findOne({ username })) {
@@ -80,6 +103,12 @@ class DataService {
     return User.findOne({ _id: id })
   }
 
+  /**
+   * 可能的错误：DataServiceError.USER_NOT_EXIST | other
+   * @param {String} id 用户id
+   * @param {String} username 用户名
+   * @param {String} password 密码
+   */
   async updateUser (id, username, password) {
     const User = this.model('User')
     const update = {}
@@ -111,5 +140,5 @@ class DataService {
   }
 }
 
-const ds = new DataService()
-module.exports = { ds, DataServiceError }
+const dataService = new DataService()
+module.exports = { dataService, DataServiceError }
