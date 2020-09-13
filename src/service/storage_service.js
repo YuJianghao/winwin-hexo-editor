@@ -1,6 +1,9 @@
 const JSONdb = require('simple-json-db')
 const path = require('path')
-const { initHexo } = require('../server')
+const logger = require('log4js').getLogger('StorageService')
+const {
+  initHexo
+} = require('../server')
 const APIKEYS = 'APIKEYS'
 const JWT_SECRET = 'JWT_SECRET'
 const JW_EXPIRE = 'JW_EXPIRE'
@@ -8,9 +11,26 @@ const JW_REFRESH = 'JW_REFRESH'
 const APIKEY_SECRET = 'APIKEY_SECRET'
 const HEXO_ROOT = 'HEXO_ROOT'
 const INSTALLED = 'INSTALLED'
+
+class StorageServiceError extends Error {
+  constructor (message, code) {
+    super(message)
+    Error.captureStackTrace(this)
+    this.code = code
+  }
+}
+
+StorageServiceError.prototype.name = 'StorageServiceError'
+StorageServiceError.BAD_OPTIONS = 'BAD_OPTIONS'
+
 class StorageService {
   constructor () {
-    this._db = new JSONdb(path.resolve(process.cwd(), './data/db.json'))
+    try {
+      this._db = new JSONdb(path.resolve(process.cwd(), './data/db.json'))
+    } catch (err) {
+      logger.error('failed to create database from json file')
+      throw err
+    }
   }
 
   _get (key) {
@@ -23,7 +43,12 @@ class StorageService {
   }
 
   sync () {
-    this._db.sync()
+    try {
+      this._db.sync()
+    } catch (err) {
+      logger.error('failed to save database to json file')
+      throw err
+    }
   }
 
   clear () {
@@ -37,15 +62,20 @@ class StorageService {
    */
   addAPIKEY (opt) {
     // 格式化参数
-    if (!opt.apikey) throw new Error('opt.apikey is required')
-    if (!opt.deviceType) throw new Error('opt.deviceType is required')
-    if (!opt.deviceSystem) throw new Error('opt.deviceSystem is required')
+    if (!opt.apikey) throw new StorageServiceError('opt.apikey is required', StorageServiceError.BAD_OPTIONS)
+    if (!opt.deviceType) throw new StorageServiceError('opt.deviceType is required', StorageServiceError.BAD_OPTIONS)
+    if (!opt.deviceSystem) throw new StorageServiceError('opt.deviceSystem is required', StorageServiceError.BAD_OPTIONS)
     const apikey = opt.apikey
     const deviceType = opt.deviceType
     const deviceSystem = opt.deviceSystem
     const issuedAt = new Date().valueOf()
     const apikeys = this._get(APIKEYS) || {}
-    apikeys[apikey] = { apikey, deviceType, deviceSystem, issuedAt }
+    apikeys[apikey] = {
+      apikey,
+      deviceType,
+      deviceSystem,
+      issuedAt
+    }
     this._set(APIKEYS, apikeys)
   }
 
@@ -149,4 +179,8 @@ class StorageService {
     return this._db.get(INSTALLED)
   }
 }
-module.exports = new StorageService()
+const storageService = new StorageService()
+module.exports = {
+  storageService,
+  StorageServiceError
+}

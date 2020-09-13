@@ -12,7 +12,7 @@ const authController = require('./auth/controller')
 const authRouter = require('./auth/router')
 const settings = require('./settings/router')
 const version = require('./version')
-const StorageService = require('./service/StorageService')
+const { storageService } = require('./service/storage_service')
 const {
   hexoeditorserver,
   initHexo,
@@ -61,12 +61,12 @@ app.use(mount('/apidoc', swaggerKoa))
 app.use(serveStatic(path.join(process.cwd(), '/frontend/dist/pwa')))
 
 // install
-const isInstalled = StorageService.isInstalled()
+const isInstalled = storageService.isInstalled()
 if (!isInstalled) {
   const install = require('./install')
   app.use(install.routes(), install.allowedMethods())
 } else {
-  initHexo(StorageService.getHexoRoot()).catch(err => {
+  initHexo(storageService.getHexoRoot()).catch(err => {
     if (![HexoError.EMPTY_HEXO_ROOT, HexoError.NOT_BLOG_ROOT].includes(err.code)) {
       logger.error('Unknown Error:', err)
       process.exit(1)

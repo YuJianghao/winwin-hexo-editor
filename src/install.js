@@ -1,19 +1,19 @@
 const Router = require('koa-router')
 const { initHexo, HexoError } = require('./server')
-const { dataService } = require('./service')
-const StorageService = require('./service/StorageService')
+const { dataService } = require('./service/data_service')
+const { storageService } = require('./service/storage_service')
 const router = new Router()
 const config = require('../config.default')
 router.prefix('/install')
 router.get('/info', async (ctx, next) => {
-  if (StorageService.isInstalled()) {
+  if (storageService.isInstalled()) {
     ctx.status = 404
   } else {
     ctx.status = 200
   }
 })
 router.post('/do', async (ctx, next) => {
-  if (StorageService.isInstalled()) {
+  if (storageService.isInstalled()) {
     ctx.status = 404
     return
   }
@@ -27,14 +27,14 @@ router.post('/do', async (ctx, next) => {
   try {
     await dataService.clear()
     await dataService.addUser(username, password)
-    StorageService.clear()
-    StorageService.setJwtSecret(JWT_SECRET)
-    StorageService.setJwtExpire(JW_EXPIRE)
-    StorageService.setJwtRefresh(JW_REFRESH)
-    StorageService.setApikeySecret(APIKEY_SECRET)
-    await StorageService.setHexoRoot(HEXO_ROOT)
+    storageService.clear()
+    storageService.setJwtSecret(JWT_SECRET)
+    storageService.setJwtExpire(JW_EXPIRE)
+    storageService.setJwtRefresh(JW_REFRESH)
+    storageService.setApikeySecret(APIKEY_SECRET)
+    await storageService.setHexoRoot(HEXO_ROOT)
     await initHexo(HEXO_ROOT)
-    StorageService.markInstalled()
+    storageService.markInstalled()
     ctx.body = 'installed'
   } catch (err) {
     if (err.code === HexoError.NOT_BLOG_ROOT || err.code === HexoError.EMPTY_HEXO_ROOT) {

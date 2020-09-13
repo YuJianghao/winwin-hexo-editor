@@ -1,5 +1,5 @@
-const { dataService, DataServiceError } = require('../service')
-const StorageService = require('../service/StorageService')
+const { dataService, DataServiceError } = require('../service/data_service')
+const { storageService } = require('../service/storage_service')
 const SettingsError = require('./errors')
 const { HexoError } = require('../server/hexo')
 
@@ -68,14 +68,14 @@ exports.getUser = async (ctx, next) => {
 
 exports.setHexoInfo = async (ctx, next) => {
   const HEXO_ROOT = ctx.request.body.HEXO_ROOT
-  await StorageService.setHexoRoot(HEXO_ROOT)
+  await storageService.setHexoRoot(HEXO_ROOT)
   ctx.body = {
     success: true
   }
 }
 
 exports.getHexoInfo = async (ctx, next) => {
-  const HEXO_ROOT = StorageService.getHexoRoot()
+  const HEXO_ROOT = storageService.getHexoRoot()
   ctx.body = {
     success: false,
     data: {
@@ -89,10 +89,10 @@ exports.security = async (ctx, next) => {
   const JW_EXPIRE = ctx.request.body.JW_EXPIRE
   const JW_REFRESH = ctx.request.body.JW_REFRESH
   const APIKEY_SECRET = ctx.request.body.APIKEY_SECRET
-  StorageService.setJwtSecret(JWT_SECRET)
-  StorageService.setJwtExpire(JW_EXPIRE)
-  StorageService.setJwtRefresh(JW_REFRESH)
-  StorageService.setApikeySecret(APIKEY_SECRET)
+  storageService.setJwtSecret(JWT_SECRET)
+  storageService.setJwtExpire(JW_EXPIRE)
+  storageService.setJwtRefresh(JW_REFRESH)
+  storageService.setApikeySecret(APIKEY_SECRET)
   ctx.body = {
     success: true
   }

@@ -5,8 +5,8 @@ const logger = require('log4js').getLogger('server:auth')
 const parallel = require('../lib/koa-parallel')
 const fs = require('fs')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
-const StorageService = require('../service/StorageService')
-const { dataService } = require('../service')
+const { storageService, StorageServiceError } = require('../service/storage_service')
+const { dataService } = require('../service/data_service')
 
 class AuthError extends Error {
   constructor (message, code) {
@@ -45,10 +45,10 @@ exports.apiKeyAuth = async function (ctx, next) {
   if (!apikey) {
     ctx.throw(new AuthError('APIKEY is required', AuthError.NO_APIKEY))
   } else {
-    const availableAPIKEYS = StorageService.getAvailableAPIKEY()
+    const availableAPIKEYS = storageService.getAvailableAPIKEY()
     if (availableAPIKEYS.includes(apikey)) {
       logger.debug('apikey auth pass')
-      StorageService.setAPIKEYLastUsed(apikey)
+      storageService.setAPIKEYLastUsed(apikey)
       ctx.state.apikey = apikey
       await next()
     } else {
@@ -60,7 +60,7 @@ exports.apiKeyAuth = async function (ctx, next) {
 
 const tokens = {}
 exports.requestAPIKEY = async function (ctx, next) {
-  const token = jwt.sign({ issueat: new Date().valueOf(), type: 'apikeytoken' }, StorageService.getApikeySecret(), { expiresIn: '5min' })
+  const token = jwt.sign({ issueat: new Date().valueOf(), type: 'apikeytoken' }, storageService.getApikeySecret(), { expiresIn: '5min' })
   tokens[token] = true
   ctx.body = {
     success: true,
@@ -73,10 +73,10 @@ exports.requestAPIKEY = async function (ctx, next) {
 exports.removeAPIKEY = async function (ctx, next) {
   if (ctx.state.apikey) {
     const apikey = ctx.state.apikey
-    StorageService.removeAPIKEY(apikey)
+    storageService.removeAPIKEY(apikey)
   } else {
     const issuedAt = ctx.request.body.issuedAt
-    StorageService.removeAPIKEYByIssuedAt(issuedAt)
+    storageService.removeAPIKEYByIssuedAt(issuedAt)
   }
   ctx.body = {
     success: true
@@ -88,7 +88,16 @@ exports.getAPIKEY = async function (ctx, next) {
   const apikey = jwt.sign({ issueat: new Date().valueOf(), type: 'apikey' }, 's' + Math.random())
   const deviceType = ctx.request.body.deviceType || 'unknown'
   const deviceSystem = ctx.request.body.deviceSystem || 'unknown'
-  StorageService.addAPIKEY({ apikey, deviceType, deviceSystem })
+  try {
+    storageService.addAPIKEY({ apikey, deviceType, deviceSystem })
+  } catch (err) {
+    if (err.code === StorageServiceError.BAD_OPTIONS) {
+      ctx.status = 400
+      ctx.body = {
+        success: false
+      }
+    }
+  }
   ctx.body = {
     success: true,
     data: {
@@ -101,7 +110,7 @@ exports.getAPIKEYInfo = async function (ctx, next) {
   ctx.body = {
     success: true,
     data: {
-      apikeys: StorageService.getAPIKEYInfo()
+      apikeys: storageService.getAPIKEYInfo()
     }
   }
 }
@@ -113,7 +122,7 @@ exports.apiKeyJwtAuth = async function (ctx, next) {
   } else {
     let decoded
     try {
-      decoded = jwt.verify(token, StorageService.getApikeySecret())
+      decoded = jwt.verify(token, storageService.getApikeySecret())
     } catch (e) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
@@ -133,7 +142,7 @@ exports.jwtAuth = async function (ctx, next) {
     ctx.throw(new AuthError('Bearer token required', AuthError.NO_BEARER_TOKEN))
   } else {
     try {
-      const decoded = jwt.verify(token, StorageService.getJwtSecret())
+      const decoded = jwt.verify(token, storageService.getJwtSecret())
       ctx.state.user = decoded
     } catch (err) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
@@ -200,8 +209,8 @@ exports.getToken = async function (ctx, next) {
   // set id and token type into jwt payload
   const id = ctx.state.id || ctx.state.user.id
   const name = ctx.state.name || ctx.state.user.name
-  var token = jwt.sign({ id, name, type: 'access' }, StorageService.getJwtSecret(), { expiresIn: StorageService.getJwtExpire() })
-  var refreshToken = jwt.sign({ id, name, type: 'refresh' }, StorageService.getJwtSecret(), { expiresIn: StorageService.getJwtRefresh() })
+  var token = jwt.sign({ id, name, type: 'access' }, storageService.getJwtSecret(), { expiresIn: storageService.getJwtExpire() })
+  var refreshToken = jwt.sign({ id, name, type: 'refresh' }, storageService.getJwtSecret(), { expiresIn: storageService.getJwtRefresh() })
   ctx.body = {
     success: true,
     message: 'success',
