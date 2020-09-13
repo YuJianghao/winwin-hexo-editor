@@ -239,11 +239,9 @@ class Hexo {
     debug('update', post._id, Object.keys(post))
     var src = await this._get(post._id, isPage)
     if (!src) return null
-    console.log(src)
     src = new Post(src)
     src.update(post)
     var posts = await this._save([{ post: src, isPage }])
-    console.log(posts[0])
     if (posts.length === 0) {
       const err = new Error()
       err.status = 500

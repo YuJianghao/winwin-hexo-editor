@@ -52,7 +52,6 @@ class StorageService {
   setAPIKEYLastUsed (apikey) {
     const apikeys = this._get(APIKEYS) || {}
     apikeys[apikey].lastUsedAt = new Date().valueOf()
-    console.log(apikeys)
     this._set(APIKEYS, apikeys)
   }
 
