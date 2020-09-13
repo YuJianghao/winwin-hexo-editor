@@ -6,7 +6,7 @@
     "restart": "pm2 restart hexoeditor",
     "start": "node bin/www",
     "dev": "export DEBUG='hexo*' && ./node_modules/.bin/nodemon -i ./data bin/www",
-    "prd": "pm2 start bin/www --name hexoeditor",
+    "prd": "pm2 start bin/www --name hexoeditor -o log/pm2-log.log -e log/pm2-err.log",
     "test": "echo \"Error: no test specified\" && exit 1",
     "sub:fe": "cd frontend && git pull origin master",
     "doc:dev": "npx vuepress dev raw_docs",

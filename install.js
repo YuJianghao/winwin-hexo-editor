@@ -100,6 +100,9 @@ async function install () {
       prefix: chalk.blue('?')
     }])
   fs.writeFileSync('./config.user.js', `module.exports = {\n  port: ${answer.port}\n}\n`)
+  if (!fs.existsSync('./log')) {
+    fs.mkdirSync('./log')
+  }
   // #endregion
 
   // #region Finished

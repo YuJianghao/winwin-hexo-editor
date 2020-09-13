@@ -15,7 +15,8 @@ const version = require('./version')
 const StorageService = require('./service/StorageService')
 const {
   hexoeditorserver,
-  initHexo
+  initHexo,
+  HexoError
 } = require('./server')
 
 // error handler
@@ -65,7 +66,12 @@ if (!isInstalled) {
   const install = require('./install')
   app.use(install.routes(), install.allowedMethods())
 } else {
-  initHexo(StorageService.getHexoRoot())
+  initHexo(StorageService.getHexoRoot()).catch(err => {
+    if (![HexoError.EMPTY_HEXO_ROOT, HexoError.NOT_BLOG_ROOT].includes(err.code)) {
+      logger.error('Unknown Error:', err)
+      process.exit(1)
+    }
+  })
 }
 
 // hexo-editor-server

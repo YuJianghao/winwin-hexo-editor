@@ -6,9 +6,14 @@ const getLogfilePath = filename => {
 }
 log4js.configure({
   appenders: {
-    everything: {
+    default: {
       type: 'file',
-      filename: getLogfilePath('all.log'),
+      filename: getLogfilePath('default.log'),
+      removeColor: true
+    },
+    'hexo-editor-server': {
+      type: 'file',
+      filename: getLogfilePath('hexo-editor-server.log'),
       removeColor: true
     },
     console: {
@@ -16,6 +21,7 @@ log4js.configure({
     }
   },
   categories: {
-    default: { appenders: ['console', 'everything'], level: isDev ? 'debug' : 'info' }
+    'hexo-editor-server:hexo': { appenders: ['console', 'hexo-editor-server'], level: isDev ? 'debug' : 'info' },
+    default: { appenders: ['console', 'default'], level: isDev ? 'debug' : 'info' }
   }
 })

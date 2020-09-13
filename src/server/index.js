@@ -5,6 +5,7 @@
 
 const debug = require('debug')('hexo-editor-server')
 const router = require('koa-router')()
+const chalk = require('chalk')
 const { HexoError } = require('./hexo')
 const logger = require('log4js').getLogger('hexo-editor-server')
 
@@ -55,10 +56,24 @@ exports.hexoeditorserver = function (app, opts = {}) {
   app.use(router.routes(), router.allowedMethods())
 }
 
+/**
+ * 可能的错误：HexoError.EMPTY_HEXO_ROOT | HexoError.NOT_BLOG_ROOT | other
+ * @param {string} hexoRoot Hexo博客目录
+ */
 exports.initHexo = async (hexoRoot) => {
   const hexo = require('./controller').hexo
-  return hexo.init(hexoRoot).catch(_ => {
-    logger.warn('\x1b[31mHexo init failed, check your HEXO_ROOT settings first!')
+  return hexo.init(hexoRoot).catch(err => {
+    switch (err.code) {
+      case HexoError.EMPTY_HEXO_ROOT:
+        logger.warn(chalk.yellow.bold('HEXO_ROOT is required!'))
+        break
+      case HexoError.NOT_BLOG_ROOT:
+        logger.warn(chalk.yellow.bold('Hexo init failed, check your HEXO_ROOT settings first!'))
+        break
+      default:
+        break
+    }
+    throw err
   })
 }
 

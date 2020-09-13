@@ -37,7 +37,7 @@ router.post('/do', async (ctx, next) => {
     StorageService.markInstalled()
     ctx.body = 'installed'
   } catch (err) {
-    if (err.code === HexoError.NOT_BLOG_ROOT) {
+    if (err.code === HexoError.NOT_BLOG_ROOT || err.code === HexoError.EMPTY_HEXO_ROOT) {
       ctx.status = 400
       ctx.body = {
         success: false,
