@@ -75,7 +75,7 @@ class Hexo {
    * @private
    */
   async _checkCanDeploy () {
-    logger.debug('checing blog can deploy')
+    logger.debug('checking blog can deploy')
     const hexoConfigYML = YAML.parse(fs.readFileSync(path.join(this.cwd, '_config.yml')).toString())
     this.canDeploy = hexoConfigYML.deploy && hexoConfigYML.deploy.type
     if (!this.canDeploy) {
@@ -163,7 +163,7 @@ class Hexo {
     var file = null
     await Promise.all(posts.map(async item => {
       const { post, isPage } = item
-      logger.info('save', post._id, 'isPage', isPage)
+      logger.info('save', post._id, 'is page:', isPage)
       const src = await this._get(post._id, isPage)
       // 删除源文件
       this.unlinkSync(src.full_source)
