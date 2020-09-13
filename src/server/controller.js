@@ -2,7 +2,6 @@ const { Hexo, HexoError } = require('./hexo')
 const hexo = new Hexo()
 const Search = require('./search')
 const search = new Search(hexo)
-const logger = require('log4js').getLogger('hexo-editor-server')
 const restrictedKeys = require('./info').restrictedKeys
 
 exports.hexo = hexo
