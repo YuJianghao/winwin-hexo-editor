@@ -145,7 +145,7 @@ class Hexo {
 
   unlinkSync () {
     try {
-      this.unlinkSync(...arguments)
+      fs.unlinkSync(...arguments)
     } catch (err) {
       logger.error('fail to delete fail:', ...arguments)
       throw err
