@@ -3,7 +3,6 @@
  * @author winwin2011
  */
 
-const debug = require('debug')('hexo-editor-server')
 const router = require('koa-router')()
 const chalk = require('chalk')
 const { HexoError } = require('./hexo')
@@ -18,7 +17,7 @@ const logger = require('log4js').getLogger('hexo-editor-server')
  * @returns {void}
  */
 exports.hexoeditorserver = function (app, opts = {}) {
-  debug('module opts input', opts)
+  logger.debug('module opts input base:', opts.base)
 
   if (!app) {
     // check if koa app exists
@@ -33,10 +32,10 @@ exports.hexoeditorserver = function (app, opts = {}) {
     // format server base and router prefix
     opts.base = (opts.base.slice(0, 1) === '/' ? '' : '/') + opts.base
     opts.base += opts.base.slice(-1) === '/' ? '' : '/'
-    debug('module opts formated', opts)
+    logger.debug('module opts formated base:', opts.base)
   } else {
     opts.base = '/hexo/'
-    console.log('using default base /hexo/')
+    logger.info('using default base /hexo/')
   }
   opts.prefix = opts.base.slice(0, -1)
 
@@ -45,7 +44,7 @@ exports.hexoeditorserver = function (app, opts = {}) {
 
   // apply custom auth middleware
   if (opts.auth) {
-    debug('apply custom auth middleware')
+    logger.debug('apply custom auth middleware')
     router.use(opts.auth)
   }
 

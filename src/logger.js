@@ -1,6 +1,8 @@
 const log4js = require('log4js')
 const path = require('path')
-const { isDev } = require('./utils')
+const {
+  isDev
+} = require('./utils')
 const getLogfilePath = filename => {
   return path.resolve(process.cwd(), 'log', filename)
 }
@@ -17,11 +19,25 @@ log4js.configure({
       removeColor: true
     },
     console: {
-      type: 'console'
+      type: 'console',
+      layout: {
+        type: 'pattern',
+        pattern: '%[[winwin-hexo-editor][%p]%] %m'
+      }
     }
   },
   categories: {
-    'hexo-editor-server:hexo': { appenders: ['console', 'hexo-editor-server'], level: isDev ? 'debug' : 'info' },
-    default: { appenders: ['console', 'default'], level: isDev ? 'debug' : 'info' }
+    'hexo-editor-server:hexo': {
+      appenders: ['hexo-editor-server'].concat(isDev ? ['console'] : []),
+      level: isDev ? 'debug' : 'info'
+    },
+    'hexo-editor-server': {
+      appenders: ['hexo-editor-server'].concat(isDev ? ['console'] : []),
+      level: isDev ? 'debug' : 'info'
+    },
+    default: {
+      appenders: ['console', 'default'],
+      level: isDev ? 'debug' : 'info'
+    }
   }
 })

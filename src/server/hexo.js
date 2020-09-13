@@ -15,6 +15,7 @@ class HexoError extends Error {
     this.code = code
   }
 }
+HexoError.prototype.name = 'HexoError'
 HexoError.NOT_BLOG_ROOT = 'NOT_BLOG_ROOT'
 HexoError.EMPTY_HEXO_ROOT = 'EMPTY_HEXO_ROOT'
 
@@ -95,7 +96,7 @@ class Hexo {
       logger.warn('Function syncGit, resetGit and saveGit will cause errors')
     }
 
-    this.hexo = new HexoAPI(this.cwd, { debug: false, draft: true, silent: process.env.NODE_ENV === 'production' })
+    this.hexo = new HexoAPI(this.cwd, { debug: false, draft: true, silent: process.env.NODE_ENV !== 'development' })
     if (this.isGit) { this.git = new Git(this.cwd) }
 
     // 初始化hexo

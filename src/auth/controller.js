@@ -1,10 +1,10 @@
 const auth = require('basic-auth')
 const jwt = require('jsonwebtoken')
 const compose = require('koa-compose')
+const logger = require('log4js').getLogger('server:auth')
 const parallel = require('../lib/koa-parallel')
 const fs = require('fs')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
-const debug = require('debug')('hexo-editor:server')
 const StorageService = require('../service/StorageService')
 const { ds } = require('../service')
 
@@ -47,12 +47,12 @@ exports.apiKeyAuth = async function (ctx, next) {
   } else {
     const availableAPIKEYS = StorageService.getAvailableAPIKEY()
     if (availableAPIKEYS.includes(apikey)) {
-      debug('apikey auth pass')
+      logger.debug('apikey auth pass')
       StorageService.setAPIKEYLastUsed(apikey)
       ctx.state.apikey = apikey
       await next()
     } else {
-      debug('APIKEY not available')
+      logger.debug('APIKEY not available')
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
   }
@@ -98,7 +98,6 @@ exports.getAPIKEY = async function (ctx, next) {
 }
 
 exports.getAPIKEYInfo = async function (ctx, next) {
-  // 这个apikey只是一个随机字符串没啥含义
   ctx.body = {
     success: true,
     data: {
