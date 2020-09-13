@@ -104,6 +104,11 @@ class DataService {
       return User.findOne({ username })
     }
   }
+
+  async hasUserById (_id) {
+    const User = this.model('User')
+    return User.findOne({ _id })
+  }
 }
 
 const ds = new DataService()
