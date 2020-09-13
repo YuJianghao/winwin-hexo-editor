@@ -423,7 +423,7 @@ class Hexo {
   async updatePost (options, isPage) {
     this._checkReady()
     if (!options._id) throw new Error('options._id is required!')
-    console.log('update post', options._id, 'isPage', isPage)
+    logger.info('update post', options._id, 'isPage', isPage)
     return this._update(new Post(options, false), isPage)
   }
 
@@ -435,7 +435,7 @@ class Hexo {
   async deletePost (_id, isPage = false, hard = true) {
     this._checkReady()
     if (!_id) throw new Error('_id is required!')
-    console.log('delete post', _id)
+    logger.info('delete post', _id)
     if (hard) {
       var posts = await this._remove([{ id: _id, isPage }])
       if (posts.length === 0) this._throwPostNotFound()
@@ -461,7 +461,7 @@ class Hexo {
   async publishPost (_id) {
     this._checkReady()
     if (!_id) throw new Error('_id is required!')
-    console.log('publish post', _id)
+    logger.info('publish post', _id)
     var doc = await this._get(_id)
     try {
       await this.hexo.post.publish({ slug: doc.slug }, true)
@@ -484,7 +484,7 @@ class Hexo {
   async unpublishPost (_id) {
     this._checkReady()
     if (!_id) throw new Error('_id is required!')
-    console.log('unpublish post', _id)
+    logger.info('unpublish post', _id)
     var doc = await this._get(_id)
     var post = new Post(doc)
     post.published = false
