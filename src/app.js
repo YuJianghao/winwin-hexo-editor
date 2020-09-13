@@ -3,10 +3,11 @@ const app = new Koa()
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
-const logger = require('koa-logger')
+const koaLogger = require('koa-logger')
 const cors = require('koa-cors')
 const path = require('path')
-
+const log4js = require('log4js')
+const logger = log4js.getLogger('server')
 const authController = require('./auth/controller')
 const authRouter = require('./auth/router')
 const settings = require('./settings/router')
@@ -30,7 +31,7 @@ app.use(async (ctx, next) => {
     }
     if (ctx.status === 500) {
       ctx.body.message = 'server internal error, try again later'
-      console.log(err)
+      logger.error(500, err)
     }
   }
 })
@@ -43,7 +44,11 @@ app.use(bodyparser({
   enableTypes: ['json', 'form', 'text']
 }))
 app.use(json())
-app.use(logger())
+app.use(koaLogger((str, args) => {
+  // redirect koa logger to other output pipe
+  // default is process.stdout(by console.log function)
+  log4js.getLogger('http').info(str)
+}))
 
 // static resources
 const serveStatic = require('koa-static')
@@ -60,9 +65,7 @@ if (!isInstalled) {
   const install = require('./install')
   app.use(install.routes(), install.allowedMethods())
 } else {
-  initHexo(StorageService.getHexoRoot()).catch(_ => {
-    console.log('\x1b[31mHexo init failed, check your HEXO_ROOT settings first!')
-  })
+  initHexo(StorageService.getHexoRoot())
 }
 
 // hexo-editor-server

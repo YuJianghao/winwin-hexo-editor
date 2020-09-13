@@ -41,6 +41,7 @@
     "koa-onerror": "^4.1.0",
     "koa-router": "^9.4.0",
     "koa-static": "^5.0.0",
+    "log4js": "^6.3.0",
     "node-env-file": "^0.1.8",
     "simple-git": "^2.20.1",
     "simple-json-db": "^1.2.2",

@@ -9,6 +9,7 @@ const config = require('../config.default')
  * Module dependencies.
  */
 
+require('../src/logger')
 var app = require('../src/app')
 var debug = require('debug')('hexo-editor:server')
 var http = require('http')

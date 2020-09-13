@@ -6,6 +6,7 @@
 const debug = require('debug')('hexo-editor-server')
 const router = require('koa-router')()
 const { HexoError } = require('./hexo')
+const logger = require('log4js').getLogger('hexo-editor-server')
 
 /**
  * mount hexo-editor-server to koa app
@@ -56,7 +57,9 @@ exports.hexoeditorserver = function (app, opts = {}) {
 
 exports.initHexo = async (hexoRoot) => {
   const hexo = require('./controller').hexo
-  return hexo.init(hexoRoot)
+  return hexo.init(hexoRoot).catch(_ => {
+    logger.warn('\x1b[31mHexo init failed, check your HEXO_ROOT settings first!')
+  })
 }
 
 exports.HexoError = HexoError
