@@ -1,4 +1,4 @@
-const { ds, DataServiceError } = require('../service')
+const { dataService, DataServiceError } = require('../service')
 const StorageService = require('../service/StorageService')
 const SettingsError = require('./errors')
 const { HexoError } = require('../server/hexo')
@@ -44,8 +44,8 @@ exports.updateUser = async (ctx, next) => {
   if (!id) throw new SettingsError('id is required', SettingsError.INVALID_PARAMS)
   const username = ctx.request.body.username
   const password = ctx.request.body.password
-  await ds.updateUser(id, username, password)
-  const user = await ds.getUser(id)
+  await dataService.updateUser(id, username, password)
+  const user = await dataService.getUser(id)
   ctx.body = {
     success: true,
     data: {
@@ -57,7 +57,7 @@ exports.updateUser = async (ctx, next) => {
 exports.getUser = async (ctx, next) => {
   const id = ctx.params.id || ctx.state.user.id
   if (!id) throw new SettingsError('id is required', SettingsError.INVALID_PARAMS)
-  const user = await ds.getUser(id)
+  const user = await dataService.getUser(id)
   ctx.body = {
     success: true,
     data: {

@@ -6,7 +6,7 @@ const parallel = require('../lib/koa-parallel')
 const fs = require('fs')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
 const StorageService = require('../service/StorageService')
-const { ds } = require('../service')
+const { dataService } = require('../service')
 
 class AuthError extends Error {
   constructor (message, code) {
@@ -138,7 +138,7 @@ exports.jwtAuth = async function (ctx, next) {
     } catch (err) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
-    if (!await ds.hasUserById(ctx.state.user.id)) {
+    if (!await dataService.hasUserById(ctx.state.user.id)) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
     await next()
@@ -179,7 +179,7 @@ exports.basicAuth = async function (ctx, next) {
     }
   } else {
     // find if user exist in database
-    var dbuser = await ds.hasUser(user.name, user.pass)
+    var dbuser = await dataService.hasUser(user.name, user.pass)
     // var query = await User.find(user)
     if (dbuser) {
       // if user exist then set id
