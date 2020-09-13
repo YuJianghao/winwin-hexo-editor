@@ -1,10 +1,15 @@
 const log4js = require('log4js')
 const path = require('path')
+const fs = require('fs')
 const {
   isDev
 } = require('./utils')
+const logFolder = path.resolve(process.cwd(), 'log')
 const getLogfilePath = filename => {
-  return path.resolve(process.cwd(), 'log', filename)
+  return path.resolve(logFolder, filename)
+}
+if (!fs.existsSync(logFolder)) {
+  fs.mkdirSync(logFolder)
 }
 log4js.configure({
   appenders: {
