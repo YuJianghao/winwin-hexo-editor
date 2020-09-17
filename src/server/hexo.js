@@ -240,6 +240,8 @@ class Hexo {
     if (isPage) {
       delete post.slug
       post.layout = 'page'
+    } else {
+      post.layout = 'draft'
     }
     // 创建文件
     const file = await this.hexo.post.create(post)
