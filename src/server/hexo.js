@@ -78,7 +78,6 @@ class Hexo {
     logger.debug('checking blog can deploy')
     const hexoConfigYML = YAML.parse(fs.readFileSync(path.join(this.cwd, '_config.yml')).toString())
     if (hexoConfigYML.deploy) {
-      console.log(hexoConfigYML.deploy)
       if (!Array.isArray(hexoConfigYML.deploy)) {
         this.canDeploy = !!hexoConfigYML.deploy.type
       } else {
@@ -473,11 +472,9 @@ class Hexo {
     if (!_id) throw new Error('_id is required!')
     logger.info('publish post', _id)
     var doc = await this._get(_id)
-    console.log(doc)
     try {
       await this.hexo.post.publish({ slug: doc.slug }, true)
     } catch (err) {
-      console.error(err)
       this._throwPostNotFound()
     }
     await this.load()
