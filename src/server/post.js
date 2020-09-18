@@ -43,6 +43,9 @@ class Post {
       Object.keys(post).map(key => {
         if (post[key]) { this[key] = post[key] }
       })
+      if (!this.frontmatters) {
+        this.frontmatters = {}
+      }
     }
   }
 
@@ -80,6 +83,7 @@ class Post {
     })
     delete this.frontmatters
     debug('freeze post', Object.keys(this))
+    return this
   }
 }
 

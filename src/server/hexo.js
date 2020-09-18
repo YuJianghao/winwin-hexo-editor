@@ -236,7 +236,6 @@ class Hexo {
       post.slug += (addon + 1)
       return this._add(post, addon + 1)
     }
-    post.published = false
     if (isPage) {
       delete post.slug
       post.layout = 'page'
@@ -244,7 +243,7 @@ class Hexo {
       post.layout = 'draft'
     }
     // 创建文件
-    const file = await this.hexo.post.create(post)
+    const file = await this.hexo.post.create(new Post(post, false).freeze())
     // 更新数据
     await this.load()
     // 读取文件
@@ -465,9 +464,11 @@ class Hexo {
     if (!_id) throw new Error('_id is required!')
     logger.info('publish post', _id)
     var doc = await this._get(_id)
+    console.log(doc)
     try {
       await this.hexo.post.publish({ slug: doc.slug }, true)
     } catch (err) {
+      console.error(err)
       this._throwPostNotFound()
     }
     await this.load()
