@@ -77,7 +77,16 @@ class Hexo {
   async _checkCanDeploy () {
     logger.debug('checking blog can deploy')
     const hexoConfigYML = YAML.parse(fs.readFileSync(path.join(this.cwd, '_config.yml')).toString())
-    this.canDeploy = hexoConfigYML.deploy && hexoConfigYML.deploy.type
+    if (hexoConfigYML.deploy) {
+      console.log(hexoConfigYML.deploy)
+      if (!Array.isArray(hexoConfigYML.deploy)) {
+        this.canDeploy = !!hexoConfigYML.deploy.type
+      } else {
+        this.canDeploy = !!hexoConfigYML.deploy[0].type
+      }
+    } else {
+      this.canDeploy = false
+    }
     if (!this.canDeploy) {
       logger.warn(`Hexo deploy config not exists in ${this.cwd}. Can't deploy blog.`)
     } else {
