@@ -1,5 +1,9 @@
 # 更新日志 ｜ Release Notes
 
+### 0.5.5
+
+- 复不能检测数组形式配置的deploy命令的bug
+
 ### 0.5.4
 
 - 修复路由bug,again*2

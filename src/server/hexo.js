@@ -54,9 +54,22 @@ class Hexo {
    */
   async _checkCanDeploy () {
     const hexoConfigYML = YAML.parse(fs.readFileSync(path.join(this.cwd, '_config.yml')).toString())
-    this.canDeploy = hexoConfigYML.deploy && hexoConfigYML.deploy.type
+    if (hexoConfigYML.deploy) {
+      console.log(hexoConfigYML.deploy)
+      if (!Array.isArray(hexoConfigYML.deploy)) {
+        this.canDeploy = !!hexoConfigYML.deploy.type
+        debug('deploy config type: object')
+      } else {
+        debug('deploy config type: array')
+        this.canDeploy = !!hexoConfigYML.deploy[0].type
+      }
+    } else {
+      this.canDeploy = false
+    }
     if (!this.canDeploy) {
       warn(`Hexo deploy config not exists in ${this.cwd}. Can't deploy blog.`)
+    } else {
+      debug('deploy check: pass')
     }
   }
 
