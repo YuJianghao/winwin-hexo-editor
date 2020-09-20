@@ -1,6 +1,6 @@
-# 致谢
+# Acknowledgement
 
-感谢和我一起扣代码的[maomishen](https://github.com/maomishen/)小伙伴！
+Thanks for my friend: [maomishen](https://github.com/maomishen/)！
 
 ---
 
@@ -8,7 +8,7 @@
 
 [hexo-admin](https://github.com/jaredly/hexo-admin) by [jaredly](https://github.com/jaredly), [homepage](https://jaredforsyth.com/hexo-admin/)
 
-感谢他们教会我怎么使用hexo
+I learnt a lot about hexo usage from them!
 
 ---
 

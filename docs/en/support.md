@@ -1,6 +1,6 @@
-# 支持
+# Support
 
-QQ群：590355610
+QQ group：590355610
 
 - [Gitee FAQ](https://winwin_2011.gitee.io/winwin-hexo-editor/support/)
 - [Gitee Issue](https://gitee.com/winwin_2011/winwin-hexo-editor/issues)

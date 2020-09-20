@@ -1,4 +1,6 @@
-# 更新日志
+# Release Notes
+
+Sorry, only Simplified Chinese version is available for now
 
 ### 0.5.4
 

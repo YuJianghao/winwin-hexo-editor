@@ -1,6 +1,6 @@
 ---
 home: true
-navbar: false
+# navbar: false
 heroImage: /img/hexo-editor-logo.svg
 heroText: winwin-hexo-editor
 tagline: 在自己的服务器上搭建Hexo博客编辑器
