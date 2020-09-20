@@ -19,6 +19,9 @@ module.exports = {
     ],
     search: false,
     lastUpdated: '最后编辑于',
-    smoothScroll: true
-  }
+    smoothScroll: true,
+  },
+  head:[
+    ['link', { rel: 'icon', href: '/img/hexo-editor-logo.svg' }]
+  ]
 }
