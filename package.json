@@ -8,8 +8,8 @@
   "license": "GPLv3",
   "private": true,
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs -d dist"
+    "docs:dev": "vuepress dev src",
+    "docs:build": "vuepress build src -d docs"
   },
   "devDependencies": {
     "vuepress": "^1.5.4"
