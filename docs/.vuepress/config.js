@@ -56,7 +56,7 @@ module.exports = {
           '/en/contribute',
           '/en/acknowledgement',
         ],
-        lastUpdated: '最后编辑于',
+        lastUpdated: 'Last Updated',
       }
     },
     logo: '/img/hexo-editor-logo.svg',
