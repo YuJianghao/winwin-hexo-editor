@@ -6,7 +6,7 @@
       <a href='https://gitee.com/winwin_2011/winwin-hexo-editor' class="gitee-corner">
         <img src='https://gitee.com/nobodyknowme/FloatWindowDemo/widgets/widget_1.svg?color=4172cf' alt='Fork me on Gitee'></img>
       </a>
-      <img class="screen" src="/img/screen.png" alt="">
+      <img class="screen" :src="$withBase('/img/screen.png')" alt="">
       <div class="container">
         <div class="content">
           <h2 class="title">
@@ -34,7 +34,7 @@
             data-aos-duration="500"
             data-aos-delay="150"
           >
-            <img src="/img/edit.png" alt="编辑">
+            <img :src="$withBase('/img/edit.png')" alt="编辑">
             <div class="desc">{{frontmatter.intro.edit}}</div>
           </div>
           <div class="item"
@@ -43,7 +43,7 @@
             data-aos-duration="500"
             data-aos-delay="300"
           >
-            <img src="/img/organize.png" alt="整理">
+            <img :src="$withBase('/img/organize.png')" alt="整理">
             <div class="desc">{{frontmatter.intro.organize}}</div>
           </div>
           <div class="item"
@@ -52,7 +52,7 @@
             data-aos-duration="500"
             data-aos-delay="450"
           >
-            <img src="/img/deploy.png" alt="发布">
+            <img :src="$withBase('/img/deploy.png')" alt="发布">
             <div class="desc">{{frontmatter.intro.deploy}}</div>
           </div>
           <div class="item"
@@ -61,7 +61,7 @@
             data-aos-duration="500"
             data-aos-delay="600"
           >
-            <img src="/img/storage.png" alt="存储">
+            <img :src="$withBase('/img/storage.png')" alt="存储">
             <div class="desc">{{frontmatter.intro.storage}}</div>
           </div>
         </div>
@@ -70,7 +70,7 @@
     <div class="section screen">
       <div class="container" id="screen-parallax-container">
         <div id="screen-parallax-content" :style="`transform: translateY(${position}px)`">
-          <img src="/img/screen.png" alt="">
+          <img :src="$withBase('/img/screen.png')" alt="">
         </div>
       </div>
     </div>
