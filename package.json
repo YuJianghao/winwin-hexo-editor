@@ -13,5 +13,9 @@
   },
   "devDependencies": {
     "vuepress": "^1.5.4"
+  },
+  "dependencies": {
+    "aos": "^2.3.4",
+    "vue-rellax": "^0.1.0"
   }
 }
