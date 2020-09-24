@@ -9,8 +9,6 @@
     "prd": "pm2 start bin/www --name hexoeditor -o log/pm2-log.log -e log/pm2-err.log",
     "test": "echo \"Error: no test specified\" && exit 1",
     "sub:fe": "cd frontend && git pull origin master",
-    "doc:dev": "npx vuepress dev raw_docs",
-    "doc:build": "npx vuepress build raw_docs -d docs"
   },
   "dependencies": {
     "basic-auth": "^2.0.1",
@@ -50,7 +48,6 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4",
-    "vuepress": "^1.5.4"
+    "nodemon": "^2.0.4"
   }
 }
