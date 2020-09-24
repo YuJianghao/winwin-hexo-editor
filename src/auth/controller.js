@@ -5,8 +5,9 @@ const logger = require('log4js').getLogger('server:auth')
 const parallel = require('../lib/koa-parallel')
 const fs = require('fs')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
-const { storageService, StorageServiceError } = require('../service/storage_service')
-const { dataService } = require('../service/data_service')
+const { storageService, ConfigServiceError } = require('../service/config_service')
+const { ApikeyService, ApikeyServiceError } = require('../service/apikey_service')
+const { UserService } = require('../service/user_service')
 
 class AuthError extends Error {
   constructor (message, code) {
@@ -45,23 +46,22 @@ exports.apiKeyAuth = async function (ctx, next) {
   if (!apikey) {
     ctx.throw(new AuthError('APIKEY is required', AuthError.NO_APIKEY))
   } else {
-    const availableAPIKEYS = storageService.getAvailableAPIKEY()
-    if (availableAPIKEYS.includes(apikey)) {
+    if (await ApikeyService.hasApikey(apikey)) {
       logger.debug('apikey auth pass')
-      storageService.setAPIKEYLastUsed(apikey)
       ctx.state.apikey = apikey
+      ctx.state.user = ApikeyService.getUserFromApikey(apikey).toObject()
+      ctx.state.user.id = ctx.state.user._id
+      delete ctx.state.user._id
       await next()
     } else {
-      logger.debug('APIKEY not available')
+      logger.debug('apikey auth failed, try others')
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
   }
 }
 
-const tokens = {}
-exports.requestAPIKEY = async function (ctx, next) {
-  const token = jwt.sign({ issueat: new Date().valueOf(), type: 'apikeytoken' }, storageService.getApikeySecret(), { expiresIn: '5min' })
-  tokens[token] = true
+exports.requestApikey = async function (ctx, next) {
+  const token = ApikeyService.requestApikey(ctx.state.user.id)
   ctx.body = {
     success: true,
     data: {
@@ -70,39 +70,42 @@ exports.requestAPIKEY = async function (ctx, next) {
   }
 }
 
-exports.removeAPIKEY = async function (ctx, next) {
+exports.removeApikey = async function (ctx, next) {
   if (ctx.state.apikey) {
     const apikey = ctx.state.apikey
-    storageService.removeAPIKEY(apikey)
+    await ApikeyService.removeApikeyByApikey(apikey)
   } else {
-    const issuedAt = ctx.request.body.issuedAt
-    storageService.removeAPIKEYByIssuedAt(issuedAt)
+    const _id = ctx.params.id
+    await ApikeyService.removeApikeyById(_id)
   }
   ctx.body = {
     success: true
   }
 }
 
-exports.getAPIKEY = async function (ctx, next) {
+exports.addApikey = async function (ctx, next) {
   // 这个apikey只是一个随机字符串没啥含义
-  const apikey = jwt.sign({ issueat: new Date().valueOf(), type: 'apikey' }, 's' + Math.random())
-  const deviceType = ctx.request.body.deviceType || 'unknown'
-  const deviceSystem = ctx.request.body.deviceSystem || 'unknown'
+  const id = ctx.state.user.id
+  const deviceType = ctx.request.body.deviceType
+  const deviceSystem = ctx.request.body.deviceSystem
+  let data
   try {
-    storageService.addAPIKEY({ apikey, deviceType, deviceSystem })
+    data = await ApikeyService.addApikey({ id, deviceType, deviceSystem })
   } catch (err) {
-    if (err.code === StorageServiceError.BAD_OPTIONS) {
+    if (err.code === ConfigServiceError.BAD_OPTIONS) {
+      logger.debug(err.message)
       ctx.status = 400
       ctx.body = {
-        success: false
+        success: false,
+        message: err.message
       }
+    } else {
+      throw err
     }
   }
   ctx.body = {
     success: true,
-    data: {
-      apikey
-    }
+    data
   }
 }
 
@@ -110,7 +113,7 @@ exports.getAPIKEYInfo = async function (ctx, next) {
   ctx.body = {
     success: true,
     data: {
-      apikeys: storageService.getAPIKEYInfo()
+      apikeys: ApikeyService.getApikeysInfo()
     }
   }
 }
@@ -122,17 +125,15 @@ exports.apiKeyJwtAuth = async function (ctx, next) {
   } else {
     let decoded
     try {
-      decoded = jwt.verify(token, storageService.getApikeySecret())
+      decoded = ApikeyService.decodeApikeyToken(token)
     } catch (e) {
-      ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
+      if (e.code === ApikeyServiceError.INVALID_APIKEY_TOKEN) {
+        ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
+      }
+      throw e
     }
-    if (!Object.keys(tokens).includes(token)) {
-      ctx.throw(new AuthError('APIKEY token expired', AuthError.API_TOKEN_EXPIRE))
-    } else {
-      delete tokens[token]
-      ctx.state.user = decoded
-      await next()
-    }
+    ctx.state.user = decoded
+    await next()
   }
 }
 
@@ -143,11 +144,12 @@ exports.jwtAuth = async function (ctx, next) {
   } else {
     try {
       const decoded = jwt.verify(token, storageService.getJwtSecret())
+      logger.debug('jwt auth pass')
       ctx.state.user = decoded
     } catch (err) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
-    if (!await dataService.hasUserById(ctx.state.user.id)) {
+    if (!await UserService.hasUserById(ctx.state.user.id)) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
     await next()
@@ -188,7 +190,7 @@ exports.basicAuth = async function (ctx, next) {
     }
   } else {
     // find if user exist in database
-    var dbuser = await dataService.hasUser(user.name, user.pass)
+    var dbuser = await UserService.hasUser(user.name, user.pass)
     // var query = await User.find(user)
     if (dbuser) {
       // if user exist then set id

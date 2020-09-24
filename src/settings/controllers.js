@@ -1,14 +1,16 @@
-const { dataService, DataServiceError } = require('../service/data_service')
-const { storageService } = require('../service/storage_service')
+const { DataServiceError } = require('../service/data_service')
+const { storageService } = require('../service/config_service')
+const { UserService, UserServiceError } = require('../service/user_service')
 const SettingsError = require('./errors')
 const { HexoError } = require('../server/hexo')
+const { password } = require('../../config.default')
 
 exports.errorHandler = async (ctx, next) => {
   try {
     await next()
   } catch (err) {
     switch (err.code) {
-      case DataServiceError.USER_NOT_EXIST:
+      case UserServiceError.USER_NOT_EXIST:
         err.status = 404
         break
       case DataServiceError.INITIATING:
@@ -43,8 +45,8 @@ exports.updateUser = async (ctx, next) => {
   if (!id) throw new SettingsError('id is required', SettingsError.INVALID_PARAMS)
   const username = ctx.request.body.username
   const password = ctx.request.body.password
-  await dataService.updateUser(id, username, password)
-  const user = await dataService.getUser(id)
+  await UserService.updateUser(id, username, password)
+  const user = await UserService.getUser(id)
   ctx.body = {
     success: true,
     data: {
@@ -56,7 +58,7 @@ exports.updateUser = async (ctx, next) => {
 exports.getUser = async (ctx, next) => {
   const id = ctx.params.id || ctx.state.user.id
   if (!id) throw new SettingsError('id is required', SettingsError.INVALID_PARAMS)
-  const user = await dataService.getUser(id)
+  const user = await UserService.getUser(id, false)
   ctx.body = {
     success: true,
     data: {

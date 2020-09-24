@@ -7,12 +7,14 @@ router.post('/token', auth.basicAuth, auth.getToken)
 
 router.post('/refresh', auth.jwtAuth, auth.requestRefreshToken, auth.getToken)
 
-router.post('/apikeytoken', auth.jwtAuth, auth.requestAPIKEY)
+router.post('/apikeytoken', auth.jwtAuth, auth.requestApikey)
 
 router.get('/apikeys', auth.jwtAuth, auth.getAPIKEYInfo)
 
-router.delete('/apikey', auth.apikeyOrJwt, auth.removeAPIKEY)
+router.delete('/apikey', auth.apiKeyAuth, auth.removeApikey)
 
-router.post('/apikey', auth.apiKeyJwtAuth, auth.getAPIKEY)
+router.delete('/apikey/:id', auth.jwtAuth, auth.removeApikey)
+
+router.post('/apikey', auth.apiKeyJwtAuth, auth.addApikey)
 
 module.exports = router

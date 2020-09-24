@@ -12,7 +12,7 @@ const authController = require('./auth/controller')
 const authRouter = require('./auth/router')
 const settings = require('./settings/router')
 const version = require('./version')
-const { storageService } = require('./service/storage_service')
+const { storageService } = require('./service/config_service')
 const {
   hexoeditorserver,
   initHexo,

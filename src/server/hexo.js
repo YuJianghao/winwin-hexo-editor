@@ -99,12 +99,11 @@ class Hexo {
    * @param {String} cwd Hexo博客目录
    */
   async init (cwd) {
-    logger.info('init')
+    logger.info('starting')
     if (!cwd) throw new HexoError('Hexo Root is required!', HexoError.EMPTY_HEXO_ROOT)
     this._checkIsBlog(cwd)
     this.cwd = cwd
     logger.debug('set HEXO_ROOT', this.cwd)
-    logger.info('starting')
     await this._checkCanDeploy()
     this.isGit = isGit(this.cwd)
     if (!this.isGit) {
