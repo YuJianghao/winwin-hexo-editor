@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const logger = require('log4js').getLogger('DataService')
+const logger = require('log4js').getLogger('services:data-service')
 const registerModels = require('./register_models')
 const Database = require('warehouse')
 const { ModelTypes } = require('../models')
@@ -27,7 +27,10 @@ class DataService {
   }
 
   _checkReady () {
-    if (!this._ready) throw new DataServiceError('service initiating', DataServiceError.INITIATING)
+    if (!this._ready) {
+      logger.warn('service initiating')
+      throw new DataServiceError('service initiating', DataServiceError.INITIATING)
+    }
   }
 
   async init () {
@@ -45,12 +48,13 @@ class DataService {
       version: DB_VERSION,
       path: path.resolve(__dirname, DB_PATH, DB_FILE)
     })
-    if (!fs.existsSync(path.resolve(__dirname, DB_PATH, DB_FILE))) {
-      await this.save()
-    }
     // register models
     registerModels(this)
-    await this.database.load()
+    // load
+    if (fs.existsSync(path.resolve(__dirname, DB_PATH, DB_FILE))) {
+      await this.database.load()
+    }
+    logger.info('ready')
     this._ready = true
   }
 

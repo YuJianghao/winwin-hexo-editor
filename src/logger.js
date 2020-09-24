@@ -25,7 +25,10 @@ log4js.configure({
     },
     console: {
       type: 'console',
-      layout: {
+      layout: isDev ? {
+        type: 'pattern',
+        pattern: '%[[%d{hh:mm:ss.SSS}][%c][%p]%] %m'
+      } : {
         type: 'pattern',
         pattern: '%[[winwin-hexo-editor][%p]%] %m'
       }

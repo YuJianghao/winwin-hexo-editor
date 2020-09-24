@@ -1,7 +1,7 @@
 const Router = require('koa-router')
 const { initHexo, HexoError } = require('./server')
 const { dataService } = require('./service/data_service')
-const { storageService } = require('./service/storage_service')
+const { storageService } = require('./service/config_service')
 const { UserService } = require('./service/user_service')
 const router = new Router()
 const config = require('../config.default')

@@ -1,5 +1,5 @@
 const { DataServiceError } = require('../service/data_service')
-const { storageService } = require('../service/storage_service')
+const { storageService } = require('../service/config_service')
 const { UserService, UserServiceError } = require('../service/user_service')
 const SettingsError = require('./errors')
 const { HexoError } = require('../server/hexo')
