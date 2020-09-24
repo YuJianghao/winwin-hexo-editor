@@ -180,6 +180,15 @@
                               },
                               "issuedAt": {
                                 "type": "number"
+                              },
+                              "user_id":{
+                                "type" :"string"
+                              },
+                              "_id":{
+                                "type" :"string"
+                              },
+                              "username":{
+                                "type" :"string"
                               }
                             }
                           }
@@ -242,21 +251,6 @@
       },
       "delete": {
         "summary": "删除一个apikey",
-        "requestBody": {
-          "description": "如果使用token，则为apikey的签发日期。如果使用apikey，则被忽略。",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "issueAt": {
-                    "type": "number"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK",
@@ -279,8 +273,49 @@
         ],
         "security": [
           {
-            "bearerAuthToken": []
-          },
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/auth/apikey/{id}": {
+      "summary": "apikey添加和删除",
+      "delete": {
+        "summary": "删除一个apikey",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the apikey",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
           {
             "apikey": []
           }
