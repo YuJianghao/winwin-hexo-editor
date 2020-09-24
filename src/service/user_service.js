@@ -30,9 +30,16 @@ class UserService {
     await dataService.save()
   }
 
-  static async getUser (id) {
+  /**
+   * 获取用户信息
+   * @param {String} id 用户id
+   * @param {Boolean} password 是否保留密码
+   */
+  static async getUser (id, password) {
     const User = dataService.model(dataService.modelTypes.User)
-    return User.findOne({ _id: id })
+    const result = User.findOne({ _id: id })
+    if (result && !password) delete result.password
+    return result
   }
 
   /**

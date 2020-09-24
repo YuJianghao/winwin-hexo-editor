@@ -49,9 +49,12 @@ exports.apiKeyAuth = async function (ctx, next) {
     if (await ApikeyService.hasApikey(apikey)) {
       logger.debug('apikey auth pass')
       ctx.state.apikey = apikey
+      ctx.state.user = ApikeyService.getUserFromApikey(apikey).toObject()
+      ctx.state.user.id = ctx.state.user._id
+      delete ctx.state.user._id
       await next()
     } else {
-      logger.debug('APIKEY not available')
+      logger.debug('apikey auth failed, try others')
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
     }
   }
@@ -141,6 +144,7 @@ exports.jwtAuth = async function (ctx, next) {
   } else {
     try {
       const decoded = jwt.verify(token, storageService.getJwtSecret())
+      logger.debug('jwt auth pass')
       ctx.state.user = decoded
     } catch (err) {
       ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))

@@ -16,6 +16,7 @@ ApikeyServiceError.INVALID_APIKEY_TOKEN = 'INVALID_APIKEY_TOKEN'
 
 class ApikeyDocumentConverter {
   static documentToObject (doc, apikey = true) {
+    if (!doc) return {}
     const obj = doc.toObject()
     const dateKeys = ['issuedAt', 'lastUsedAt']
     dateKeys.map(key => {
@@ -101,6 +102,12 @@ class ApikeyService {
   // #endregion
 
   // #region apikey 使用
+  static getUserFromApikey (apikey) {
+    const Apikey = dataService.model(dataService.modelTypes.Apikey)
+    const User = dataService.model(dataService.modelTypes.User)
+    return User.findOne({ _id: Apikey.findOne({ apikey }).user_id })
+  }
+
   static async hasApikey (apikey) {
     const Apikey = dataService.model(dataService.modelTypes.Apikey)
     const has = Apikey.findOne({ apikey })

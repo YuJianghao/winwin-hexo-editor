@@ -3,6 +3,7 @@ const { storageService } = require('../service/config_service')
 const { UserService, UserServiceError } = require('../service/user_service')
 const SettingsError = require('./errors')
 const { HexoError } = require('../server/hexo')
+const { password } = require('../../config.default')
 
 exports.errorHandler = async (ctx, next) => {
   try {
@@ -57,7 +58,7 @@ exports.updateUser = async (ctx, next) => {
 exports.getUser = async (ctx, next) => {
   const id = ctx.params.id || ctx.state.user.id
   if (!id) throw new SettingsError('id is required', SettingsError.INVALID_PARAMS)
-  const user = await UserService.getUser(id)
+  const user = await UserService.getUser(id, false)
   ctx.body = {
     success: true,
     data: {
