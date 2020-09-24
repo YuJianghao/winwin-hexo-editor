@@ -2,6 +2,7 @@ const Router = require('koa-router')
 const { initHexo, HexoError } = require('./server')
 const { dataService } = require('./service/data_service')
 const { storageService } = require('./service/storage_service')
+const { UserService } = require('./service/user_service')
 const router = new Router()
 const config = require('../config.default')
 router.prefix('/install')
@@ -26,7 +27,7 @@ router.post('/do', async (ctx, next) => {
   const APIKEY_SECRET = ctx.request.body.APIKEY_SECRET || config.apikeySecret
   try {
     await dataService.clear()
-    await dataService.addUser(username, password)
+    await UserService.addUser(username, password)
     storageService.clear()
     storageService.setJwtSecret(JWT_SECRET)
     storageService.setJwtExpire(JW_EXPIRE)
