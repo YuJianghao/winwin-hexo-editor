@@ -36,23 +36,28 @@ class ApikeyService {
   static requestApikey (id) {
     const apikeyToken = jwt.sign({ issueat: new Date().valueOf(), type: 'apikeytoken', id }, storageService.getApikeySecret(), { expiresIn: '5min' })
     ApikeyService.ApikeyTokens[apikeyToken] = apikeyToken
-    Object.keys(ApikeyService.ApikeyTokens).map(key => logger.debug('apikey token', key))
+    Object.keys(ApikeyService.ApikeyTokens).map(key => {
+      logger.info('apikey token')
+      logger.debug(key)
+    })
     return apikeyToken
   }
 
   static decodeApikeyToken (apikeyToken) {
     const has = Object.keys(ApikeyService.ApikeyTokens).includes(apikeyToken)
     if (!has) {
-      logger.debug('invalid apikey token', apikeyToken)
+      logger.info('invalid apikey token')
+      logger.debug(apikeyToken)
       throw new ApikeyServiceError('invalid apikey token', ApikeyServiceError.INVALID_APIKEY_TOKEN)
     }
     try {
       const decoded = jwt.verify(apikeyToken, storageService.getApikeySecret())
       if (has) delete ApikeyService.ApikeyTokens[apikeyToken]
-      logger.debug('apikey token decoded')
+      logger.info('apikey token decoded')
       return decoded
     } catch (err) {
-      logger.debug('invalid apikey token', apikeyToken)
+      logger.info('invalid apikey token')
+      logger.debug(apikeyToken)
       throw new ApikeyServiceError('invalid apikey token', ApikeyServiceError.INVALID_APIKEY_TOKEN)
     }
   }
@@ -81,7 +86,7 @@ class ApikeyService {
       user_id: id
     })
     dataService.save()
-    logger.debug('new apikey added', Apikey.findOne({ apikey })._id)
+    logger.info('new apikey added', Apikey.findOne({ apikey })._id)
     return { apikey, deviceType, deviceSystem, issuedAt, id }
   }
   // #endregion
@@ -90,7 +95,7 @@ class ApikeyService {
   static getApikeysInfo () {
     const Apikey = dataService.model(dataService.modelTypes.Apikey)
     const result = Apikey.find({}).map(item => ApikeyDocumentConverter.documentToObject(item, false))
-    logger.debug('get apikeys info', result.length)
+    logger.info('get apikeys info', result.length)
     return result
   }
   // #endregion
@@ -102,7 +107,7 @@ class ApikeyService {
     if (has) {
       await Apikey.update({ apikey }, { lastUsedAt: new Date() })
       dataService.save()
-      logger.debug('apikey used', Apikey.findOne({ apikey })._id)
+      logger.info('apikey used', Apikey.findOne({ apikey })._id)
     }
     return has
   }
@@ -111,9 +116,9 @@ class ApikeyService {
     const Apikey = dataService.model(dataService.modelTypes.Apikey)
     await Apikey.remove({ _id })
     if (Apikey.findOne({ _id })) {
-      logger.debug('apikey removed', _id)
+      logger.info('apikey removed', _id)
     } else {
-      logger.debug('invalid apikey id, do nothing', _id)
+      logger.info('invalid apikey id, do nothing', _id)
     }
     dataService.save()
   }
@@ -123,9 +128,10 @@ class ApikeyService {
     const one = Apikey.findOne({ apikey })
     await Apikey.remove({ apikey })
     if (one) {
-      logger.debug('apikey removed', one._id)
+      logger.info('apikey removed', one._id)
     } else {
-      logger.debug('invalid apikey, do nothing', apikey)
+      logger.info('invalid apikey, do nothing')
+      logger.debug(apikey)
     }
     dataService.save()
   }

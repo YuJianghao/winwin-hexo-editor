@@ -34,6 +34,7 @@ class DataService {
   }
 
   async init () {
+    logger.info('starting')
     // create database file
     try {
       if (!fs.existsSync(path.resolve(__dirname, DB_PATH))) {

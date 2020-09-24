@@ -6,12 +6,18 @@
 const config = require('../config.default')
 
 /**
- * Module dependencies.
+ * logger
  */
 
 require('../src/logger')
-const app = require('../src/app')
 const logger = require('log4js').getLogger('server')
+logger.info('Starting server')
+
+/**
+ * Module dependencies.
+ */
+
+const app = require('../src/app')
 const http = require('http')
 
 /**
@@ -91,5 +97,5 @@ function onListening () {
     ? 'pipe ' + addr
     : 'port ' + addr.port
   logger.info('Server running on ' + bind)
-  logger.info('Try visit http://localhost:' + addr.port + ' through yout browser')
+  logger.info('Try visiting http://localhost:' + addr.port + ' through your browser')
 }
