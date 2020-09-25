@@ -4,6 +4,20 @@
 
 主要添加了用户安全相关配置，改进ui
 
+## 临时安装说明
+
+```bash
+git clone https://github.com/YuJianghao/winwin-hexo-editor.git
+yarn # npm # 安装依赖
+node install.js # 运行安装程序
+```
+
+在安装程序中需要指定hexo博客目录。详情请查看[文档](https://yujianghao.github.io/winwin-hexo-editor/guide#%E9%85%8D%E7%BD%AEhexo%E5%8D%9A%E5%AE%A2)
+
+请根据安装程序指引完成安装。**注意，部分安装需要在浏览器进行！详情请查看安装程序输出。**
+
+程序开启、关闭、重启方法目前和正式版相同，请查看[文档](https://yujianghao.github.io/winwin-hexo-editor/guide.html)
+
 ## 更新日志
 
 ### v0.6.0-5
