@@ -121,8 +121,8 @@ class ConfigService {
     return this._db.get(INSTALLED)
   }
 }
-const storageService = new ConfigService()
+const configService = new ConfigService()
 module.exports = {
-  storageService,
+  configService,
   ConfigServiceError
 }

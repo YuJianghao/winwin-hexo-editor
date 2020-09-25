@@ -64,13 +64,20 @@ class UserService {
     }
   }
 
-  static async hasUser (username, password) {
+  static async hasUserWithPassword (username, password) {
     const User = dataService.model(dataService.modelTypes.User)
-    if (password) {
-      return User.findOne({ username, password })
-    } else {
-      return User.findOne({ username })
-    }
+    console.log(username, password)
+    return User.findOne({ username, password })
+  }
+
+  static async hasUserWithIdPassword (_id, password) {
+    const User = dataService.model(dataService.modelTypes.User)
+    return User.findOne({ _id, password })
+  }
+
+  static async hasUser (username) {
+    const User = dataService.model(dataService.modelTypes.User)
+    return User.findOne({ username })
   }
 
   static async hasUserById (_id) {

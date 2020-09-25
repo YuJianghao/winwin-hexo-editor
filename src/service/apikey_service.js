@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { dataService } = require('./data_service')
-const { storageService } = require('./config_service')
+const { configService } = require('./config_service')
 const logger = require('log4js').getLogger('services:apikey-service')
 
 class ApikeyServiceError extends Error {
@@ -35,7 +35,7 @@ class ApikeyService {
    * @returns 返回用于新建apikey的token
    */
   static requestApikey (id) {
-    const apikeyToken = jwt.sign({ issueat: new Date().valueOf(), type: 'apikeytoken', id }, storageService.getApikeySecret(), { expiresIn: '5min' })
+    const apikeyToken = jwt.sign({ issueat: new Date().valueOf(), type: 'apikeytoken', id }, configService.getApikeySecret(), { expiresIn: '5min' })
     ApikeyService.ApikeyTokens[apikeyToken] = apikeyToken
     Object.keys(ApikeyService.ApikeyTokens).map(key => {
       logger.info('apikey token')
@@ -52,7 +52,7 @@ class ApikeyService {
       throw new ApikeyServiceError('invalid apikey token', ApikeyServiceError.INVALID_APIKEY_TOKEN)
     }
     try {
-      const decoded = jwt.verify(apikeyToken, storageService.getApikeySecret())
+      const decoded = jwt.verify(apikeyToken, configService.getApikeySecret())
       if (has) delete ApikeyService.ApikeyTokens[apikeyToken]
       logger.info('apikey token decoded')
       return decoded

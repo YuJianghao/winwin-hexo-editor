@@ -5,7 +5,7 @@ const logger = require('log4js').getLogger('server:auth')
 const parallel = require('../lib/koa-parallel')
 const fs = require('fs')
 if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
-const { storageService, ConfigServiceError } = require('../service/config_service')
+const { configService, ConfigServiceError } = require('../service/config_service')
 const { ApikeyService, ApikeyServiceError } = require('../service/apikey_service')
 const { UserService } = require('../service/user_service')
 
@@ -143,7 +143,7 @@ exports.jwtAuth = async function (ctx, next) {
     ctx.throw(new AuthError('Bearer token required', AuthError.NO_BEARER_TOKEN))
   } else {
     try {
-      const decoded = jwt.verify(token, storageService.getJwtSecret())
+      const decoded = jwt.verify(token, configService.getJwtSecret())
       logger.debug('jwt auth pass')
       ctx.state.user = decoded
     } catch (err) {
@@ -190,7 +190,7 @@ exports.basicAuth = async function (ctx, next) {
     }
   } else {
     // find if user exist in database
-    var dbuser = await UserService.hasUser(user.name, user.pass)
+    var dbuser = await UserService.hasUserWithPassword(user.name, user.pass)
     // var query = await User.find(user)
     if (dbuser) {
       // if user exist then set id
@@ -211,8 +211,8 @@ exports.getToken = async function (ctx, next) {
   // set id and token type into jwt payload
   const id = ctx.state.id || ctx.state.user.id
   const name = ctx.state.name || ctx.state.user.name
-  var token = jwt.sign({ id, name, type: 'access' }, storageService.getJwtSecret(), { expiresIn: storageService.getJwtExpire() })
-  var refreshToken = jwt.sign({ id, name, type: 'refresh' }, storageService.getJwtSecret(), { expiresIn: storageService.getJwtRefresh() })
+  var token = jwt.sign({ id, name, type: 'access' }, configService.getJwtSecret(), { expiresIn: configService.getJwtExpire() })
+  var refreshToken = jwt.sign({ id, name, type: 'refresh' }, configService.getJwtSecret(), { expiresIn: configService.getJwtRefresh() })
   ctx.body = {
     success: true,
     message: 'success',
