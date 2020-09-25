@@ -1,5 +1,6 @@
-const { ds, DataServiceError } = require('../service')
-const StorageService = require('../service/StorageService')
+const { DataServiceError } = require('../service/data_service')
+const { configService } = require('../service/config_service')
+const { UserService, UserServiceError } = require('../service/user_service')
 const SettingsError = require('./errors')
 const { HexoError } = require('../server/hexo')
 
@@ -8,7 +9,7 @@ exports.errorHandler = async (ctx, next) => {
     await next()
   } catch (err) {
     switch (err.code) {
-      case DataServiceError.USER_NOT_EXIST:
+      case UserServiceError.USER_NOT_EXIST:
         err.status = 404
         break
       case DataServiceError.INITIATING:
@@ -24,10 +25,17 @@ exports.errorHandler = async (ctx, next) => {
           message: err.message,
           data: err.data
         }
+        return
+      case HexoError.EMPTY_HEXO_ROOT:
+        ctx.status = 404
+        ctx.body = {
+          success: false,
+          message: err.message,
+          data: err.data
+        }
         break
-      default:
-        throw err
     }
+    throw err
   }
 }
 
@@ -35,9 +43,19 @@ exports.updateUser = async (ctx, next) => {
   const id = ctx.params.id || ctx.state.user.id
   if (!id) throw new SettingsError('id is required', SettingsError.INVALID_PARAMS)
   const username = ctx.request.body.username
+  const oldpassword = ctx.request.body.oldpassword
   const password = ctx.request.body.password
-  await ds.updateUser(id, username, password)
-  const user = await ds.getUser(id)
+  console.log(ctx.request.body)
+  if (!await UserService.hasUserWithIdPassword(id, oldpassword)) {
+    ctx.status = 403
+    ctx.body = {
+      success: false,
+      message: 'old password wrong'
+    }
+    return
+  }
+  await UserService.updateUser(id, username, password)
+  const user = await UserService.getUser(id)
   ctx.body = {
     success: true,
     data: {
@@ -49,7 +67,7 @@ exports.updateUser = async (ctx, next) => {
 exports.getUser = async (ctx, next) => {
   const id = ctx.params.id || ctx.state.user.id
   if (!id) throw new SettingsError('id is required', SettingsError.INVALID_PARAMS)
-  const user = await ds.getUser(id)
+  const user = await UserService.getUser(id, false)
   ctx.body = {
     success: true,
     data: {
@@ -60,14 +78,14 @@ exports.getUser = async (ctx, next) => {
 
 exports.setHexoInfo = async (ctx, next) => {
   const HEXO_ROOT = ctx.request.body.HEXO_ROOT
-  await StorageService.setHexoRoot(HEXO_ROOT)
+  await configService.setHexoRoot(HEXO_ROOT)
   ctx.body = {
     success: true
   }
 }
 
 exports.getHexoInfo = async (ctx, next) => {
-  const HEXO_ROOT = StorageService.getHexoRoot()
+  const HEXO_ROOT = configService.getHexoRoot()
   ctx.body = {
     success: false,
     data: {
@@ -78,13 +96,13 @@ exports.getHexoInfo = async (ctx, next) => {
 
 exports.security = async (ctx, next) => {
   const JWT_SECRET = ctx.request.body.JWT_SECRET
-  const JW_EXPIRE = ctx.request.body.JW_EXPIRE
-  const JW_REFRESH = ctx.request.body.JW_REFRESH
+  const JWT_EXPIRE = ctx.request.body.JWT_EXPIRE
+  const JWT_REFRESH = ctx.request.body.JWT_REFRESH
   const APIKEY_SECRET = ctx.request.body.APIKEY_SECRET
-  StorageService.setJwtSecret(JWT_SECRET)
-  StorageService.setJwtExpire(JW_EXPIRE)
-  StorageService.setJwtRefresh(JW_REFRESH)
-  StorageService.setApikeySecret(APIKEY_SECRET)
+  configService.setJwtSecret(JWT_SECRET)
+  configService.setJwtExpire(JWT_EXPIRE)
+  configService.setJwtRefresh(JWT_REFRESH)
+  configService.setApikeySecret(APIKEY_SECRET)
   ctx.body = {
     success: true
   }

@@ -69,6 +69,7 @@ async function update () {
   printer.printSection('Fetch Submodules')
   try {
     printer.info('Fetching submodules updates')
+    await Executer.run('git submodule sync')
     await Executer.run('git submodule update --init --recursive')
     printer.success('Submodules updated')
   } catch (err) {

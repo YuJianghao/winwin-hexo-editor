@@ -5,6 +5,7 @@ class SettingsError extends Error {
     this.code = code
   }
 }
+SettingsError.prototype.name = 'SettingsError'
 SettingsError.INVALID_PARAMS = 'INVALID_PARAMS'
 
 module.exports = SettingsError

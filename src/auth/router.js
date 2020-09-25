@@ -1,6 +1,5 @@
 const router = require('koa-router')()
 const auth = require('./controller')
-const compose = require('koa-compose')
 
 router.prefix('/auth')
 
@@ -8,17 +7,14 @@ router.post('/token', auth.basicAuth, auth.getToken)
 
 router.post('/refresh', auth.jwtAuth, auth.requestRefreshToken, auth.getToken)
 
-router.post('/apikeytoken', auth.jwtAuth, auth.requestAPIKEY)
+router.post('/apikeytoken', auth.jwtAuth, auth.requestApikey)
 
 router.get('/apikeys', auth.jwtAuth, auth.getAPIKEYInfo)
 
-router.delete('/apikey', require('../lib/koa-parallel')([{
-  fn: auth.apiKeyAuth,
-  validator: err => err.status === 401
-}, {
-  fn: compose([auth.jwtAuth, auth.requestAccessToken])
-}]), auth.removeAPIKEY)
+router.delete('/apikey', auth.apiKeyAuth, auth.removeApikey)
 
-router.post('/apikey', auth.apiKeyJwtAuth, auth.getAPIKEY)
+router.delete('/apikey/:id', auth.jwtAuth, auth.removeApikey)
+
+router.post('/apikey', auth.apiKeyJwtAuth, auth.addApikey)
 
 module.exports = router

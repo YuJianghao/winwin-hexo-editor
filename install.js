@@ -55,6 +55,7 @@ async function install () {
   printer.printSection('Fetch Submodules')
   try {
     printer.info('Fetching submodules updates')
+    await Executer.run('git submodule sync')
     await Executer.run('git submodule update --init --recursive')
     printer.success('Submodules updated')
   } catch (err) {
@@ -100,6 +101,9 @@ async function install () {
       prefix: chalk.blue('?')
     }])
   fs.writeFileSync('./config.user.js', `module.exports = {\n  port: ${answer.port}\n}\n`)
+  if (!fs.existsSync('./log')) {
+    fs.mkdirSync('./log')
+  }
   // #endregion
 
   // #region Finished

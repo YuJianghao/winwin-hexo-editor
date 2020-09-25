@@ -1,19 +1,20 @@
 const Router = require('koa-router')
 const { initHexo, HexoError } = require('./server')
-const { ds } = require('./service')
-const StorageService = require('./service/StorageService')
+const { dataService } = require('./service/data_service')
+const { configService } = require('./service/config_service')
+const { UserService } = require('./service/user_service')
 const router = new Router()
 const config = require('../config.default')
 router.prefix('/install')
 router.get('/info', async (ctx, next) => {
-  if (StorageService.isInstalled()) {
+  if (configService.isInstalled()) {
     ctx.status = 404
   } else {
     ctx.status = 200
   }
 })
 router.post('/do', async (ctx, next) => {
-  if (StorageService.isInstalled()) {
+  if (configService.isInstalled()) {
     ctx.status = 404
     return
   }
@@ -25,19 +26,19 @@ router.post('/do', async (ctx, next) => {
   const JW_REFRESH = ctx.request.body.JW_REFRESH || config.jwtRefresh
   const APIKEY_SECRET = ctx.request.body.APIKEY_SECRET || config.apikeySecret
   try {
-    await ds.clear()
-    await ds.addUser(username, password)
-    StorageService.clear()
-    StorageService.setJwtSecret(JWT_SECRET)
-    StorageService.setJwtExpire(JW_EXPIRE)
-    StorageService.setJwtRefresh(JW_REFRESH)
-    StorageService.setApikeySecret(APIKEY_SECRET)
-    await StorageService.setHexoRoot(HEXO_ROOT)
+    await dataService.clear()
+    await UserService.addUser(username, password)
+    configService.clear()
+    configService.setJwtSecret(JWT_SECRET)
+    configService.setJwtExpire(JW_EXPIRE)
+    configService.setJwtRefresh(JW_REFRESH)
+    configService.setApikeySecret(APIKEY_SECRET)
+    await configService.setHexoRoot(HEXO_ROOT)
     await initHexo(HEXO_ROOT)
-    StorageService.markInstalled()
+    configService.markInstalled()
     ctx.body = 'installed'
   } catch (err) {
-    if (err.code === HexoError.NOT_BLOG_ROOT) {
+    if (err.code === HexoError.NOT_BLOG_ROOT || err.code === HexoError.EMPTY_HEXO_ROOT) {
       ctx.status = 400
       ctx.body = {
         success: false,

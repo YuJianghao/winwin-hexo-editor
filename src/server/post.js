@@ -1,6 +1,32 @@
 const hfm = require('hexo-front-matter')
 const debug = require('debug')('hexo:post')
 const restrictedKeys = require('./info').restrictedKeys
+
+function postCategoriesArray2d2Raw (categoriesArray2D) {
+  let categories = []
+  if (categoriesArray2D.length === 1) {
+    if (categoriesArray2D[0].length === 1) {
+      categories = categoriesArray2D[0][0]
+    } else {
+      categories = categoriesArray2D[0]
+    }
+  } else {
+    categories = categoriesArray2D
+  }
+  return categories
+}
+
+function postCategoriesRaw2Array2d (categories) {
+  if (!categories) return [[]]
+  if (!Array.isArray(categories)) return [[categories]]
+  else {
+    if (!categories.filter(cat => Array.isArray(cat)).length) { return [categories] }
+    return categories.map(cat => {
+      return Array.isArray(cat) ? cat : [cat]
+    })
+  }
+}
+
 /**
  * 用于存储不包含hexo默认值的文章信息
  * @class
@@ -43,6 +69,12 @@ class Post {
       Object.keys(post).map(key => {
         if (post[key]) { this[key] = post[key] }
       })
+      if (!this.frontmatters) {
+        this.frontmatters = {}
+      }
+    }
+    if (this.categories) {
+      this.categories = postCategoriesRaw2Array2d(this.categories)
     }
   }
 
@@ -79,7 +111,11 @@ class Post {
       }
     })
     delete this.frontmatters
+    if (this.categories) {
+      this.categories = postCategoriesArray2d2Raw(this.categories)
+    }
     debug('freeze post', Object.keys(this))
+    return this
   }
 }
 

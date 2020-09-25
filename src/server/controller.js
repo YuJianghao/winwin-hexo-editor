@@ -1,8 +1,7 @@
-const { Hexo } = require('./hexo')
+const { Hexo, HexoError } = require('./hexo')
 const hexo = new Hexo()
 const Search = require('./search')
 const search = new Search(hexo)
-const warn = require('./utils').warn
 const restrictedKeys = require('./info').restrictedKeys
 
 exports.hexo = hexo
@@ -16,46 +15,32 @@ exports.getRestrictedKeys = async function (ctx, next) {
   }
 }
 
-exports.defaultErrorHandler = async function (ctx, next) {
+exports.errorHandler = async function (ctx, next) {
   try {
     await next()
   } catch (err) {
-    if (err.status !== 404 && err.status !== 503) throw err
-    ctx.status = err.status
-    ctx.body = {
-      success: false,
-      message: err.message
-    }
-  }
-}
-exports.serviceErrorHandler = async function (ctx, next) {
-  try {
-    await next()
-  } catch (err) {
-    if (err.name === 'Hexo Init') {
-      err.status = 503
-    }
-    if (err.name === 'Hexo Cant Deploy') {
-      err.status = 503
-    }
-    if (err.name === 'Git Cant Save') {
-      err.status = 503
-    }
-    if (err.name === 'Git Cant Sync') {
-      err.status = 503
-    }
-    if (err.status === 503) warn(err.name, ':', err.message)
-    throw err
-  }
-}
-
-exports.postNotFoundErrorHandler = async function (ctx, next) {
-  try {
-    await next()
-  } catch (err) {
-    if (process.env.NODE_ENV !== 'production') console.log(err)
-    if (err.name === 'Not Found') {
-      err.status = 404
+    switch (err.code) {
+      case HexoError.POST_NOT_FOUND:
+        err.status = 404
+        break
+      case HexoError.UNINITIALIZED:
+        err.status = 503
+        break
+      case HexoError.CANT_DEPLOY:
+        err.status = 503
+        break
+      case HexoError.GIT_CANT_SAVE:
+        err.status = 503
+        break
+      case HexoError.NOT_GIT_REPO:
+        err.status = 503
+        break
+      case HexoError.GIT_CANT_SYNC:
+        err.status = 503
+        break
+      case HexoError.BAD_PARAMS:
+        err.status = 400
+        break
     }
     throw err
   }
@@ -69,12 +54,6 @@ exports.reload = async function (ctx, next) {
 }
 
 exports.addPost = async function (ctx, next) {
-  if (!ctx.request.body.title) {
-    const err = new Error()
-    err.status = 400
-    err.message = 'title is required'
-    throw err
-  }
   const post = await hexo.addPost(ctx.request.body)
   ctx.body = {
     success: true,
@@ -85,12 +64,6 @@ exports.addPost = async function (ctx, next) {
 }
 
 exports.addPage = async function (ctx, next) {
-  if (!ctx.request.body.title) {
-    const err = new Error()
-    err.status = 400
-    err.message = 'title is required'
-    throw err
-  }
   const post = await hexo.addPost(ctx.request.body, true)
   ctx.body = {
     success: true,
@@ -112,11 +85,6 @@ exports.getPosts = async function (ctx, next) {
 
 exports.getPost = async function (ctx, next) {
   const post = await hexo.getPost(ctx.params.id)
-  if (post === null) {
-    const err = new Error('Post not found')
-    err.name = 'Not Found'
-    throw err
-  }
   ctx.body = {
     success: true,
     data: {
@@ -127,11 +95,6 @@ exports.getPost = async function (ctx, next) {
 
 exports.getPage = async function (ctx, next) {
   const post = await hexo.getPost(ctx.params.id, true)
-  if (post === null) {
-    const err = new Error('Page not found')
-    err.name = 'Not Found'
-    throw err
-  }
   ctx.body = {
     success: true,
     data: {

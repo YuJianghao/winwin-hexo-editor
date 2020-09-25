@@ -1,16 +1,34 @@
 const JSONdb = require('simple-json-db')
 const path = require('path')
+const logger = require('log4js').getLogger('services:config-service')
 const { initHexo } = require('../server')
-const APIKEYS = 'APIKEYS'
 const JWT_SECRET = 'JWT_SECRET'
 const JW_EXPIRE = 'JW_EXPIRE'
 const JW_REFRESH = 'JW_REFRESH'
 const APIKEY_SECRET = 'APIKEY_SECRET'
 const HEXO_ROOT = 'HEXO_ROOT'
 const INSTALLED = 'INSTALLED'
-class StorageService {
+
+class ConfigServiceError extends Error {
+  constructor (message, code) {
+    super(message)
+    Error.captureStackTrace(this)
+    this.code = code
+  }
+}
+
+ConfigServiceError.prototype.name = 'ConfigServiceError'
+ConfigServiceError.BAD_OPTIONS = 'BAD_OPTIONS'
+
+class ConfigService {
   constructor () {
-    this._db = new JSONdb(path.resolve(process.cwd(), './data/db.json'))
+    try {
+      this._db = new JSONdb(path.resolve(process.cwd(), './data/db.json'))
+      logger.info('database loaded')
+    } catch (err) {
+      logger.error('failed to create database from json file')
+      throw err
+    }
   }
 
   _get (key) {
@@ -23,64 +41,18 @@ class StorageService {
   }
 
   sync () {
-    this._db.sync()
+    try {
+      this._db.sync()
+      logger.info('database synced')
+    } catch (err) {
+      logger.error('failed to save database to json file')
+      throw err
+    }
   }
 
   clear () {
     this._db.JSON({})
     this.sync()
-  }
-
-  /**
-   * 添加一个APIKEY
-   * @param {Object} opt 选项
-   */
-  addAPIKEY (opt) {
-    // 格式化参数
-    if (!opt.apikey) throw new Error('opt.apikey is required')
-    if (!opt.deviceType) throw new Error('opt.deviceType is required')
-    if (!opt.deviceSystem) throw new Error('opt.deviceSystem is required')
-    const apikey = opt.apikey
-    const deviceType = opt.deviceType
-    const deviceSystem = opt.deviceSystem
-    const issuedAt = new Date().valueOf()
-    const apikeys = this._get(APIKEYS) || {}
-    apikeys[apikey] = { apikey, deviceType, deviceSystem, issuedAt }
-    this._set(APIKEYS, apikeys)
-  }
-
-  setAPIKEYLastUsed (apikey) {
-    const apikeys = this._get(APIKEYS) || {}
-    apikeys[apikey].lastUsedAt = new Date().valueOf()
-    this._set(APIKEYS, apikeys)
-  }
-
-  removeAPIKEY (apikey) {
-    const apikeys = this._get(APIKEYS) || {}
-    delete apikeys[apikey]
-    this._set(APIKEYS, apikeys)
-  }
-
-  removeAPIKEYByIssuedAt (issuedAt) {
-    const apikeys = this._get(APIKEYS) || {}
-    Object.keys(apikeys).filter(apikey => apikeys[apikey].issuedAt === issuedAt).map(apikey => this.removeAPIKEY(apikey))
-  }
-
-  getAPIKEY (apikey) {
-    const apikeys = this._get(APIKEYS) || {}
-    return apikeys[apikey] || {}
-  }
-
-  getAvailableAPIKEY () {
-    const apikeys = this._get(APIKEYS) || {}
-    return Object.keys(apikeys)
-  }
-
-  getAPIKEYInfo () {
-    return this.getAvailableAPIKEY().map(apikey => this.getAPIKEY(apikey)).map(obj => {
-      delete obj.apikey
-      return obj
-    })
   }
 
   setJwtSecret (secret) {
@@ -149,4 +121,8 @@ class StorageService {
     return this._db.get(INSTALLED)
   }
 }
-module.exports = new StorageService()
+const configService = new ConfigService()
+module.exports = {
+  configService,
+  ConfigServiceError
+}
