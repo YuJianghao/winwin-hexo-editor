@@ -181,14 +181,14 @@
                               "issuedAt": {
                                 "type": "number"
                               },
-                              "user_id":{
-                                "type" :"string"
+                              "user_id": {
+                                "type": "string"
                               },
-                              "_id":{
-                                "type" :"string"
+                              "_id": {
+                                "type": "string"
                               },
-                              "username":{
-                                "type" :"string"
+                              "username": {
+                                "type": "string"
                               }
                             }
                           }
@@ -1251,27 +1251,13 @@
             }
           },
           "categories": {
-            "oneOf": [
-              {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
                 "type": "string"
-              },
-              {
-                "type": "array",
-                "items": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  ]
-                }
               }
-            ]
+            }
           },
           "frontmatters": {
             "type": "object"
