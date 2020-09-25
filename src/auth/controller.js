@@ -190,7 +190,7 @@ exports.basicAuth = async function (ctx, next) {
     }
   } else {
     // find if user exist in database
-    var dbuser = await UserService.hasUser(user.name, user.pass)
+    var dbuser = await UserService.hasUserWithPassword(user.name, user.pass)
     // var query = await User.find(user)
     if (dbuser) {
       // if user exist then set id

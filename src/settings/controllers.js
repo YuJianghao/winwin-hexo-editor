@@ -43,7 +43,17 @@ exports.updateUser = async (ctx, next) => {
   const id = ctx.params.id || ctx.state.user.id
   if (!id) throw new SettingsError('id is required', SettingsError.INVALID_PARAMS)
   const username = ctx.request.body.username
+  const oldpassword = ctx.request.body.oldpassword
   const password = ctx.request.body.password
+  console.log(ctx.request.body)
+  if (!await UserService.hasUserWithIdPassword(id, oldpassword)) {
+    ctx.status = 403
+    ctx.body = {
+      success: false,
+      message: 'old password wrong'
+    }
+    return
+  }
   await UserService.updateUser(id, username, password)
   const user = await UserService.getUser(id)
   ctx.body = {
