@@ -41,6 +41,8 @@ exports.errorHandler = async function (ctx, next) {
       case HexoError.BAD_PARAMS:
         err.status = 400
         break
+      case HexoError.SHELL_COMMAND_FAIL:
+        err.status = 503
     }
     throw err
   }
