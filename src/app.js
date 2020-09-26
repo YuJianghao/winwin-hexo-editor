@@ -53,11 +53,6 @@ app.use(koaLogger((str, args) => {
 
 // static resources
 const serveStatic = require('koa-static')
-const mount = require('koa-mount')
-const pathToSwaggerUi = path.join(__dirname, '../swagger-ui-dist')
-const swaggerKoa = new Koa()
-swaggerKoa.use(serveStatic(pathToSwaggerUi))
-app.use(mount('/apidoc', swaggerKoa))
 app.use(serveStatic(path.join(process.cwd(), '/frontend/dist/pwa')))
 
 // install
