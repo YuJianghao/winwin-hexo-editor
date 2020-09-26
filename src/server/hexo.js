@@ -268,6 +268,9 @@ class Hexo {
    */
   async _update (post, isPage = false) {
     logger.info('update', post._id, Object.keys(post))
+    if (post.frontmatters) {
+      logger.info('update', post._id, 'frontmatters', Object.keys(post.frontmatters))
+    }
     var src = await this._get(post._id, isPage)
     if (!src) return null
     src = new Post(src)

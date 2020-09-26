@@ -37,6 +37,9 @@ app.use(async (ctx, next) => {
   }
 })
 
+const { dataServiceErrorHandler } = require('./errorHandlers')
+app.use(dataServiceErrorHandler)
+
 // cors
 app.use(cors())
 
