@@ -25,6 +25,7 @@ HexoError.GIT_CANT_SAVE = 'GIT_CANT_SAVE'
 HexoError.GIT_CANT_SYNC = 'GIT_CANT_SYNC'
 HexoError.BAD_PARAMS = 'BAD_PARAMS'
 HexoError.NOT_GIT_REPO = 'NOT_GIT_REPO'
+HexoError.SHELL_COMMAND_FAIL = 'SHELL_COMMAND_FAIL'
 
 /**
  * 用于和hexo交互的模型
@@ -607,7 +608,9 @@ class Hexo {
         } else {
           logger.error('failed to run command', cmd)
           logger.error(code, signal)
-          reject(code, signal)
+          const err = new HexoError('failed to run command ' + cmd, HexoError.SHELL_COMMAND_FAIL)
+          err.data = { code, signal }
+          reject(err)
         }
       })
     })
