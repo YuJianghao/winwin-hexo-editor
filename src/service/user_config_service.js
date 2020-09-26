@@ -9,7 +9,7 @@ class UserConfigService {
   static async _initConfigById (id) {
     const Model = dataService.model(dataService.modelTypes.UserConfig)
     await Model.insertOne({
-      ...UserConfigService._parseConfig({}, UserConfigService.defaultConfig),
+      config: {},
       user_id: id
     })
     await dataService.save()
@@ -26,27 +26,22 @@ class UserConfigService {
         user_id: id
       })
     }
-    return config.toObject().config
+    return UserConfigService._parseConfig(config.toObject().config)
   }
 
   static async getConfigById (id, parts = []) {
-    const oldConfig = await UserConfigService._getOrCreateConfig(id)
-    const config = UserConfigService._parseConfig(oldConfig)
-    if (JSON.stringify(oldConfig) !== JSON.stringify(config)) {
-      return UserConfigService.setConfigById(id, config, parts)
-    } else {
-      const result = {}
-      parts.map(key => { result[key] = config[key] })
-      return result
-    }
+    const config = await UserConfigService._getOrCreateConfig(id)
+    const result = {}
+    parts.map(key => { result[key] = config[key] })
+    return result
   }
 
   static async setConfigById (id, config = {}, parts = []) {
     const Model = dataService.model(dataService.modelTypes.UserConfig)
     const oldConfig = await UserConfigService._getOrCreateConfig(id)
-    const parsedOldConfig = UserConfigService._parseConfig(oldConfig, UserConfigService.defaultConfig)
+    parts.map(key => { oldConfig[key] = config[key] })
     await Model.replace({ user_id: id }, {
-      config: UserConfigService._parseConfig(config, parsedOldConfig),
+      config: oldConfig,
       user_id: id
     })
     await dataService.save()
@@ -55,22 +50,22 @@ class UserConfigService {
 }
 
 UserConfigService.schema = {
-  ui: {
-    editor: {
-      toolbar: {
-        direction: v => ['vertical', 'horizontal'].includes(v)
-      }
-    }
-  }
+  // ui: {
+  //   editor: {
+  //     toolbar: {
+  //       direction: v => ['vertical', 'horizontal'].includes(v)
+  //     }
+  //   }
+  // }
 }
 UserConfigService.defaultConfig = {
-  ui: {
-    editor: {
-      toolbar: {
-        direction: 'vertical'
-      }
-    }
-  }
+  // ui: {
+  //   editor: {
+  //     toolbar: {
+  //       direction: 'vertical'
+  //     }
+  //   }
+  // }
 }
 
 module.exports = {
