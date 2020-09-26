@@ -8,6 +8,7 @@ if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
 const { configService, ConfigServiceError } = require('../service/config_service')
 const { ApikeyService, ApikeyServiceError } = require('../service/apikey_service')
 const { UserService } = require('../service/user_service')
+const { DataServiceError } = require('../service/data_service')
 
 class AuthError extends Error {
   constructor (message, code) {
