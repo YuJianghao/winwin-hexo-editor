@@ -66,7 +66,6 @@ class UserService {
 
   static async hasUserWithPassword (username, password) {
     const User = dataService.model(dataService.modelTypes.User)
-    console.log(username, password)
     return User.findOne({ username, password })
   }
 
