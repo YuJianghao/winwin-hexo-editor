@@ -18,4 +18,7 @@ router.put('/hexo', controllers.setHexoInfo)
 
 router.put('/security', controllers.security)
 
+router.get('/ui', controllers.getUiConfig)
+router.put('/ui', controllers.setUiConfig)
+
 module.exports = router
