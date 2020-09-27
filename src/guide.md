@@ -18,7 +18,7 @@
 
 - `hexo generate`：生成hexo博客
 - `hexo deploy`: 生成hexo博客并部署
-- `git add . && git commit -m 'server updates'`: 将博客更改添加进git
+- `git add . -all && git commit -m 'server updates'`: 将博客更改添加进git
 - `git pull`: 从远端拉取博客内容
 - `git push`: 将本地博客内容推送到远端
 

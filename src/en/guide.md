@@ -20,7 +20,7 @@ Please make sure that the following commands can run successfully in the path `~
 
 - `hexo generate`: Generate hexo blog
 - `hexo deploy`: Generate hexo blog and deploy
-- `git add. && git commit -m'server updates'`: add blog changes to git
+- `git add . --all && git commit -m'server updates'`: add blog changes to git
 - `git pull`: pull blog content from remote
 - `git push`: push local blog content to remote
 
@@ -35,7 +35,7 @@ If you do not need the deploy method from hexo, `hexo deploy` is unnecessary. If
 Download source code
 
 > We assumes that you will install `winwin-hexo-editor` in `~/winwin-hexo-editor`.
-> 
+>
 ```bash
 git clone https://github.com/YuJianghao/winwin-hexo-editor
 cd winwin-hexo-editor
