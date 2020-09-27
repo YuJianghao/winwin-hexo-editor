@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" style="overflow:hidden">
     <div class="section welcome" :class="{hide:hideWelcome}" v-rellax="{speed:-7}">
       <div class="background"></div>
       <div class="cube" v-rellax="{speed:-10}"></div>
@@ -239,6 +239,7 @@ export default {
     background-color #4172cf
     color white
     padding 10px 20px
+    display inline-block
     font-size 20px
     transition all 0.3s
     &:hover
