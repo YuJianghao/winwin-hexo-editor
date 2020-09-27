@@ -8,10 +8,13 @@
 
 **为什么我不能部署博客？503错误？**
 
-Hexo-editor仅仅帮你运行`hexo deploy`和`git pull/push`，以此来完成部署和同步工作，你需要自行配置这几个命令。以下是操作和命令的对照表
+Hexo-editor仅仅帮你运行命令行命令来完成部署和同步工作，你需要自行配置这几个命令。以下是操作和命令的对照表:
 
+- 生成：`hexo clean`
 - 部署：`hexo g -d`
-- 同步到git：`git add . && git commit && git push`
+- 清理：`hexo clean`
+- 从git同步：`git reset && git pull`
+- 同步到git：`git add . --all && git commit && git push`
 
 ## 载入失败
 

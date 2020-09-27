@@ -29,6 +29,7 @@ module.exports = {
         ],
         sidebar: [
           '/guide',
+          '/preview',
           '/releasenotes',
           '/support',
           '/faq',

@@ -8,9 +8,13 @@ Most of it can be solved by running `git reset --hard && git pull && bash instal
 
 **Why I can't deploy my hexo blog? / Why 503 error?**
 
-Hexo-editor help you configure neither `hexo deploy` command nor `git pull/push` nor any other CI command.You need to configure them manually.
+Hexo-editor help you configure neither hexo command nor git nor any other CI command.You need to configure them manually. Here's the map:
 
-Hexo-editor simply run `hexo g -d` for deploy button, `git reset && git pull` for git sync button and `git add . && git commit && git push` for git save button!
+- `hexo g -d` for deploy button
+- `hexo clearn` for clean button
+- `hexo g` for generate button
+- `git reset && git pull` for git sync button
+- `git add . --all && git commit && git push` for git save button!
 
 ## Load fail
 
