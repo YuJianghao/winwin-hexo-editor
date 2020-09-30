@@ -1,8 +1,7 @@
 const fs = require('fs')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
-const packageJson = require('./package.json')
-const { Printer, Executer } = require('./scripts/lib')
+const { Printer, Executer, readJsonFile } = require('./scripts/lib')
 const logo = fs.readFileSync('./assets/logo.art')
 const config = require('./config.default')
 const printer = new Printer()
@@ -14,8 +13,9 @@ async function install () {
 
   // #region Version
   printer.printSection('Check Version')
-  printer.info('Version ' + packageJson.version)
-  if (packageJson.version.indexOf('-') >= 0) {
+  const oldVersion = readJsonFile('./package.json')
+  printer.info('Current Version ' + oldVersion)
+  if (oldVersion.indexOf('-') >= 0) {
     printer.warn('This is a preview version!')
   }
   // #endregion
