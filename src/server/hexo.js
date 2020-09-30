@@ -91,6 +91,7 @@ class Hexo {
     } else {
       logger.debug('blog can deploy')
     }
+    return this.canDeploy
   }
 
   _checkIsGit () {
@@ -559,7 +560,7 @@ class Hexo {
    */
   async deploy () {
     this._checkReady()
-    if (!this.canDeploy) {
+    if (!this._checkCanDeploy()) {
       throw new HexoError('No deploy config found. Can\'t deploy.', HexoError.CANT_DEPLOY)
     }
     logger.info('deploy')
