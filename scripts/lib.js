@@ -65,7 +65,7 @@ class Executer {
 
   static async hasCommand (cmd) {
     try {
-      return !!await Executer.run('command -v ' + cmd)
+      return !!await Executer.run(cmd)
     } catch (err) {
       return false
     }
