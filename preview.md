@@ -2,13 +2,18 @@
 
 ## 当前版本
 
-主要添加了用户安全相关配置，改进ui，完善apikey支持
+`v0.6.0-6`
+
+- 更改api文档位置
+- 添加用户配置文件
+- windows安装支持
 
 ## 临时安装说明
 
 ```bash
 git clone https://github.com/YuJianghao/winwin-hexo-editor.git
 yarn # npm # 安装依赖
+git chekcout preview
 node install.js # 运行安装程序
 ```
 
@@ -19,6 +24,22 @@ node install.js # 运行安装程序
 程序开启、关闭、重启方法目前和正式版相同，请查看[文档](https://yujianghao.github.io/winwin-hexo-editor/guide.html)
 
 ## 更新日志
+
+### v0.6.0-6
+
+- 新增：用户配置文件
+- 新增：API文档
+- 新增：windows安装支持
+- 改进：使用本地git不再报错，仅警告
+- 改进：访问不存在的文章自动跳转到首页
+- 改进：子模块改用github
+- 改进：更多错误处理
+- 修复：手动保存失效的bug
+- 修复：从git同步时不更新文章内容的bug
+- 修复：未保存的文件不能删除的bug
+- 修复：编辑或查看文章不能跳转路由的bug
+- 修复：添加对命令行错误的相应提示
+- 移除：api端文档
 
 ### v0.6.0-5
 
