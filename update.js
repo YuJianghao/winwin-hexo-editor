@@ -1,7 +1,6 @@
 const fs = require('fs')
 const chalk = require('chalk')
-const packageJson = require('./package.json')
-const { Printer, Executer } = require('./scripts/lib')
+const { Printer, Executer, readJsonFile } = require('./scripts/lib')
 const logo = fs.readFileSync('./assets/logo.art')
 const printer = new Printer()
 
@@ -12,8 +11,9 @@ async function update () {
 
   // #region Version
   printer.printSection('Check Version')
-  printer.info('Current Version ' + packageJson.version)
-  if (packageJson.version.indexOf('-') >= 0) {
+  const oldVersion = readJsonFile('./package.json').version
+  printer.info('Current Version ' + oldVersion)
+  if (oldVersion.indexOf('-') >= 0) {
     printer.warn('This is a preview version!')
   }
   // #endregion
@@ -22,7 +22,7 @@ async function update () {
   printer.printSection('Check Dependences')
 
   const NODE = 'node'
-  const hasNode = await Executer.hasCommand(NODE)
+  const hasNode = await Executer.hasCommand(NODE + ' -v')
   if (!hasNode) {
     printer.error('Node is required! Please install node.js first')
     process.exit(101)
@@ -31,7 +31,7 @@ async function update () {
   }
 
   const NPM = 'npm'
-  const hasNPM = await Executer.hasCommand(NPM)
+  const hasNPM = await Executer.hasCommand(NPM + ' -v')
   if (!hasNPM) {
     printer.error('npm not found, is there anything wrong with your node installation?')
     process.exit(102)
@@ -40,7 +40,7 @@ async function update () {
   }
 
   const YARN = 'yarn'
-  const hasYarn = await Executer.hasCommand(YARN)
+  const hasYarn = await Executer.hasCommand(YARN + ' -v')
   if (!hasYarn) {
     printer.info(`${NODE} : ${chalk.red('pass')}`)
     printer.warn('yarn not found, use npm instead.')
@@ -99,6 +99,15 @@ async function update () {
   // #region Finished
   printer.clear()
   printer.log(chalk.green.bold('Finished!'))
+
+  // #region Version
+  const newVersion = readJsonFile('./package.json').version
+  printer.info('Current Version ' + newVersion)
+  if (newVersion.indexOf('-') >= 0) {
+    printer.warn('This is a preview version!')
+  }
+  // #endregion
+
   printer.log('Run ' + chalk.blue.bold('`npm start`') + ' to start with node')
   printer.log('Run ' + chalk.blue.bold('`npm run prd`') + ' to start with pm2')
   printer.log('Run ' + chalk.blue.bold('`npm run stop`') + ' to stop')
