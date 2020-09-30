@@ -1242,7 +1242,7 @@
             "type": "boolean"
           },
           "_content": {
-            "type": "boolean"
+            "type": "string"
           },
           "tags": {
             "type": "array",
