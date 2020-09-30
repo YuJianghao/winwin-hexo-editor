@@ -22,7 +22,6 @@ HexoError.POST_NOT_FOUND = 'POST_NOT_FOUND'
 HexoError.UNINITIALIZED = 'UNINITIALIZED'
 HexoError.CANT_DEPLOY = 'CANT_DEPLOY'
 HexoError.GIT_CANT_SAVE = 'GIT_CANT_SAVE'
-HexoError.GIT_CANT_SYNC = 'GIT_CANT_SYNC'
 HexoError.BAD_PARAMS = 'BAD_PARAMS'
 HexoError.NOT_GIT_REPO = 'NOT_GIT_REPO'
 HexoError.SHELL_COMMAND_FAIL = 'SHELL_COMMAND_FAIL'
@@ -94,6 +93,11 @@ class Hexo {
     }
   }
 
+  _checkIsGit () {
+    this.isGit = isGit(this.cwd)
+    return this.isGit
+  }
+
   /**
    * 初始化并开始监听文件
    * 可能的错误：HexoError.EMPTY_HEXO_ROOT | HexoError.NOT_BLOG_ROOT | other
@@ -106,10 +110,10 @@ class Hexo {
     this.cwd = cwd
     logger.debug('set HEXO_ROOT', this.cwd)
     await this._checkCanDeploy()
-    this.isGit = isGit(this.cwd)
+    this._checkIsGit()
     if (!this.isGit) {
       logger.warn(`${this.cwd} isn't a git repository`)
-      logger.warn('Function syncGit, resetGit and saveGit will cause errors')
+      logger.warn('Function syncGit, resetGit and saveGit will work locally')
     }
 
     this.hexo = new HexoAPI(this.cwd, { debug: false, draft: true, silent: process.env.NODE_ENV !== 'development' })
@@ -617,6 +621,24 @@ class Hexo {
   }
 
   /**
+   * 运行简单控制台程序并获取输出
+   * @param {String} cmd 命令
+   * @private
+   */
+  async _runSimpleShell (cmd) {
+    return new Promise((resolve, reject) => {
+      exec('git remote -v', { cwd: this.cwd }, (err, stdout, stderr) => {
+        if (err) {
+          err.stdout = stdout
+          err.stderr = stderr
+          reject(err)
+        }
+        resolve(stdout)
+      })
+    })
+  }
+
+  /**
    * 抛出不是git目录的异常
    * @private
    */
@@ -629,16 +651,12 @@ class Hexo {
    */
   async syncGit () {
     logger.info('sync git')
-    if (!this.isGit) this._notGitRepo()
-    try {
-      await this.git.reset('hard')
-      await this.git.pull()
-    } catch (err) {
-      if (err.message.indexOf('no tracking information') >= 0) {
-        throw new HexoError('No configured remote origin. Reset only.', HexoError.GIT_CANT_SYNC)
-      }
-      throw err
-    }
+    if (!this._checkIsGit()) this._notGitRepo()
+    const stdout = await this._runSimpleShell('git remote -v')
+    const remote = !!stdout
+    await this.git.reset('hard')
+    if (remote) await this.git.pull()
+    return { remote }
   }
 
   /**
@@ -646,7 +664,7 @@ class Hexo {
    */
   async resetGit () {
     logger.info('reset git')
-    if (!this.isGit) this._notGitRepo()
+    if (!this._checkIsGit()) this._notGitRepo()
     await this.git.reset('hard')
   }
 
@@ -655,17 +673,13 @@ class Hexo {
    */
   async saveGit () {
     logger.info('save git')
-    if (!this.isGit) this._notGitRepo()
-    try {
-      await this._runShell('git add . --all')
-      await this.git.commit('server update posts: ' + (new Date()).toString(), () => {})
-      await this.git.push()
-    } catch (err) {
-      if (err.message.indexOf('No configured push destination') >= 0) {
-        throw new HexoError('No configured push destination', HexoError.GIT_CANT_SAVE)
-      }
-      throw err
-    }
+    if (!this._checkIsGit()) this._notGitRepo()
+    const stdout = await this._runSimpleShell('git remote -v')
+    const remote = !!stdout
+    await this._runShell('git add . --all')
+    await this.git.commit('server update posts: ' + (new Date()).toString(), () => {})
+    if (remote) await this.git.push()
+    return { remote }
   }
 }
 

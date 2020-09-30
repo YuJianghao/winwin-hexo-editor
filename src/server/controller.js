@@ -35,9 +35,6 @@ exports.errorHandler = async function (ctx, next) {
       case HexoError.NOT_GIT_REPO:
         err.status = 503
         break
-      case HexoError.GIT_CANT_SYNC:
-        err.status = 503
-        break
       case HexoError.BAD_PARAMS:
         err.status = 400
         break
@@ -186,9 +183,10 @@ exports.getCategories = async function (ctx, next) {
 }
 
 exports.sync = async function (ctx, next) {
-  await hexo.syncGit()
+  const { remote } = await hexo.syncGit()
   ctx.body = {
-    success: true
+    success: true,
+    data: { remote }
   }
 }
 
@@ -200,9 +198,10 @@ exports.reset = async function (ctx, next) {
 }
 
 exports.save = async function (ctx, next) {
-  await hexo.saveGit()
+  const { remote } = await hexo.saveGit()
   ctx.body = {
-    success: true
+    success: true,
+    data: { remote }
   }
 }
 
