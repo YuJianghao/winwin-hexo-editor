@@ -54,7 +54,7 @@ async function update () {
   try {
     printer.info('Fetching updates')
     await Executer.run('git reset --hard')
-    await Executer.run('git submodule foreach \'git reset --hard\'')
+    await Executer.run('git submodule foreach "git reset --hard"')
     await Executer.run('git pull')
     printer.success('Updated')
   } catch (err) {
