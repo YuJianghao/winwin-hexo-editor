@@ -13,7 +13,7 @@ async function install () {
 
   // #region Version
   printer.printSection('Check Version')
-  const oldVersion = readJsonFile('./package.json')
+  const oldVersion = readJsonFile('./package.json').version
   printer.info('Current Version ' + oldVersion)
   if (oldVersion.indexOf('-') >= 0) {
     printer.warn('This is a preview version!')
