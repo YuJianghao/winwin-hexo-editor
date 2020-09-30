@@ -73,7 +73,7 @@ class Hexo {
    * 可能的错误：null
    * @private
    */
-  async _checkCanDeploy () {
+  _checkCanDeploy () {
     logger.debug('checking blog can deploy')
     const hexoConfigYML = YAML.parse(fs.readFileSync(path.join(this.cwd, '_config.yml')).toString())
     if (hexoConfigYML.deploy) {
@@ -109,7 +109,7 @@ class Hexo {
     this._checkIsBlog(cwd)
     this.cwd = cwd
     logger.debug('set HEXO_ROOT', this.cwd)
-    await this._checkCanDeploy()
+    this._checkCanDeploy()
     this._checkIsGit()
     if (!this.isGit) {
       logger.warn(`${this.cwd} isn't a git repository`)
