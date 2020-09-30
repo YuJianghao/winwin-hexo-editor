@@ -24,7 +24,7 @@ async function install () {
   printer.printSection('Check Dependences')
 
   const NODE = 'node'
-  const hasNode = await Executer.hasCommand(NODE)
+  const hasNode = await Executer.hasCommand(NODE + ' -v')
   if (!hasNode) {
     printer.error('Node is required! Please install node.js first')
     process.exit(101)
@@ -33,7 +33,7 @@ async function install () {
   }
 
   const NPM = 'npm'
-  const hasNPM = await Executer.hasCommand(NPM)
+  const hasNPM = await Executer.hasCommand(NPM + ' -v')
   if (!hasNPM) {
     printer.error('npm not found, is there anything wrong with your node installation?')
     process.exit(102)
@@ -42,7 +42,7 @@ async function install () {
   }
 
   const YARN = 'yarn'
-  const hasYarn = await Executer.hasCommand(YARN)
+  const hasYarn = await Executer.hasCommand(YARN + ' -v')
   if (!hasYarn) {
     printer.info(`${NODE} : ${chalk.red('pass')}`)
     printer.warn('yarn not found, use npm instead.')
