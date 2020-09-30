@@ -29,9 +29,6 @@ exports.errorHandler = async function (ctx, next) {
       case HexoError.CANT_DEPLOY:
         err.status = 503
         break
-      case HexoError.GIT_CANT_SAVE:
-        err.status = 503
-        break
       case HexoError.NOT_GIT_REPO:
         err.status = 503
         break
