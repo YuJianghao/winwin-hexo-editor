@@ -1,6 +1,7 @@
 const { DataServiceError } = require('../service/data_service')
 const { configService } = require('../service/config_service')
 const { UserService, UserServiceError } = require('../service/user_service')
+const { UserConfigService } = require('../service/user_config_service')
 const SettingsError = require('./errors')
 const { HexoError } = require('../server/hexo')
 
@@ -45,7 +46,6 @@ exports.updateUser = async (ctx, next) => {
   const username = ctx.request.body.username
   const oldpassword = ctx.request.body.oldpassword
   const password = ctx.request.body.password
-  console.log(ctx.request.body)
   if (!await UserService.hasUserWithIdPassword(id, oldpassword)) {
     ctx.status = 403
     ctx.body = {
@@ -105,5 +105,22 @@ exports.security = async (ctx, next) => {
   configService.setApikeySecret(APIKEY_SECRET)
   ctx.body = {
     success: true
+  }
+}
+
+exports.getUiConfig = async (ctx, next) => {
+  const id = ctx.state.user.id
+  const config = await UserConfigService.getConfigById(id, ['ui'])
+  ctx.body = {
+    config
+  }
+}
+
+exports.setUiConfig = async (ctx, next) => {
+  const id = ctx.state.user.id
+  const config = ctx.request.body
+  const newConfig = await UserConfigService.setConfigById(id, { ui: config }, ['ui'])
+  ctx.body = {
+    config: newConfig
   }
 }

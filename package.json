@@ -1,6 +1,6 @@
 {
   "name": "hexo-editor",
-  "version": "0.6.0-5",
+  "version": "0.6.0-6",
   "scripts": {
     "stop": "pm2 stop hexoeditor",
     "restart": "pm2 restart hexoeditor",
@@ -39,11 +39,11 @@
     "koa-onerror": "^4.1.0",
     "koa-router": "^9.4.0",
     "koa-static": "^5.0.0",
+    "lodash": "^4.17.20",
     "log4js": "^6.3.0",
     "node-env-file": "^0.1.8",
     "simple-git": "^2.20.1",
     "simple-json-db": "^1.2.2",
-    "swagger-ui-dist": "^3.33.0",
     "warehouse": "^4.0.0",
     "yamljs": "^0.3.0"
   },

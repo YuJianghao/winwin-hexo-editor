@@ -114,7 +114,7 @@ class Post {
     if (this.categories) {
       this.categories = postCategoriesArray2d2Raw(this.categories)
     }
-    debug('freeze post', Object.keys(this))
+    debug('freeze post,', Object.keys(this).join(' | '))
     return this
   }
 }
