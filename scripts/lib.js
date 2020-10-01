@@ -1,3 +1,4 @@
+const fs = require('fs')
 const chalk = require('chalk')
 const cp = require('child_process')
 
@@ -73,3 +74,8 @@ class Executer {
 }
 Executer.log = false
 exports.Executer = Executer
+
+exports.readJsonFile = filename => {
+  const file = fs.readFileSync(filename)
+  return JSON.parse(file)
+}
