@@ -1,13 +1,5 @@
 # 预览版记录
 
-## 当前版本
-
-`v0.6.0-7`
-
-- windows安装支持
-- 改进本地git支持和deploy方法
-- 修复错误
-
 ## 临时安装说明
 
 ```bash
@@ -24,6 +16,10 @@ node install.js # 运行安装程序
 程序开启、关闭、重启方法目前和正式版相同，请查看[文档](https://yujianghao.github.io/winwin-hexo-editor/guide.html)
 
 ## 更新日志
+
+### v0.6.0-rc0
+
+- 修复：用户配置不能修改的bug
 
 ### v0.6.0-7
 
