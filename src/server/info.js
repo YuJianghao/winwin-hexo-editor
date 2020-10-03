@@ -1,17 +1,39 @@
-const restrictedKeys = [
-  '_id',
-  '_content',
-  'slug',
-  'date',
-  'updated',
-  'raw',
-  'layout',
-  'published',
-  'title',
-  'tags',
-  'category',
-  'categories'
-]
+const restrictedKeys = {
+  post: [
+    '_id',
+    'title',
+    'date',
+    'updated',
+    'comments',
+    'layout',
+    '_content',
+    'source',
+    'slug',
+    'photos',
+    'link',
+    'raw',
+    'published',
+    'content',
+    'excerpt',
+    'more',
+    'tags',
+    'category',
+    'categories'
+  ],
+  page: [
+    'title',
+    'date',
+    'updated',
+    'comments',
+    'layout',
+    '_content',
+    'source',
+    'path',
+    'raw',
+    'content',
+    'excerpt'
+  ]
+}
 
 module.exports = {
   restrictedKeys

@@ -3,15 +3,21 @@ const app = new Koa()
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
-const logger = require('koa-logger')
-const compose = require('koa-compose')
+const koaLogger = require('koa-logger')
 const cors = require('koa-cors')
 const path = require('path')
-
-const config = require('./loadConfig')
-const auth = require('./auth')
-const token = require('./token')
+const log4js = require('log4js')
+const logger = log4js.getLogger('server')
+const authController = require('./auth/controller')
+const authRouter = require('./auth/router')
+const settings = require('./settings/router')
 const version = require('./version')
+const { configService } = require('./service/config_service')
+const {
+  hexoeditorserver,
+  initHexo,
+  HexoError
+} = require('./server')
 
 // error handler
 onerror(app)
@@ -26,10 +32,13 @@ app.use(async (ctx, next) => {
     }
     if (ctx.status === 500) {
       ctx.body.message = 'server internal error, try again later'
-      console.log(err)
+      logger.error(500, err)
     }
   }
 })
+
+const { dataServiceErrorHandler } = require('./errorHandlers')
+app.use(dataServiceErrorHandler)
 
 // cors
 app.use(cors())
@@ -39,27 +48,39 @@ app.use(bodyparser({
   enableTypes: ['json', 'form', 'text']
 }))
 app.use(json())
-app.use(logger())
-app.use(require('koa-static')(path.join(process.cwd(), '/frontend/dist/pwa')))
+app.use(koaLogger((str, args) => {
+  // redirect koa logger to other output pipe
+  // default is process.stdout(by console.log function)
+  log4js.getLogger('http').info(str)
+}))
 
-// logger
-app.use(async (ctx, next) => {
-  const start = new Date()
-  console.log(start.toLocaleString() + '.' + start.getMilliseconds())
-  await next()
-  const ms = new Date() - start
-  console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
-})
+// static resources
+const serveStatic = require('koa-static')
+app.use(serveStatic(path.join(process.cwd(), '/frontend/dist/pwa')))
+
+// install
+const isInstalled = configService.isInstalled()
+if (!isInstalled) {
+  const install = require('./install')
+  app.use(install.routes(), install.allowedMethods())
+} else {
+  initHexo(configService.getHexoRoot()).catch(err => {
+    if (![HexoError.EMPTY_HEXO_ROOT, HexoError.NOT_BLOG_ROOT].includes(err.code)) {
+      logger.error('Unknown Error:', err)
+      process.exit(1)
+    }
+  })
+}
 
 // hexo-editor-server
-require('./server')(app, {
-  hexoRoot: config.hexoRoot,
+hexoeditorserver(app, {
   base: 'hexoeditorserver',
-  auth: compose([auth.jwtAuth, auth.requestAccessToken])
+  auth: authController.apikeyOrJwt
 })
 
 // routes
-app.use(token.routes(), token.allowedMethods())
+app.use(authRouter.routes(), authRouter.allowedMethods())
+app.use(settings.routes(), settings.allowedMethods())
 app.use(version.routes(), version.allowedMethods())
 
 // error-handling

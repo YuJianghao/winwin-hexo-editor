@@ -1,0 +1,1404 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "@winwin/hexo-editor-api",
+    "version": "0.6.0-1",
+    "description": "An api definition for @winwin/hexo-editor",
+    "contact": {
+      "email": "yjh2011@live.com",
+      "name": "winwin2011",
+      "url": "https://github.com/yuJianghao/winwin-hexo-editor-server"
+    },
+    "license": {
+      "name": "GPLv3"
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/auth/token": {
+      "summary": "获取登录token",
+      "post": {
+        "summary": "获取登录token",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "token": {
+                          "type": "string"
+                        },
+                        "refreshToken": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "summary": "刷新登录token",
+      "post": {
+        "summary": "刷新登录token",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "token": {
+                          "type": "string"
+                        },
+                        "refreshToken": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearerAuthRefresh": []
+          }
+        ]
+      }
+    },
+    "/auth/apikeytoken": {
+      "summary": "获取用于申请apikey的token",
+      "post": {
+        "summary": "获取用于申请apikey的token",
+        "description": "5分钟内有效，仅可使用一次，过期或使用后需要重新申请",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          }
+        ]
+      }
+    },
+    "/auth/apikeys": {
+      "summary": "获取当前已授权的apikey列表",
+      "get": {
+        "summary": "获取当前已授权的apikey列表",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "apikeys": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "deviceType": {
+                                "type": "string"
+                              },
+                              "deviceSystem": {
+                                "type": "string"
+                              },
+                              "issuedAt": {
+                                "type": "number"
+                              },
+                              "user_id": {
+                                "type": "string"
+                              },
+                              "_id": {
+                                "type": "string"
+                              },
+                              "username": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          }
+        ]
+      }
+    },
+    "/auth/apikey": {
+      "summary": "apikey添加和删除",
+      "post": {
+        "summary": "添加一个apikey",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "apikey": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearerAuthAPIKEYToken": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "删除一个apikey",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/auth/apikey/{id}": {
+      "summary": "apikey添加和删除",
+      "delete": {
+        "summary": "删除一个apikey",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the apikey",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/posts": {
+      "summary": "Actions about posts",
+      "get": {
+        "summary": "Get all posts",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "posts": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Post"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "lists"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/tags": {
+      "summary": "Actions about tags",
+      "get": {
+        "summary": "Get all tags",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Tag"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "lists"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/categories": {
+      "summary": "Actions about categories",
+      "get": {
+        "summary": "Get all categories",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Category"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "lists"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/post": {
+      "summary": "Actions about one specific post",
+      "post": {
+        "summary": "Add post by options",
+        "description": "",
+        "operationId": "",
+        "requestBody": {
+          "description": "Post object needs to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "post"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/post/{id}": {
+      "summary": "Actions about one specific post",
+      "get": {
+        "summary": "Get post by id",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "post"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update post by id and options",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Post object needs to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "post"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete post by id",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "post"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/post/{id}/publish": {
+      "post": {
+        "summary": "Publish post by id",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "post"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/post/{id}/unpublish": {
+      "post": {
+        "summary": "Unpublish post by id",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "post"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/page": {
+      "summary": "Actions about one specific page",
+      "post": {
+        "summary": "Add page by options",
+        "description": "",
+        "operationId": "",
+        "requestBody": {
+          "description": "Post object needs to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "page"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/page/{id}": {
+      "summary": "Actions about one specific page",
+      "get": {
+        "summary": "Get page by id",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the page",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "page"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update post by id and options",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Post object needs to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "page"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete post by id",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Post200"
+          },
+          "404": {
+            "$ref": "#/components/responses/Post404"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "page"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/reload": {
+      "post": {
+        "summary": "Reload hexo data from files",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Default200"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "hexo action"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/generate": {
+      "post": {
+        "summary": "Generate blog",
+        "description": "Run `hexo g`",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Default200"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "hexo action"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/deploy": {
+      "post": {
+        "summary": "Deploy blog",
+        "description": "Run `hexo g -d`",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Default200"
+          },
+          "503": {
+            "description": "Hexo deploy config not exits, can't deploy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "hexo action"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/clean": {
+      "post": {
+        "summary": "Clean hexo database and generated public files",
+        "description": "Run `hexo clean`",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Default200"
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "hexo action"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/sync": {
+      "post": {
+        "summary": "Download files from git remote origin",
+        "description": "Run `git reset --hard && git pull`",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Default200"
+          },
+          "503": {
+            "description": "DNot a git repo or do not have remote origin, can't pull",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "git action"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/reset": {
+      "post": {
+        "summary": "Reset files from git",
+        "description": "Run `git reset --hard`",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Default200"
+          },
+          "503": {
+            "description": "Not a git repo, can't reset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "git action"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/hexoeditorserver/save": {
+      "post": {
+        "summary": "Save files to git remote origin",
+        "description": "Run `git add. && git commit && git push`",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Default200"
+          },
+          "503": {
+            "description": "Not a git repo or do not have remote origin, can't pull",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "git action"
+        ],
+        "security": [
+          {
+            "bearerAuthToken": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/info/apidoc": {
+      "get": {
+        "summary": "获取json格式的api文档",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "info"
+        ]
+      }
+    },
+    "/info/version": {
+      "get": {
+        "summary": "主程序版本",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/DefaultError"
+          }
+        },
+        "tags": [
+          "info"
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "bearerAuthToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "bearerAuthAPIKEYToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "bearerAuthRefresh": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "apikey": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Post": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "date": {
+            "type": "number"
+          },
+          "updated": {
+            "type": "number"
+          },
+          "layout": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "raw": {
+            "type": "string"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "_content": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "frontmatters": {
+            "type": "object"
+          }
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "permalink": {
+            "type": "string"
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "length": {
+            "type": "integer"
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "permalink": {
+            "type": "string"
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "length": {
+            "type": "integer"
+          }
+        }
+      },
+      "ErrorResponseBody": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "Default200": {
+        "description": "OK",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DefaultError": {
+        "description": "Unexpected Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseBody"
+            }
+          }
+        }
+      },
+      "Post404": {
+        "description": "Post required not fould",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseBody"
+            }
+          }
+        }
+      },
+      "Post200": {
+        "description": "OK",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "post": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Post"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

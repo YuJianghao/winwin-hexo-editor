@@ -12,108 +12,28 @@
 
 [移动客户端](https://github.com/maomishen/winwin-hexo-editor-mobile) | [Mobile client](https://github.com/maomishen/winwin-hexo-editor-mobile)
 
-![Main page](https://cdn.yujianghao.cn/uploads/2020/08/07/VWUwO3J3_Snipaste_2020-08-07_10-52-08.png)
+![Main page](https://cdn.yujianghao.cn/uploads/2020/09/21/CNkHVagP_thumbnail-winwin-hexo-editor-v0.6.0-4.png)
 
 ## 功能 | Feature
 
-- [x] 文章增删改和预览 | Post add/delete/update and preview
-- [x] 发布和草稿 | Post puiblish/unpublish/drafts
+- [x] 文章增删改和预览 | Post/Page add/delete/update and preview
+- [x] 发布和草稿 | Post/Page puiblish/unpublish/drafts
 - [x] Markdown编辑 | Markdown editor
 - [x] 分类 | categories
 - [x] 标签 | tags
 - [x] git同步 | git push/reset/pull
 - [x] hexo命令 | hexo generate/deploy/clean
 - [x] 登录 | Basic authentication
-- [x] 文章排序 | Post sort
+- [x] 文章排序 | Post/Page sort
 - [x] front-matters
 - [x] 文章搜索 | Search
 - [x] 自定义slug | Custom slug
-- [ ] ~~图床Image CDN~~(请使用[picgo](https://picgo.github.io/PicGo-Doc/zh/guide/)替代 | use [picgo](https://picgo.github.io/PicGo-Doc/zh/guide/) instead)
+- [ ] ~~图床Image CDN~~(请使用[cloudreve](https://cloudreve.org/)替代 | use [cloudreve](https://cloudreve.org/) instead)
 - [ ] 亲，请告诉我您还需要什么 ~ | let me know what you need ...
 
-## 安装 | Installation
+## 如何使用 | How to use
 
-> **没有Hexo和Node.js经验的同学可以查看[手把手教学](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
->
-> **For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
-
-### 默认安装 | Default installation
-
-下载源码 | Download source
-
-```bash
-git clone https://github.com/YuJianghao/winwin-hexo-editor
-```
-
-运行安装程序 | Run Installer
-
-可以使用默认值 | You can use default settings.
-
-```bash
-cd winwin-hexo-editor
-bash install.sh
-```
-
-开始运行 | Start
-
-```bash
-# 不使用pm2 | without pm2
-npm run start
-
-# 使用pm2 | with pm2
-# 开启 | start
-npm run prd
-# 停止 | stop
-npm run stop
-# 重启 | restart
-npm run restart
-
-# 开发 | for development
-npm run dev
-```
-
-<!-- TODO 如何配置pm2 -->
-
-然后用浏览器打开`http://localhost:5777` | Then open `http://localhost:5777` from your browser.
-
-> 对于windows用户推荐使用WSL，详见[适用于Linux的Windows子系统](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10 )
-
-### 使用自定义服务器 | With custom server address
-
-直接使用`http://yourapiaddress:5777`即可。 | Just open `http://yourapiaddress:5777`.
-
-你需要自行配置你的http服务器反向代理。 | You need to configure your HTTP server proxy.
-
-<!-- TODO: 教学如何配置反向代理 -->
-
-## 选项 | Options
-
-所有选项都通过安装程序设定 | All options are set through installer.
-
-```bash
-bash setup.sh
-```
-
-```js
-module.exports = {
-  port: 5777,
-  hexoRoot: '',         // 博客文件夹目录 | hexo blog folder path
-  jwtSecret: 'secret',  // 密钥 | secret
-  jwtExpire: '1h',      // 操作过期时间 | access expire time
-  jwtRefresh: '7d',     // 登录过期时间 | login expire time
-  username: 'admin',
-  password: 'admin'
-}
-```
-
-## 更新 | Update
-
-
-运行安装程序 | Run Installer
-
-```bash
-bash update.sh
-```
+请查看[文档](https://winwin_2011.gitee.io/winwin-hexo-editor/guide.html)。 | Please see [doc](https://yujianghao.github.io/winwin-hexo-editor/en/guide.html)
 
 ## 支持 | Support
 

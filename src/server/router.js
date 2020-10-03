@@ -3,43 +3,55 @@ const controller = require('./controller')
 module.exports = router => {
   router.all('/', (ctx, next) => { ctx.body = 'Greeting guys!' })
 
-  router.use(controller.defaultErrorHandler)
-  router.use(controller.serviceErrorHandler)
+  router.use(controller.errorHandler)
 
   router.get('/restrictedkeys',
-    controller.getRestrictedKeys)
+    controller.getRestrictedKeys
+  )
 
   router.post('/post',
   // TODO: need validation
     controller.addPost
   )
 
+  router.post('/page',
+  // TODO: need validation
+    controller.addPage
+  )
+
   router.get('/posts',
     controller.getPosts
   )
 
-  router.get('/post/:id/',
-    controller.postNotFoundErrorHandler,
+  router.get('/post/:id',
     controller.getPost
   )
 
-  router.put('/post/:id/',
-    controller.postNotFoundErrorHandler,
+  router.get('/page/:id',
+    controller.getPage
+  )
+
+  router.put('/post/:id',
     controller.updatePost
   )
 
-  router.delete('/post/:id/',
-    controller.postNotFoundErrorHandler,
+  router.put('/page/:id',
+    controller.updatePage
+  )
+
+  router.delete('/post/:id',
     controller.removePost
   )
 
+  router.delete('/page/:id',
+    controller.removePage
+  )
+
   router.post('/post/:id/publish',
-    controller.postNotFoundErrorHandler,
     controller.publishPost
   )
 
   router.post('/post/:id/unpublish',
-    controller.postNotFoundErrorHandler,
     controller.unpublishPost
   )
 

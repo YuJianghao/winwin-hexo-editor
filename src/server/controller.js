@@ -1,8 +1,7 @@
-const Hexo = require('./hexo')
+const { Hexo, HexoError } = require('./hexo')
 const hexo = new Hexo()
 const Search = require('./search')
 const search = new Search(hexo)
-const warn = require('./utils').warn
 const restrictedKeys = require('./info').restrictedKeys
 
 exports.hexo = hexo
@@ -16,45 +15,28 @@ exports.getRestrictedKeys = async function (ctx, next) {
   }
 }
 
-exports.defaultErrorHandler = async function (ctx, next) {
+exports.errorHandler = async function (ctx, next) {
   try {
     await next()
   } catch (err) {
-    if (err.status !== 404 && err.status !== 503) throw err
-    ctx.status = err.status
-    ctx.body = {
-      success: false,
-      message: err.message
-    }
-  }
-}
-exports.serviceErrorHandler = async function (ctx, next) {
-  try {
-    await next()
-  } catch (err) {
-    if (err.name === 'Hexo Init') {
-      err.status = 503
-    }
-    if (err.name === 'Hexo Cant Deploy') {
-      err.status = 503
-    }
-    if (err.name === 'Git Cant Save') {
-      err.status = 503
-    }
-    if (err.name === 'Git Cant Sync') {
-      err.status = 503
-    }
-    if (err.status === 503) warn(err.name, ':', err.message)
-    throw err
-  }
-}
-
-exports.postNotFoundErrorHandler = async function (ctx, next) {
-  try {
-    await next()
-  } catch (err) {
-    if (err.name === 'Not Found') {
-      err.status = 404
+    switch (err.code) {
+      case HexoError.POST_NOT_FOUND:
+        err.status = 404
+        break
+      case HexoError.UNINITIALIZED:
+        err.status = 503
+        break
+      case HexoError.CANT_DEPLOY:
+        err.status = 503
+        break
+      case HexoError.NOT_GIT_REPO:
+        err.status = 503
+        break
+      case HexoError.BAD_PARAMS:
+        err.status = 400
+        break
+      case HexoError.SHELL_COMMAND_FAIL:
+        err.status = 503
     }
     throw err
   }
@@ -68,12 +50,6 @@ exports.reload = async function (ctx, next) {
 }
 
 exports.addPost = async function (ctx, next) {
-  if (!ctx.request.body.title) {
-    const err = new Error()
-    err.status = 400
-    err.message = 'title is required'
-    throw err
-  }
   const post = await hexo.addPost(ctx.request.body)
   ctx.body = {
     success: true,
@@ -83,8 +59,18 @@ exports.addPost = async function (ctx, next) {
   }
 }
 
+exports.addPage = async function (ctx, next) {
+  const post = await hexo.addPost(ctx.request.body, true)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
 exports.getPosts = async function (ctx, next) {
-  const posts = await hexo.listPosts()
+  const posts = await hexo.listArticles()
   ctx.body = {
     success: true,
     data: {
@@ -95,11 +81,16 @@ exports.getPosts = async function (ctx, next) {
 
 exports.getPost = async function (ctx, next) {
   const post = await hexo.getPost(ctx.params.id)
-  if (post === null) {
-    const err = new Error('Post not found')
-    err.name = 'Not Found'
-    throw err
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
   }
+}
+
+exports.getPage = async function (ctx, next) {
+  const post = await hexo.getPost(ctx.params.id, true)
   ctx.body = {
     success: true,
     data: {
@@ -118,8 +109,28 @@ exports.updatePost = async function (ctx, next) {
   }
 }
 
+exports.updatePage = async function (ctx, next) {
+  const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body }, true)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
 exports.removePost = async function (ctx, next) {
   const post = await hexo.deletePost(ctx.params.id)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
+
+exports.removePage = async function (ctx, next) {
+  const post = await hexo.deletePost(ctx.params.id, true)
   ctx.body = {
     success: true,
     data: {
@@ -169,9 +180,10 @@ exports.getCategories = async function (ctx, next) {
 }
 
 exports.sync = async function (ctx, next) {
-  await hexo.syncGit()
+  const { remote } = await hexo.syncGit()
   ctx.body = {
-    success: true
+    success: true,
+    data: { remote }
   }
 }
 
@@ -183,9 +195,10 @@ exports.reset = async function (ctx, next) {
 }
 
 exports.save = async function (ctx, next) {
-  await hexo.saveGit()
+  const { remote } = await hexo.saveGit()
   ctx.body = {
-    success: true
+    success: true,
+    data: { remote }
   }
 }
 
