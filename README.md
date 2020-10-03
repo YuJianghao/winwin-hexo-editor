@@ -33,7 +33,7 @@
 
 ## 如何使用 | How to use
 
-请查看[文档](https://yujianghao.github.io/winwin-hexo-editor/guide.html)。 | Please see [doc](https://yujianghao.github.io/winwin-hexo-editor/en/guide.html)
+请查看[文档](https://winwin_2011.gitee.io/winwin-hexo-editor/guide.html)。 | Please see [doc](https://yujianghao.github.io/winwin-hexo-editor/en/guide.html)
 
 ## 支持 | Support
 
