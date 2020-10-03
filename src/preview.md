@@ -8,42 +8,31 @@
 
 ## 当前版本
 
-`v0.6.0-6`
-
-- 添加用户安全相关配置
-- 改进ui
-- 完善apikey支持
-- 修复bug
-
-## 安装说明
-
-```bash
-git clone https://github.com/YuJianghao/winwin-hexo-editor.git
-git checkout preview # 切换到预览版
-yarn # npm install # 安装依赖
-node install.js # 运行安装程序
-```
-
-::: warning 安装说明仅对最新预览版生效
-历史版本请查看`preview`分支的`winwin-hexo-editor/preview.md`文件
-:::
-
-在安装程序中需要指定hexo博客目录。详情请查看[文档](guide.md)
-
-请根据安装程序指引完成安装。**部分安装需要在浏览器进行！详情请查看安装程序输出。**
-
-程序开启、关闭、重启方法目前和正式版相同，请查看[文档](guide.md)
+无
 
 ## 更新计划
 
-### v0.6.0-7
-
-- 更新：API文档
-- 改进：优化包体积
-- 修复：不能更改用户配置的bug
-- 修复：本地git报错的bug
+无
 
 ## 更新日志
+
+### v0.6.0-rc.1
+
+- 完善rc流程、文档和版本号
+
+### v0.6.0-rc.0
+
+- 修复：用户配置不能修改的bug
+
+### v0.6.0-7
+
+- 新增：windows支持
+- 改进：优化打包文件大小
+- 改进：恢复各种503错误提示
+- 改进：整理service
+- 改进：在每次部署/git操作前检查是否可以操作
+- 修复：用户配置不能修改的bug
+- 修复：api文档错误
 
 ### v0.6.0-6
 
