@@ -43,10 +43,16 @@ cd winwin-hexo-editor
 请不要将博客源码或`winwin-hexo-editor`部署到http服务的网站根目录下，例如`/www`或`/www/wwwroot/`。这很可能会导致一些安全问题。
 :::
 
+安装依赖
+
+```bash
+yarn # 或者 npm install
+```
+
 运行安装程序
 
 ```bash
-bash ./install.sh
+node install.js
 ```
 
 开始运行
@@ -82,7 +88,7 @@ npm run prd
 ## 更新
 
 ```bash
-bash ./update.sh
+bash update.js
 ```
 
 更新后你需要手动重启服务

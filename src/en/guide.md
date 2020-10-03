@@ -45,10 +45,16 @@ cd winwin-hexo-editor
 Please do not deploy the blog source code or `winwin-hexo-editor` to websites' root directories, such as `/www` or `/www/wwwroot/`. This will cause security issues.
 :::
 
+Install Dependences
+
+```bash
+yarn # or npm
+```
+
 Run Installer
 
 ```bash
-bash ./install.sh
+bash install.js
 ```
 
 Start service
@@ -78,7 +84,7 @@ You need to configure your HTTP server proxy.
 ## Update
 
 ```bash
-bash ./update.sh
+bash update.js
 ```
 
 Remember to restart your service manually after update.
