@@ -123,7 +123,11 @@ class Hexo {
     const posts = this._hexo.locals.get('posts').toArray()
     const postsObj = posts.map(this.postDocument2Obj.bind(this))
     logger.debug('list posts object', postsObj.length)
-    return postsObj
+    return postsObj.map(post => {
+      delete post._content
+      delete post.raw
+      return post
+    })
   }
 
   async listPagesObj () {
@@ -131,7 +135,11 @@ class Hexo {
     const pages = this._hexo.locals.get('pages').toArray()
     const pagesObj = pages.map(this.pageDocument2Obj.bind(this))
     logger.debug('list pages object', pagesObj.length)
-    return pagesObj
+    return pagesObj.map(page => {
+      delete page._content
+      delete page.raw
+      return page
+    })
   }
 
   /**
