@@ -22,9 +22,9 @@ exports.errorHandler = async function (ctx, next) {
       // case HexoError.NOT_GIT_REPO:
       //   err.status = 503
       //   break
-      // case HexoError.BAD_PARAMS:
-      //   err.status = 400
-      //   break
+      case HexoError.BAD_PARAMS:
+        err.status = 400
+        break
       // case HexoError.SHELL_COMMAND_FAIL:
       //   err.status = 503
     }

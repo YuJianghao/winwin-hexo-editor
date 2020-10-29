@@ -146,9 +146,10 @@ class Hexo {
    * @param {number} [data.date]
    * @param {boolean} replace
    */
-  async createPost (data, replace) {
+  async createPost (data = {}, replace) {
     const title = data.title
     const slug = data.slug || data.title
+    if (!title && !slug) throw new HexoError('title or slug is required!', HexoError.BAD_PARAMS)
     const layout = data.layout
     const path = data.path
     const date = data.date ? new Date(data.date) : undefined
