@@ -5,7 +5,7 @@ module.exports = (router) => {
     ctx.body = 'Greeting guys!'
   })
 
-  // router.use(controller.errorHandler)
+  router.use(controller.errorHandler)
 
   // router.get('/restrictedkeys',
   //   controller.getRestrictedKeys

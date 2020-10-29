@@ -4,22 +4,22 @@ const HexoAPI = require('hexo')
 const hfm = require('hexo-front-matter')
 const logger = require('log4js').getLogger('hexo-editor-server:hexo')
 
-// class HexoError extends Error {
-//   constructor (message, code) {
-//     super(message)
-//     Error.captureStackTrace(this)
-//     this.code = code
-//   }
-// }
-// HexoError.prototype.name = 'HexoError'
-// HexoError.NOT_BLOG_ROOT = 'NOT_BLOG_ROOT'
-// HexoError.EMPTY_HEXO_ROOT = 'EMPTY_HEXO_ROOT'
-// HexoError.POST_NOT_FOUND = 'POST_NOT_FOUND'
-// HexoError.UNINITIALIZED = 'UNINITIALIZED'
-// HexoError.CANT_DEPLOY = 'CANT_DEPLOY'
-// HexoError.BAD_PARAMS = 'BAD_PARAMS'
-// HexoError.NOT_GIT_REPO = 'NOT_GIT_REPO'
-// HexoError.SHELL_COMMAND_FAIL = 'SHELL_COMMAND_FAIL'
+class HexoError extends Error {
+  constructor (message, code) {
+    super(message)
+    Error.captureStackTrace(this)
+    this.code = code
+  }
+}
+HexoError.prototype.name = 'HexoError'
+HexoError.NOT_BLOG_ROOT = 'NOT_BLOG_ROOT'
+HexoError.EMPTY_HEXO_ROOT = 'EMPTY_HEXO_ROOT'
+HexoError.NOT_FOUND = 'NOT_FOUND'
+HexoError.UNINITIALIZED = 'UNINITIALIZED'
+HexoError.CANT_DEPLOY = 'CANT_DEPLOY'
+HexoError.BAD_PARAMS = 'BAD_PARAMS'
+HexoError.NOT_GIT_REPO = 'NOT_GIT_REPO'
+HexoError.SHELL_COMMAND_FAIL = 'SHELL_COMMAND_FAIL'
 
 class Hexo {
   /**
@@ -158,7 +158,12 @@ class Hexo {
     )
     await this._hexo.load()
     if (layout === 'page') {
-      logger.debug('created page with keys', Object.keys(data), 'replace:', replace)
+      logger.debug(
+        'created page with keys',
+        Object.keys(data),
+        'replace:',
+        replace
+      )
       return this._hexo.locals
         .get('pages')
         .toArray()
@@ -297,25 +302,25 @@ class Hexo {
   }
 
   getPostObj (_id) {
-    const post = this.postDocument2Obj(
-      this._hexo.locals
-        .get('posts')
-        .toArray()
-        .filter((item) => item._id === _id)[0]
-    )
+    const posts = this._hexo.locals
+      .get('posts')
+      .toArray()
+      .filter((item) => item._id === _id)
+    if (posts.length < 1) { throw new HexoError('post not found', HexoError.NOT_FOUND) }
+    const post = this.postDocument2Obj(posts[0])
     logger.debug('get post', _id)
     return post
   }
 
   getPageObj (_id) {
-    const page = this.pageDocument2Obj(
-      this._hexo.locals
-        .get('pages')
-        .toArray()
-        .filter((item) => item._id === _id)[0]
-    )
+    const pages = this._hexo.locals
+      .get('pages')
+      .toArray()
+      .filter((item) => item._id === _id)
+    if (pages.length < 1) { throw new HexoError('page not found', HexoError.NOT_FOUND) }
+    const page = this.pageDocument2Obj(pages[0])
     logger.debug('get page', _id)
     return page
   }
 }
-module.exports = { Hexo }
+module.exports = { Hexo, HexoError }

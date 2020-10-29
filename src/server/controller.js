@@ -1,36 +1,36 @@
-const { Hexo } = require('./hexo')
+const { Hexo, HexoError } = require('./hexo')
 const hexo = new Hexo()
 // const Search = require('./search')
 // const search = new Search(hexo)
 
 exports.hexo = hexo
 
-// exports.errorHandler = async function (ctx, next) {
-//   try {
-//     await next()
-//   } catch (err) {
-//     switch (err.code) {
-//       case HexoError.POST_NOT_FOUND:
-//         err.status = 404
-//         break
-//       case HexoError.UNINITIALIZED:
-//         err.status = 503
-//         break
-//       case HexoError.CANT_DEPLOY:
-//         err.status = 503
-//         break
-//       case HexoError.NOT_GIT_REPO:
-//         err.status = 503
-//         break
-//       case HexoError.BAD_PARAMS:
-//         err.status = 400
-//         break
-//       case HexoError.SHELL_COMMAND_FAIL:
-//         err.status = 503
-//     }
-//     throw err
-//   }
-// }
+exports.errorHandler = async function (ctx, next) {
+  try {
+    await next()
+  } catch (err) {
+    switch (err.code) {
+      case HexoError.NOT_FOUND:
+        err.status = 404
+        break
+      // case HexoError.UNINITIALIZED:
+      //   err.status = 503
+      //   break
+      // case HexoError.CANT_DEPLOY:
+      //   err.status = 503
+      //   break
+      // case HexoError.NOT_GIT_REPO:
+      //   err.status = 503
+      //   break
+      // case HexoError.BAD_PARAMS:
+      //   err.status = 400
+      //   break
+      // case HexoError.SHELL_COMMAND_FAIL:
+      //   err.status = 503
+    }
+    throw err
+  }
+}
 
 // exports.reload = async function (ctx, next) {
 //   await hexo.load()
