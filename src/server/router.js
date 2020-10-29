@@ -18,20 +18,13 @@ module.exports = (router) => {
   router.get('/pages', controller.listPagesObj)
 
   router.get('/post/:id', controller.getPostObj)
-
   router.get('/page/:id', controller.getPageObj)
 
   router.put('/post/:id', controller.updatePost)
-
   router.put('/page/:id', controller.updatePage)
 
-  // router.delete('/post/:id',
-  //   controller.removePost
-  // )
-
-  // router.delete('/page/:id',
-  //   controller.removePage
-  // )
+  router.delete('/post/:id', controller.removePost)
+  router.delete('/page/:id', controller.removePage)
 
   // router.post('/post/:id/publish',
   //   controller.publishPost

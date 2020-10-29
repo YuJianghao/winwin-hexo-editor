@@ -121,25 +121,19 @@ exports.updatePage = async function (ctx, next) {
   }
 }
 
-// exports.removePost = async function (ctx, next) {
-//   const post = await hexo.deletePost(ctx.params.id)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.removePost = async function (ctx, next) {
+  await hexo.removePost(ctx.params.id)
+  ctx.body = {
+    success: true
+  }
+}
 
-// exports.removePage = async function (ctx, next) {
-//   const post = await hexo.deletePost(ctx.params.id, true)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.removePage = async function (ctx, next) {
+  await hexo.removePage(ctx.params.id, true)
+  ctx.body = {
+    success: true
+  }
+}
 
 // exports.publishPost = async function (ctx, next) {
 //   const post = await hexo.publishPost(ctx.params.id)
