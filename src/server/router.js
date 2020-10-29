@@ -24,13 +24,9 @@ module.exports = (router) => {
   router.get('/posts', controller.listPostsObj)
   router.get('/pages', controller.listPagesObj)
 
-  // router.get('/post/:id',
-  //   controller.getPost
-  // )
+  router.get('/post/:id', controller.getPostObj)
 
-  // router.get('/page/:id',
-  //   controller.getPage
-  // )
+  router.get('/page/:id', controller.getPageObj)
 
   // router.put('/post/:id',
   //   controller.updatePost

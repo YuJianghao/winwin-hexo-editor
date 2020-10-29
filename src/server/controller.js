@@ -79,25 +79,25 @@ exports.listPagesObj = async function (ctx, next) {
   }
 }
 
-// exports.getPost = async function (ctx, next) {
-//   const post = await hexo.getPost(ctx.params.id)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.getPostObj = async function (ctx, next) {
+  const post = await hexo.getPostObj(ctx.params.id)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
 
-// exports.getPage = async function (ctx, next) {
-//   const post = await hexo.getPost(ctx.params.id, true)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.getPageObj = async function (ctx, next) {
+  const post = await hexo.getPageObj(ctx.params.id)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
 
 // exports.updatePost = async function (ctx, next) {
 //   const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body })
