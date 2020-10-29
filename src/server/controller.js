@@ -69,6 +69,16 @@ exports.listPostsObj = async function (ctx, next) {
   }
 }
 
+exports.listPagesObj = async function (ctx, next) {
+  const pages = await hexo.listPagesObj()
+  ctx.body = {
+    success: true,
+    data: {
+      pages: pages
+    }
+  }
+}
+
 // exports.getPost = async function (ctx, next) {
 //   const post = await hexo.getPost(ctx.params.id)
 //   ctx.body = {

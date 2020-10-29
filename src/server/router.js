@@ -1,7 +1,9 @@
 const controller = require('./controller')
 
-module.exports = router => {
-  router.all('/', (ctx, next) => { ctx.body = 'Greeting guys!' })
+module.exports = (router) => {
+  router.all('/', (ctx, next) => {
+    ctx.body = 'Greeting guys!'
+  })
 
   // router.use(controller.errorHandler)
 
@@ -19,9 +21,8 @@ module.exports = router => {
   //   controller.addPage
   // )
 
-  router.get('/posts',
-    controller.listPostsObj
-  )
+  router.get('/posts', controller.listPostsObj)
+  router.get('/pages', controller.listPagesObj)
 
   // router.get('/post/:id',
   //   controller.getPost
