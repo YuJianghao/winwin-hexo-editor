@@ -311,23 +311,13 @@ class Hexo {
   }
 
   getPostObj (_id) {
-    const posts = this._hexo.locals
-      .get('posts')
-      .toArray()
-      .filter((item) => item._id === _id)
-    if (posts.length < 1) { throw new HexoError('post not found', HexoError.NOT_FOUND) }
-    const post = this.postDocument2Obj(posts[0])
+    const post = this.postDocument2Obj(this._getPostDocument(_id))
     logger.debug('get post', _id)
     return post
   }
 
   getPageObj (_id) {
-    const pages = this._hexo.locals
-      .get('pages')
-      .toArray()
-      .filter((item) => item._id === _id)
-    if (pages.length < 1) { throw new HexoError('page not found', HexoError.NOT_FOUND) }
-    const page = this.pageDocument2Obj(pages[0])
+    const page = this.pageDocument2Obj(this._getPageDocument(_id))
     logger.debug('get page', _id)
     return page
   }
