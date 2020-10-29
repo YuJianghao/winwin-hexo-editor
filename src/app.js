@@ -74,8 +74,8 @@ if (!isInstalled) {
 
 // hexo-editor-server
 hexoeditorserver(app, {
-  base: 'hexoeditorserver',
-  auth: authController.apikeyOrJwt
+  base: 'hexoeditorserver'
+  // auth: authController.apikeyOrJwt
 })
 
 // routes

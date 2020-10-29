@@ -54,6 +54,7 @@ exports.hexoeditorserver = function (app, opts = {}) {
   // setup router
   app.use(router.routes(), router.allowedMethods())
 }
+const isProd = process.env.NODE_ENV === 'production'
 
 /**
  * 可能的错误：HexoError.EMPTY_HEXO_ROOT | HexoError.NOT_BLOG_ROOT | other
@@ -61,7 +62,7 @@ exports.hexoeditorserver = function (app, opts = {}) {
  */
 exports.initHexo = async (hexoRoot) => {
   const hexo = require('./controller').hexo
-  return hexo.init(hexoRoot).catch(err => {
+  return hexo.init(hexoRoot, { debug: !isProd, silent: isProd }).catch(err => {
     switch (err.code) {
       case HexoError.EMPTY_HEXO_ROOT:
         logger.warn(chalk.yellow.bold('HEXO_ROOT is required!'))
