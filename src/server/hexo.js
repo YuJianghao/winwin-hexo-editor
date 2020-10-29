@@ -151,7 +151,7 @@ class Hexo {
     const slug = data.slug || data.title
     const layout = data.layout
     const path = data.path
-    const date = new Date(data.date)
+    const date = data.date ? new Date(data.date) : undefined
     const file = await this._hexo.post.create(
       { title, slug, layout, path, date },
       replace
@@ -160,14 +160,14 @@ class Hexo {
     if (layout === 'page') {
       logger.debug(
         'created page with keys',
-        Object.keys(data),
+        Object.keys(data).filter(key => key !== 'layout'),
         'replace:',
         replace
       )
-      return this._hexo.locals
+      return this.postDocument2Obj(this._hexo.locals
         .get('pages')
         .toArray()
-        .filter((item) => item.full_source === file.path)[0]
+        .filter((item) => item.full_source === file.path)[0])
     } else {
       logger.debug(
         'created post with keys',
@@ -177,10 +177,10 @@ class Hexo {
         'layout:',
         layout
       )
-      return this._hexo.locals
+      return this.postDocument2Obj(this._hexo.locals
         .get('posts')
         .toArray()
-        .filter((item) => item.full_source === file.path)[0]
+        .filter((item) => item.full_source === file.path)[0])
     }
   }
 

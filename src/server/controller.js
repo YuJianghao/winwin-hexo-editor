@@ -39,25 +39,27 @@ exports.errorHandler = async function (ctx, next) {
 //   }
 // }
 
-// exports.addPost = async function (ctx, next) {
-//   const post = await hexo.addPost(ctx.request.body)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.createPost = async function (ctx, next) {
+  const { data, replace } = ctx.request.body
+  const post = await hexo.createPost(data, replace)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
 
-// exports.addPage = async function (ctx, next) {
-//   const post = await hexo.addPost(ctx.request.body, true)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.createPage = async function (ctx, next) {
+  const { data, replace } = ctx.request.body
+  const page = await hexo.createPage(data, replace)
+  ctx.body = {
+    success: true,
+    data: {
+      page: page
+    }
+  }
+}
 
 exports.listPostsObj = async function (ctx, next) {
   const posts = await hexo.listPostsObj()

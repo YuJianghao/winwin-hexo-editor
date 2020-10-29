@@ -11,15 +11,8 @@ module.exports = (router) => {
   //   controller.getRestrictedKeys
   // )
 
-  // router.post('/post',
-  // // TODO: need validation
-  //   controller.addPost
-  // )
-
-  // router.post('/page',
-  // // TODO: need validation
-  //   controller.addPage
-  // )
+  router.post('/post', controller.createPost)
+  router.post('/page', controller.createPage)
 
   router.get('/posts', controller.listPostsObj)
   router.get('/pages', controller.listPagesObj)
