@@ -213,12 +213,7 @@ class Hexo {
    * @returns updated post obj
    */
   async updatePost (_id, data) {
-    const post = this.postDocument2Obj(
-      this._hexo.locals
-        .get('posts')
-        .toArray()
-        .filter((item) => item._id === _id)[0]
-    )
+    const post = this.postDocument2Obj(this._getPostDocument(_id))
     const fullSource = post.full_source
     if (data.date) data.date = new Date(data.date)
     if (data.updated) data.updated = new Date(data.updated)
@@ -247,12 +242,7 @@ class Hexo {
    * @returns updated page obj
    */
   async updatePage (_id, data) {
-    const post = this.pageDocument2Obj(
-      this._hexo.locals
-        .get('pages')
-        .toArray()
-        .filter((item) => item._id === _id)[0]
-    )
+    const post = this.pageDocument2Obj(this._getPageDocument(_id))
     const fullSource = post.full_source
     if (data.date) data.date = new Date(data.date)
     if (data.updated) data.updated = new Date(data.updated)
@@ -300,6 +290,24 @@ class Hexo {
       fs.rmdirSync(dirname)
     }
     logger.debug('removed page', _id)
+  }
+
+  _getPostDocument (_id) {
+    const posts = this._hexo.locals
+      .get('posts')
+      .toArray()
+      .filter((item) => item._id === _id)
+    if (posts.length < 1) { throw new HexoError('post not found', HexoError.NOT_FOUND) }
+    return posts[0]
+  }
+
+  _getPageDocument (_id) {
+    const pages = this._hexo.locals
+      .get('pages')
+      .toArray()
+      .filter((item) => item._id === _id)
+    if (pages.length < 1) { throw new HexoError('page not found', HexoError.NOT_FOUND) }
+    return pages[0]
   }
 
   getPostObj (_id) {

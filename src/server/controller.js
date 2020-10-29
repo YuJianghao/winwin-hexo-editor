@@ -101,25 +101,25 @@ exports.getPageObj = async function (ctx, next) {
   }
 }
 
-// exports.updatePost = async function (ctx, next) {
-//   const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body })
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.updatePost = async function (ctx, next) {
+  const post = await hexo.updatePost(ctx.params.id, ctx.request.body)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
 
-// exports.updatePage = async function (ctx, next) {
-//   const post = await hexo.updatePost({ _id: ctx.params.id, ...ctx.request.body }, true)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.updatePage = async function (ctx, next) {
+  const page = await hexo.updatePage(ctx.params.id, ctx.request.body)
+  ctx.body = {
+    success: true,
+    data: {
+      page: page
+    }
+  }
+}
 
 // exports.removePost = async function (ctx, next) {
 //   const post = await hexo.deletePost(ctx.params.id)
