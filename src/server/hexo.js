@@ -28,6 +28,8 @@ class Hexo {
    * @param {Object} options Hexo option
    */
   async init (base = process.cwd(), options = {}) {
+    // TODO: 提示用户draft选项会被默认覆盖
+    options.draft = true
     this._cwd = base
     this._hexo = new HexoAPI(base, options)
     await this._hexo.init()
@@ -155,10 +157,9 @@ class Hexo {
    * @param {boolean} replace
    */
   // TODO: 需要提醒用户，如果需要默认新建草稿，需要修改hexo默认配置
-  async createPost (data = {}, replace) {
+  async createPost (data, replace) {
     const title = data.title
     const slug = data.slug || data.title
-    if (!title && !slug) throw new HexoError('title or slug is required!', HexoError.BAD_PARAMS)
     const layout = data.layout
     const path = data.path
     const date = data.date ? new Date(data.date) : undefined
@@ -168,29 +169,39 @@ class Hexo {
     )
     await this._hexo.load()
     if (layout === 'page') {
+      const page = this.pageDocument2Obj(
+        this._hexo.locals
+          .get('pages')
+          .toArray()
+          .filter((item) => item.full_source === file.path)[0]
+      )
       logger.debug(
-        'created page with keys',
-        Object.keys(data).filter(key => key !== 'layout'),
+        'created page',
+        page._id,
+        ' with keys',
+        Object.keys(data),
         'replace:',
         replace
       )
-      return this.postDocument2Obj(this._hexo.locals
-        .get('pages')
-        .toArray()
-        .filter((item) => item.full_source === file.path)[0])
+      return page
     } else {
+      const post = this.postDocument2Obj(
+        this._hexo.locals
+          .get('posts')
+          .toArray()
+          .filter((item) => item.full_source === file.path)[0]
+      )
       logger.debug(
-        'created post with keys',
+        'created post',
+        post._id,
+        ' with keys',
         Object.keys(data),
         'replace:',
         replace,
         'layout:',
         layout
       )
-      return this.postDocument2Obj(this._hexo.locals
-        .get('posts')
-        .toArray()
-        .filter((item) => item.full_source === file.path)[0])
+      return post
     }
   }
 
@@ -299,6 +310,91 @@ class Hexo {
       fs.rmdirSync(dirname)
     }
     logger.debug('removed page', _id)
+  }
+
+  tagDocument2Obj (tag) {
+    tag = tag.toObject()
+    tag.posts = tag.posts.map((post) => post._id)
+    return tag
+  }
+
+  async listTagsObj () {
+    await this._hexo.load()
+    const tags = this._hexo.locals
+      .get('tags')
+      .toArray()
+      .map(this.tagDocument2Obj)
+    logger.debug('list tag obj', tags.length)
+    return tags
+  }
+
+  categoryDocument2Obj (category) {
+    category = category.toObject()
+    category.posts = category.posts.map((post) => post._id)
+    return category
+  }
+
+  async listCategoriesObj () {
+    await this._hexo.load()
+    const categories = this._hexo.locals
+      .get('categories')
+      .toArray()
+      .map(this.tagDocument2Obj)
+    logger.debug('list tag obj', categories.length)
+    return categories
+  }
+
+  async publishPost (_id) {
+    const slug = (await this._getPostDocument(_id)).slug
+    await this._hexo.post.publish({ slug }, true)
+    await this._hexo.load()
+    const post = this.postDocument2Obj(
+      this._hexo.locals
+        .get('posts')
+        .toArray()
+        .filter((item) => item.slug === slug)[0]
+    )
+    logger.debug('publish post', _id, 'to', post._id)
+    return post
+  }
+
+  async unpublishPost (_id) {
+    const source = this._getPostDocument(_id).full_source
+    const draftDir = path.resolve(this._hexo.source_dir, '_drafts')
+    if (!fs.existsSync(draftDir))fs.mkdirSync(draftDir)
+    const target = path.resolve(draftDir, path.basename(source))
+    fs.renameSync(source, target)
+    await this._hexo.locals.invalidate()
+    await this._hexo.load()
+    const post = this.postDocument2Obj(
+      this._hexo.locals
+        .get('posts')
+        .toArray()
+        .filter((item) => item.full_source === target)[0]
+    )
+    logger.debug('unpublish post', _id, 'to', post._id)
+    return post
+  }
+
+  async generate () {
+    const draft = this._hexo.env.args.draft
+    this._hexo.env.args.draft = false
+    await this._hexo.call('generate')
+    await this._hexo.exit()
+    this._hexo.env.args.draft = draft
+    logger.debug('generate')
+  }
+
+  async clean () {
+    await this._hexo.call('clean')
+    await this._hexo.exit()
+    logger.debug('clean')
+  }
+
+  async deploy () {
+    await this._hexo.call('generate', { _: 'd' })
+    await this._hexo.exit()
+    logger.debug('deploy')
   }
 
   _getPostDocument (_id) {

@@ -135,45 +135,66 @@ exports.removePage = async function (ctx, next) {
   }
 }
 
-// exports.publishPost = async function (ctx, next) {
-//   const post = await hexo.publishPost(ctx.params.id)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.publishPost = async function (ctx, next) {
+  const post = await hexo.publishPost(ctx.params.id)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
 
-// exports.unpublishPost = async function (ctx, next) {
-//   const post = await hexo.unpublishPost(ctx.params.id)
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       post: post
-//     }
-//   }
-// }
+exports.unpublishPost = async function (ctx, next) {
+  const post = await hexo.unpublishPost(ctx.params.id)
+  ctx.body = {
+    success: true,
+    data: {
+      post: post
+    }
+  }
+}
 
-// exports.getTags = async function (ctx, next) {
-//   const tags = await hexo.listTags()
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       tags: tags
-//     }
-//   }
-// }
+exports.listTagsObj = async function (ctx, next) {
+  const tags = await hexo.listTagsObj()
+  ctx.body = {
+    success: true,
+    data: {
+      tags: tags
+    }
+  }
+}
 
-// exports.getCategories = async function (ctx, next) {
-//   const categories = await hexo.listCategories()
-//   ctx.body = {
-//     success: true,
-//     data: {
-//       categories: categories
-//     }
-//   }
-// }
+exports.listCategoriesObj = async function (ctx, next) {
+  const categories = await hexo.listCategoriesObj()
+  ctx.body = {
+    success: true,
+    data: {
+      categories: categories
+    }
+  }
+}
+
+exports.deploy = async function (ctx, next) {
+  await hexo.deploy()
+  ctx.body = {
+    success: true
+  }
+}
+
+exports.generate = async function (ctx, next) {
+  await hexo.generate()
+  ctx.body = {
+    success: true
+  }
+}
+
+exports.clean = async function (ctx, next) {
+  await hexo.clean()
+  ctx.body = {
+    success: true
+  }
+}
 
 // exports.sync = async function (ctx, next) {
 //   const { remote } = await hexo.syncGit()
@@ -195,27 +216,6 @@ exports.removePage = async function (ctx, next) {
 //   ctx.body = {
 //     success: true,
 //     data: { remote }
-//   }
-// }
-
-// exports.deploy = async function (ctx, next) {
-//   await hexo.deploy()
-//   ctx.body = {
-//     success: true
-//   }
-// }
-
-// exports.generate = async function (ctx, next) {
-//   await hexo.generate()
-//   ctx.body = {
-//     success: true
-//   }
-// }
-
-// exports.clean = async function (ctx, next) {
-//   await hexo.clean()
-//   ctx.body = {
-//     success: true
 //   }
 // }
 
