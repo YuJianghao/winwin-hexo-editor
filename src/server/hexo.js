@@ -154,6 +154,7 @@ class Hexo {
    * @param {number} [data.date]
    * @param {boolean} replace
    */
+  // TODO: 需要提醒用户，如果需要默认新建草稿，需要修改hexo默认配置
   async createPost (data = {}, replace) {
     const title = data.title
     const slug = data.slug || data.title
