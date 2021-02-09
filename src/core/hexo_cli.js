@@ -1,6 +1,5 @@
 const chalk = require('chalk')
 const { spawn } = require('hexo-util')
-require('../util/logger')
 
 class HexoCLI {
   /**
@@ -31,13 +30,13 @@ class HexoCLI {
    */
   async runcli (cwd, command, args = []) {
     const string = [command].concat(args).map(key => {
-      if (key.includes(' ')) return '"' + key + '"'
+      if (key.toString().includes(' ')) return '"' + key + '"'
       else return key
     }).join(' ')
-    this.logger.debug('Run `' + string + '` ' + chalk.gray(cwd))
+    this.logger.info('Run `' + string + '` ' + chalk.gray(cwd))
     try {
       await spawn(command, args, { cwd, stdio: 'inherit' })
-      this.logger.debug('Finished')
+      this.logger.info('Finished')
     } catch (err) {
       this.logger.error('Fail to run `' + string + '`')
       this.logger.error(err)

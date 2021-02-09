@@ -50,25 +50,33 @@ class HexoAPI {
   async listPost () {
     await this.hexo.locals.invalidate()
     await this.hexo.load()
-    return this.hexo.locals.get('posts').toArray().map(postDocument2Object)
+    const res = await this.hexo.locals.get('posts').toArray().map(postDocument2Object)
+    this.logger.info('List posts', res.length)
+    return res
   }
 
   async listPage () {
     await this.hexo.locals.invalidate()
     await this.hexo.load()
-    return this.hexo.locals.get('pages').toArray().map(pageDocument2Object)
+    const res = await this.hexo.locals.get('pages').toArray().map(pageDocument2Object)
+    this.logger.info('List pages', res.length)
+    return res
   }
 
   async listTag () {
     await this.hexo.locals.invalidate()
     await this.hexo.load()
-    return this.hexo.locals.get('tags').toArray().map(tagDocument2Object)
+    const res = await this.hexo.locals.get('tags').toArray().map(tagDocument2Object)
+    this.logger.info('List tags', res.length)
+    return res
   }
 
   async listCategory () {
     await this.hexo.locals.invalidate()
     await this.hexo.load()
-    return this.hexo.locals.get('categories').toArray().map(categoryDocument2Object)
+    const res = await this.hexo.locals.get('categories').toArray().map(categoryDocument2Object)
+    this.logger.info('List categories', res.length)
+    return res
   }
 
   async stringify () {
