@@ -55,14 +55,14 @@ const categories = {
    * hexo核心输出
    */
   hexo: {
-    appenders: [HEXO_EDITOR_APPENDER].concat(isDev ? ['console'] : []),
+    appenders: [].concat(isDev ? ['console'] : []).concat([HEXO_EDITOR_APPENDER]),
     level: isDev ? 'debug' : 'info'
   },
   /**
    * 应用服务输出
    */
   server: {
-    appenders: [HEXO_EDITOR_APPENDER].concat(isDev ? ['console'] : []),
+    appenders: [].concat(isDev ? ['console'] : []).concat([HEXO_EDITOR_APPENDER]),
     level: isDev ? 'debug' : 'info'
   },
   /**
