@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const { spawn } = require('hexo-util')
 require('../util/logger')
 
-class HexoCli {
+class HexoCLI {
   /**
    * 有关hexo的cli操作封装
    * @param {String} HEXO_ROOT hexo路径
@@ -91,7 +91,7 @@ class HexoCli {
       args.push(opt.slug)
     }
     if (title)args.push(title)
-    await this.runcli(this.HEXO_ROOT, 'hexo', args)
+    return this.runcli(this.HEXO_ROOT, 'hexo', args)
   }
 
   /**
@@ -134,4 +134,4 @@ class HexoCli {
     this.runcli(this.HEXO_ROOT, 'hexo', ['version'])
   }
 }
-module.exports = HexoCli
+module.exports = HexoCLI
