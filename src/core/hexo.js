@@ -69,8 +69,12 @@ class Hexo {
     return this.hcli.new(...arguments)
   }
 
+  /**
+   * 从id获取文件路径
+   * @param {String} id 文章id
+   * @param {Boolean} page 是否是页面
+   */
   async _getSource (id, page = false) {
-    this._checkReady()
     const res = (page ? (await this.hapi.listPage()) : (await this.hapi.listPost())).filter(r => r._id === id)
     if (res.length < 1) throw new Error('Not found')
     return res[0].full_source
@@ -106,9 +110,14 @@ class Hexo {
     return this.hcli.clean(...arguments)
   }
 
-  async publish () {
+  async publish (id, layout = 'post') {
     this._checkReady()
-    return this.hcli.publish(...arguments)
+    const posts = (await this.listPost()).filter(p => p._id === id)
+    if (posts.length < 1) throw new Error('Not found')
+    const post = posts[0]
+    if (post.published) throw new Error('Already published')
+    const filename = path.basename(post.source, path.extname(post.source))
+    return this.hcli.publish(filename, layout)
   }
 }
 module.exports = Hexo

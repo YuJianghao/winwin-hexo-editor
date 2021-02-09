@@ -33,7 +33,7 @@ class HexoCLI {
       if (key.toString().includes(' ')) return '"' + key + '"'
       else return key
     }).join(' ')
-    this.logger.info('Run `' + string + '` ' + chalk.gray(cwd))
+    this.logger.info('Run ' + chalk.blue('`' + string + '`') + ' ' + chalk.gray(cwd))
     try {
       await spawn(command, args, { cwd, stdio: 'inherit' })
       this.logger.info('Finished')
