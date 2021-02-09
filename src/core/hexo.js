@@ -64,7 +64,17 @@ class Hexo {
     return this.hapi.listCategory()
   }
 
-  async new () {
+  /**
+   * hexo new
+   * https://hexo.io/zh-cn/docs/commands.html#new
+   * @param {String} title 文章名
+   * @param {Object} opt 选项
+   * @param {String} opt.layout 布局
+   * @param {String} opt.path 路径
+   * @param {String} opt.slug
+   * @param {Boolean} opt.replace 是否替换已存在文件
+   */
+  async new (title, opt = { layout: undefined, path: undefined, slug: undefined, replace: false }) {
     this._checkReady()
     return this.hcli.new(...arguments)
   }
@@ -88,6 +98,11 @@ class Hexo {
     this.logger.info('Write file', chalk.magenta(source))
   }
 
+  /**
+   * 根据id删除文章
+   * @param {String} id 需要删除的文章id
+   * @param {Boolean} page 是否是页面
+   */
   async delete (id, page = false) {
     this._checkReady()
     const source = await this._getSource(id, page)
@@ -95,21 +110,39 @@ class Hexo {
     this.logger.info('Delete file', chalk.magenta(source))
   }
 
-  async generate () {
+  /**
+   * hexo generate
+   * https://hexo.io/zh-cn/docs/commands.html#generate
+   */
+  async generate (opt = { deploy: false, watch: false, bail: false, force: false, concurrency: false }) {
     this._checkReady()
     return this.hcli.generate(...arguments)
   }
 
-  async deploy () {
+  /**
+   * hexo deploy
+   * https://hexo.io/zh-cn/docs/commands.html#deploy
+   */
+  async deploy (opt = { generate: false }) {
     this._checkReady()
     return this.hcli.deploy(...arguments)
   }
 
+  /**
+   * hexo clean
+   * https://hexo.io/zh-cn/docs/commands.html#clean
+   */
   async clean () {
     this._checkReady()
     return this.hcli.clean(...arguments)
   }
 
+  /**
+   * hexo publish
+   * https://hexo.io/zh-cn/docs/commands.html#publish
+   * @param {String} filename 文件名
+   * @param {String} layout 布局
+   */
   async publish (id, layout = 'post') {
     this._checkReady()
     const posts = (await this.listPost()).filter(p => p._id === id)
