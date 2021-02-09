@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const {
   isDev
-} = require('./utils')
+} = require('./common')
 /**
  * 日志目录
  */
