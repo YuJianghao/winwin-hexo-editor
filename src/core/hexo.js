@@ -76,7 +76,12 @@ class Hexo {
    */
   async new (title, opt = { layout: undefined, path: undefined, slug: undefined, replace: false }) {
     this._checkReady()
-    return this.hcli.new(...arguments)
+    const source = await this.hcli.new(...arguments)
+    await this.hapi.freload()
+    const post = (await this.listPost()).concat(await this.listPage()).filter(p => p.full_source === source)
+    if (post.length < 1) throw new Error('Not found')
+    if (post.length > 1) throw new Error('Duplicate fail found, retry later')
+    return post[0]
   }
 
   /**
@@ -107,6 +112,8 @@ class Hexo {
     const source = await this._getSource(id, page)
     fs.writeFileSync(source, string)
     this.logger.info('Write file', chalk.magenta(source))
+    await this.hapi.freload()
+    return (page ? (await this.listPage()) : (await this.listPost())).filter(p => p._id === id)[0]
   }
 
   /**

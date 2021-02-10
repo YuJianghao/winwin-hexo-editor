@@ -1,5 +1,6 @@
 const chalk = require('chalk')
 const { spawn } = require('hexo-util')
+const expandHomeDir = require('expand-home-dir')
 
 class HexoCLI {
   /**
@@ -35,8 +36,10 @@ class HexoCLI {
     }).join(' ')
     this.logger.info('Run ' + chalk.blue('`' + string + '`') + ' ' + chalk.gray(cwd))
     try {
-      await spawn(command, args, { cwd, stdio: 'inherit' })
+      const res = await spawn(command, args, { cwd })
+      this.logger.info(res)
       this.logger.info('Finished')
+      return res
     } catch (err) {
       this.logger.error('Fail to run `' + string + '`')
       this.logger.error(err)
@@ -91,7 +94,8 @@ class HexoCLI {
       args.push(opt.slug)
     }
     if (title)args.push(title)
-    return this.runcli(this.HEXO_ROOT, 'hexo', args)
+    const info = await this.runcli(this.HEXO_ROOT, 'hexo', args)
+    return expandHomeDir(info.split('Created: ')[1].trim())
   }
 
   /**

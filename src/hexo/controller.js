@@ -50,8 +50,9 @@ exports.new = async (ctx, next) => {
     ctx.body = err
   }
   const { title, layout, path, slug, replace } = ctx.request.body
-  await h.new(title, { layout, path, slug, replace })
+  const res = await h.new(title, { layout, path, slug, replace })
   ctx.status = 200
+  ctx.body = res
 }
 // #endregion
 
@@ -69,8 +70,9 @@ exports.update = async (ctx, next) => {
     ctx.body = err
   }
   const { id, page, obj } = ctx.request.body
-  await h.write(id, obj, page)
+  const res = await h.write(id, obj, page)
   ctx.status = 200
+  ctx.body = res
 }
 // #endregion
 

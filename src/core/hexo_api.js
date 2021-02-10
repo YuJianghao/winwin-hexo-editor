@@ -66,6 +66,12 @@ class HexoAPI {
     this.reload = throttle(this.reload, 5000, { trailing: false })
   }
 
+  async freload () {
+    await this.hexo.locals.invalidate()
+    await this.hexo.load()
+    this.logger.info('Force reload')
+  }
+
   async reload () {
     await this.hexo.locals.invalidate()
     await this.hexo.load()
