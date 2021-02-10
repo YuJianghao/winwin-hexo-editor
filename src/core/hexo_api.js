@@ -1,5 +1,6 @@
 const Hexo = require('hexo')
 const hfm = require('hexo-front-matter')
+const { throttle } = require('lodash')
 /**
    * Transform categories to string[][]
    * @param {string | string[] | string[][]} categories
@@ -59,6 +60,16 @@ class HexoAPI {
       draft: true,
       silent: process.env.NODE_ENV !== 'development'
     })
+    /**
+     * 每五秒执行一次，执行后五秒内触发不再执行
+     */
+    this.reload = throttle(this.reload, 5000, { trailing: false })
+  }
+
+  async reload () {
+    await this.hexo.locals.invalidate()
+    await this.hexo.load()
+    this.logger.info('Reload')
   }
 
   async init () {
@@ -66,39 +77,39 @@ class HexoAPI {
   }
 
   async listPost () {
-    await this.hexo.locals.invalidate()
-    await this.hexo.load()
+    await this.reload()
     const res = await this.hexo.locals.get('posts').toArray().map(postDocument2Object)
     this.logger.info('List posts', res.length)
     return res
   }
 
   async listPage () {
-    await this.hexo.locals.invalidate()
-    await this.hexo.load()
+    await this.reload()
     const res = await this.hexo.locals.get('pages').toArray().map(pageDocument2Object)
     this.logger.info('List pages', res.length)
     return res
   }
 
   async listTag () {
-    await this.hexo.locals.invalidate()
-    await this.hexo.load()
+    await this.reload()
     const res = await this.hexo.locals.get('tags').toArray().map(tagDocument2Object)
     this.logger.info('List tags', res.length)
     return res
   }
 
   async listCategory () {
-    await this.hexo.locals.invalidate()
-    await this.hexo.load()
+    await this.reload()
     const res = await this.hexo.locals.get('categories').toArray().map(categoryDocument2Object)
     this.logger.info('List categories', res.length)
     return res
   }
 
-  async stringify () {
-    return hfm.stringify(...arguments)
+  async stringify (raw, obj) {
+    let str = ''
+    str += hfm.split(raw).separator
+    str += '\n'
+    str += hfm.stringify(obj)
+    return str
   }
 }
 module.exports = HexoAPI

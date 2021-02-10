@@ -90,9 +90,20 @@ class Hexo {
     return res[0].full_source
   }
 
+  /**
+   * 从id获取原数据
+   * @param {String} id 文章id
+   * @param {Boolean} page 是否是页面
+   */
+  async _getRaw (id, page = false) {
+    const res = (page ? (await this.hapi.listPage()) : (await this.hapi.listPost())).filter(r => r._id === id)
+    if (res.length < 1) throw new Error('Not found')
+    return res[0].raw
+  }
+
   async write (id, obj, page = false) {
     this._checkReady()
-    const string = await this.hapi.stringify(obj)
+    const string = await this.hapi.stringify(await this._getRaw(id, page), obj)
     const source = await this._getSource(id, page)
     fs.writeFileSync(source, string)
     this.logger.info('Write file', chalk.magenta(source))

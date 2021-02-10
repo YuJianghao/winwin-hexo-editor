@@ -27,7 +27,7 @@
     "hexo-util": "^2.4.0",
     "inquirer": "^7.3.3",
     "is-git-repository": "^2.0.0",
-    "joi": "^17.2.1",
+    "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",

@@ -9,7 +9,7 @@ const config = require('../config.default')
  * logger
  */
 
-require('../src/logger')
+require('../src/util/logger')
 const logger = require('log4js').getLogger('server')
 logger.info('Starting server')
 

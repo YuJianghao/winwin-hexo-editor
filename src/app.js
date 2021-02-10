@@ -20,7 +20,7 @@ app.use(async (ctx, next) => {
       message: err.message
     }
     if (ctx.status === 500) {
-      ctx.body.message = 'server internal error, try again later'
+      ctx.body.message = 'server internal error. Fix problem and try again later. This can be caused by unexpected input or server error.'
       logger.error(500, err)
     }
   }
@@ -40,4 +40,6 @@ app.use(koaLogger((str, args) => {
   log4js.getLogger('http').info(str)
 }))
 
+const hexo = require('./hexo/router')
+app.use(hexo.routes(), hexo.allowedMethods())
 module.exports = app

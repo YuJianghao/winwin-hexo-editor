@@ -40,6 +40,7 @@ class HexoCLI {
     } catch (err) {
       this.logger.error('Fail to run `' + string + '`')
       this.logger.error(err)
+      throw err
     }
   }
 
