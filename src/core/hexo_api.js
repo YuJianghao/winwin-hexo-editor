@@ -1,5 +1,22 @@
 const Hexo = require('hexo')
 const hfm = require('hexo-front-matter')
+/**
+   * Transform categories to string[][]
+   * @param {string | string[] | string[][]} categories
+   * @returns {string[][]}
+   */
+function postCategoriesRaw2Array2d (categories) {
+  if (!categories) return [[]]
+  if (!Array.isArray(categories)) return [[categories]]
+  else {
+    if (!categories.filter((cat) => Array.isArray(cat)).length) {
+      return [categories]
+    }
+    return categories.map((cat) => {
+      return Array.isArray(cat) ? cat : [cat]
+    })
+  }
+}
 function postDocument2Object (doc) {
   if (doc.next)doc.next = doc.next._id
   if (doc.prev)doc.prev = doc.prev._id
@@ -9,6 +26,7 @@ function postDocument2Object (doc) {
   obj.tags = obj.tags.data.map(t => t._id)
   obj.categories = obj.categories.data.map(t => t._id)
   obj.fm = hfm.parse(obj.raw)
+  if (obj.fm.categories)obj.fm.categories = postCategoriesRaw2Array2d(obj.fm.categories)
   return obj
 }
 function pageDocument2Object (doc) {
