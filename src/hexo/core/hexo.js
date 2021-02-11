@@ -1,4 +1,4 @@
-require('../util/logger')
+require('../../util/logger')
 const HexoAPI = require('./hexo_api')
 const HexoCLI = require('./hexo_cli')
 const fs = require('hexo-fs')

@@ -1,8 +1,8 @@
 const Joi = require('joi')
-const path = require('path')
-const Hexo = require('../core/hexo')
+const storage = require('../services/storage')
+const Hexo = require('./core/hexo')
 const h = new Hexo()
-h.init(path.resolve(process.cwd(), '../testblog'))
+h.init(storage.get('config').root)
 
 // #region validate
 exports.v = {

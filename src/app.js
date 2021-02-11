@@ -40,6 +40,12 @@ app.use(koaLogger((str, args) => {
   log4js.getLogger('http').info(str)
 }))
 
+const auth = require('./auth/router')
+const { jwtAuth, requestAccessToken } = require('./auth/controller')
+app.use(auth.routes(), auth.allowedMethods())
+app.use(jwtAuth)
+app.use(requestAccessToken)
+
 const hexo = require('./hexo/router')
 app.use(hexo.routes(), hexo.allowedMethods())
 module.exports = app
