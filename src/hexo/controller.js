@@ -4,13 +4,44 @@ const Hexo = require('../core/hexo')
 const h = new Hexo()
 h.init(path.resolve(process.cwd(), '../testblog'))
 
+// #region validate
+exports.v = {
+  generate: Joi.object({
+    deploy: Joi.boolean(),
+    watch: Joi.boolean(),
+    bail: Joi.boolean(),
+    force: Joi.boolean(),
+    concurrency: Joi.boolean()
+  }),
+  deploy: Joi.object({
+    generate: Joi.boolean()
+  }),
+  new: Joi.object({
+    title: Joi.string().required(),
+    layout: Joi.string(),
+    path: Joi.string(),
+    slug: Joi.string(),
+    replace: Joi.boolean()
+  }),
+  update: Joi.object({
+    id: Joi.string().required(),
+    page: Joi.boolean(),
+    obj: Joi.object().required()
+  }),
+  delete: Joi.object({
+    id: Joi.string().required(),
+    page: Joi.boolean()
+  })
+}
+// #endregion
+
 // #region actions
 exports.generate = async (ctx, next) => {
-  await h.generate()
+  await h.generate(ctx.request.body)
   ctx.status = 200
 }
 exports.deploy = async (ctx, next) => {
-  await h.deploy()
+  await h.deploy(ctx.request.body)
   ctx.status = 200
 }
 exports.clean = async (ctx, next) => {
@@ -35,20 +66,7 @@ exports.listCategory = async (ctx, next) => {
 // #endregion
 
 // #region new
-const shcemaNew = Joi.object({
-  title: Joi.string().required(),
-  layout: Joi.string(),
-  path: Joi.string(),
-  slug: Joi.string(),
-  replace: Joi.boolean()
-})
 exports.new = async (ctx, next) => {
-  try {
-    await shcemaNew.validateAsync(ctx.request.body)
-  } catch (err) {
-    ctx.status = 400
-    ctx.body = err
-  }
   const { title, layout, path, slug, replace } = ctx.request.body
   const res = await h.new(title, { layout, path, slug, replace })
   ctx.status = 200
@@ -57,18 +75,7 @@ exports.new = async (ctx, next) => {
 // #endregion
 
 // #region update
-const schemaUpdate = Joi.object({
-  id: Joi.string().required(),
-  page: Joi.boolean(),
-  obj: Joi.object().required()
-})
 exports.update = async (ctx, next) => {
-  try {
-    await schemaUpdate.validateAsync(ctx.request.body)
-  } catch (err) {
-    ctx.status = 400
-    ctx.body = err
-  }
   const { id, page, obj } = ctx.request.body
   const res = await h.write(id, obj, page)
   ctx.status = 200
@@ -77,17 +84,7 @@ exports.update = async (ctx, next) => {
 // #endregion
 
 // #region delete
-const schemaDelete = Joi.object({
-  id: Joi.string().required(),
-  page: Joi.boolean()
-})
 exports.delete = async (ctx, next) => {
-  try {
-    await schemaDelete.validateAsync(ctx.request.body)
-  } catch (err) {
-    ctx.status = 400
-    ctx.body = err
-  }
   const { id, page } = ctx.request.body
   await h.delete(id, page)
   ctx.status = 200
