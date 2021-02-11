@@ -94,3 +94,8 @@ exports.logout = async (ctx, next) => {
   storage.set('blacklist', blacklist)
   ctx.status = 200
 }
+exports.info = async (ctx, next) => {
+  ctx.body = {
+    name: storage.get('config').username
+  }
+}
