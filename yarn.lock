@@ -23,6 +23,11 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@denq/iron-tree@^1.3.1":
+  version "1.3.2"
+  resolved "https://registry.npm.taobao.org/@denq/iron-tree/download/@denq/iron-tree-1.3.2.tgz#b125c9847556e31f3a794a629d66726ab763dcb3"
+  integrity sha1-sSXJhHVW4x86eUpinWZyardj3LM=
+
 "@eslint/eslintrc@^0.1.3":
   version "0.1.3"
   resolved "https://registry.npm.taobao.org/@eslint/eslintrc/download/@eslint/eslintrc-0.1.3.tgz#7d1a2b2358552cc04834c0979bd4275362e37085"
@@ -2042,6 +2047,13 @@ levn@^0.4.1:
   dependencies:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
+
+list-to-tree@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.npm.taobao.org/list-to-tree/download/list-to-tree-2.2.3.tgz#8b36499850d6e4ed61db620e7adf7a910aeb488f"
+  integrity sha1-izZJmFDW5O1h22IOet96kQrrSI8=
+  dependencies:
+    "@denq/iron-tree" "^1.3.1"
 
 load-json-file@^2.0.0:
   version "2.0.0"

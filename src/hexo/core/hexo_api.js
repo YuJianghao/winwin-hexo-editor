@@ -1,6 +1,7 @@
 const Hexo = require('hexo')
 const hfm = require('hexo-front-matter')
 const { throttle } = require('lodash')
+const LTT = require('list-to-tree')
 /**
    * Transform categories to string[][]
    * @param {string | string[] | string[][]} categories
@@ -25,9 +26,30 @@ function postDocument2Object (doc) {
   if (doc.updated)doc.updated = doc.updated.valueOf()
   const obj = doc.toObject()
   obj.tags = obj.tags.data.map(t => t._id)
-  obj.categories = obj.categories.data.map(t => t._id)
+  obj.categories = obj.categories.data.map(t => {
+    return {
+      _id: t._id,
+      parent: t.parent
+    }
+  })
+
+  function expand (category) {
+    if (!category._child) return [category]
+    return [category].concat(expand(category._child[0]))
+  }
+  const list = Object.keys(obj.categories).map(key => obj.categories[key]).map(obj => {
+    if (obj.parent === undefined) obj.parent = 0
+    return obj
+  })
+  const ltt = new LTT(list, {
+    key_id: '_id',
+    key_parent: 'parent',
+    key_child: '_child'
+  })
+  const tree = ltt.GetTree()
+  obj.categories = (tree ? tree.map(expand) : [[]]).map(ca => ca.map(c => c._id))
+  console.log(obj.categories)
   obj.fm = hfm.parse(obj.raw)
-  if (obj.fm.categories)obj.fm.categories = postCategoriesRaw2Array2d(obj.fm.categories)
   return obj
 }
 function pageDocument2Object (doc) {
