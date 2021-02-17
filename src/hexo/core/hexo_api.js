@@ -48,8 +48,8 @@ function postDocument2Object (doc) {
   })
   const tree = ltt.GetTree()
   obj.categories = (tree ? tree.map(expand) : [[]]).map(ca => ca.map(c => c._id))
-  console.log(obj.categories)
   obj.fm = hfm.parse(obj.raw)
+  if (obj.fm.categories)obj.fm.categories = postCategoriesRaw2Array2d(obj.fm.categories)
   return obj
 }
 function pageDocument2Object (doc) {
