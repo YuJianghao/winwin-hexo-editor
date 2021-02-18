@@ -62,7 +62,7 @@ const categories = {
    * 应用服务输出
    */
   server: {
-    appenders: [].concat(isDev ? ['console'] : []).concat([HEXO_EDITOR_APPENDER]),
+    appenders: ['console'].concat([HEXO_EDITOR_APPENDER]),
     level: isDev ? 'debug' : 'info'
   },
   /**

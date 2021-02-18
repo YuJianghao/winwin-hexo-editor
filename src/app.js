@@ -40,6 +40,8 @@ app.use(koaLogger((str, args) => {
   log4js.getLogger('http').info(str)
 }))
 
+app.use(require('koa-static')(require('path').resolve(__dirname, '../frontend/dist/pwa')))
+
 const auth = require('./auth/router')
 const { jwtAuth, requestAccessToken } = require('./auth/controller')
 app.use(auth.routes(), auth.allowedMethods())
