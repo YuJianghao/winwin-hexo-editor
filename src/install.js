@@ -3,7 +3,7 @@ const storage = require('./services/storage')
 const hexo = require('./hexo/core/hexo')
 const Joi = require('joi')
 const { validateRequestBody } = require('./util/middlewares')
-const { SHA1 } = require('crypto-js')
+const sha1 = require('crypto-js/sha1')
 const logger = require('log4js').getLogger('installer')
 
 const router = new Router()
@@ -40,7 +40,7 @@ router.post('/', validateRequestBody(install), async (ctx, next) => {
   config.expire = expire
   config.refresh = refresh
   config.username = username
-  config.password = SHA1(password).toString()
+  config.password = sha1(password).toString()
   config.installed = true
   storage.set('config', config)
   hexo.init(root)

@@ -3,7 +3,6 @@
 // TODO: apikey-auth
 const auth = require('basic-auth')
 const jwt = require('jsonwebtoken')
-const koaJWT = require('koa-jwt')
 const compose = require('koa-compose')
 const { SHA1 } = require('crypto-js')
 const storage = require('../services/storage')
@@ -47,7 +46,51 @@ exports.getToken = async function (ctx, next) {
 function extractToken (ctx) {
   return ctx.header.authorization.split(' ')[1]
 }
-exports.jwtAuth = compose([koaJWT({ secret: storage.get('config').secret }), blacklist])
+function resolveAuthorizationHeader (ctx) {
+  if (!ctx.header || !ctx.header.authorization) {
+    return
+  }
+
+  const parts = ctx.header.authorization.split(' ')
+
+  if (parts.length === 2) {
+    const scheme = parts[0]
+    const credentials = parts[1]
+
+    if (/^Bearer$/i.test(scheme)) {
+      return credentials
+    }
+  }
+  throw new Error('Authtication Error')
+}
+exports.jwtAuth = compose([async (ctx, next) => {
+  try {
+    await next()
+  } catch (err) {
+    if (err.message === 'Authtication Error') {
+      ctx.status = 401
+      ctx.body = {
+        success: false,
+        message: 'Authtication Error'
+      }
+    }
+  }
+}, async function (ctx, next) {
+  // 为了动态读取secret
+  const token = resolveAuthorizationHeader(ctx)
+  if (!token) {
+    throw new Error('Authtication Error')
+  } else {
+    try {
+      const decoded = jwt.verify(token, storage.get('config').secret)
+      logger.debug('jwt auth pass')
+      ctx.state.user = decoded
+    } catch (err) {
+      throw new Error('Authtication Error')
+    }
+    await next()
+  }
+}, blacklist])
 
 /**
  * 讲当前token加入黑名单
