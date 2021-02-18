@@ -117,7 +117,7 @@ class Hexo {
       if (article.fm.fm !== undefined)article.fm = article.fm.fm
       else delete article.fm
     }
-    console.log(article)
+    Object.keys(article).forEach(key => { if (article[key] === undefined || article[key] === '') delete article[key] })
     const string = await this.hapi.stringify(await this._getRaw(id, page), article)
     const source = await this._getSource(id, page)
     fs.writeFileSync(source, string)
