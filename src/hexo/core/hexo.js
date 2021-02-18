@@ -4,6 +4,7 @@ const HexoCLI = require('./hexo_cli')
 const fs = require('hexo-fs')
 const path = require('path')
 const chalk = require('chalk')
+const { restrictedKeys } = require('./util')
 
 class Hexo {
   _checkReady () {
@@ -108,7 +109,16 @@ class Hexo {
 
   async write (id, obj, page = false) {
     this._checkReady()
-    const string = await this.hapi.stringify(await this._getRaw(id, page), obj)
+    const article = JSON.parse(JSON.stringify(obj))
+    if (article.fm && typeof article.fm === 'object') {
+      Object.keys(article.fm).forEach(key => {
+        if (key !== 'fm' && !restrictedKeys.includes(key))article[key] = article.fm[key]
+      })
+      if (article.fm.fm !== undefined)article.fm = article.fm.fm
+      else delete article.fm
+    }
+    console.log(article)
+    const string = await this.hapi.stringify(await this._getRaw(id, page), article)
     const source = await this._getSource(id, page)
     fs.writeFileSync(source, string)
     this.logger.info('Write file', chalk.magenta(source))

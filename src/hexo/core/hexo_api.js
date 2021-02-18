@@ -2,6 +2,7 @@ const Hexo = require('hexo')
 const hfm = require('hexo-front-matter')
 const { throttle } = require('lodash')
 const LTT = require('list-to-tree')
+const { restrictedKeys } = require('./util')
 /**
    * Transform categories to string[][]
    * @param {string | string[] | string[][]} categories
@@ -48,7 +49,14 @@ function postDocument2Object (doc) {
   })
   const tree = ltt.GetTree()
   obj.categories = (tree ? tree.map(expand) : [[]]).map(ca => ca.map(c => c._id))
-  obj.fm = hfm.parse(obj.raw)
+  obj.fm = {}
+  obj.fm.fm = hfm.parse(obj.raw)
+  restrictedKeys.map(key => {
+    if (obj.fm.fm[key] !== undefined) {
+      obj.fm[key] = obj.fm.fm[key]
+      delete obj.fm.fm[key]
+    }
+  })
   if (obj.fm.categories)obj.fm.categories = postCategoriesRaw2Array2d(obj.fm.categories)
   return obj
 }
