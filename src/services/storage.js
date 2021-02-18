@@ -30,15 +30,5 @@ class Storage {
   }
 }
 const storage = new Storage()
-storage.set('config', {
-  root: '../testblog',
-  port: 5777,
-  secret: 'secret',
-  expire: '1h',
-  refresh: '7d',
-  username: 'admin',
-  password: SHA1(SHA1('admin').toString()).toString()
-})
-
-console.log(SHA1('admin').toString())
+// console.log(SHA1('admin').toString())
 module.exports = storage

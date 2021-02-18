@@ -3,6 +3,8 @@ const controller = require('./controller')
 const { validateRequestBody } = require('../util/middlewares')
 const router = new Router()
 
+router.use(controller.hexoInitiating)
+
 router.post('/generate', validateRequestBody(controller.v.generate), controller.generate)
 router.post('/deploy', validateRequestBody(controller.v.deploy), controller.deploy)
 router.post('/clean', controller.clean)

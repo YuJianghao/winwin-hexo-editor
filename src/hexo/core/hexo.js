@@ -17,7 +17,7 @@ class Hexo {
    * 可能的错误：HexoError.NOT_BLOG_ROOT | other
    * @private
    */
-  _checkIsBlog (cwd) {
+  checkIsBlog (cwd) {
     let file
     try {
       // 检查是否有对应文件
@@ -37,7 +37,7 @@ class Hexo {
   async init (cwd) {
     // TOD： 验证是不是hexo目录
     this.cwd = cwd
-    this._checkIsBlog(cwd)
+    this.checkIsBlog(cwd)
     this.hapi = new HexoAPI(this.cwd)
     await this.hapi.init()
     this.hcli = new HexoCLI(this.cwd)
@@ -204,4 +204,4 @@ class Hexo {
     return this.hcli.gitSave()
   }
 }
-module.exports = Hexo
+module.exports = new Hexo()

@@ -3,7 +3,7 @@
  * load config
  */
 const storage = require('../src/services/storage')
-const config = storage.get('config')
+const config = storage.get('config') || {}
 
 /**
  * logger
@@ -40,6 +40,7 @@ const server = http.createServer(app.callback())
 server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
+if (config.installed)require('../src/hexo/core/hexo').init(config.root)
 
 /**
  * Normalize a port into a number, string, or false.

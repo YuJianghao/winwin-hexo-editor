@@ -1,7 +1,6 @@
 const chalk = require('chalk')
 const { spawn } = require('hexo-util')
 const expandHomeDir = require('expand-home-dir')
-const { isDev } = require('../../util/common')
 
 class HexoCLI {
   /**

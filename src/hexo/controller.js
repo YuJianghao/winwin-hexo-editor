@@ -1,8 +1,7 @@
 const Joi = require('joi')
-const storage = require('../services/storage')
-const Hexo = require('./core/hexo')
-const h = new Hexo()
-h.init(storage.get('config').root)
+// const storage = require('../services/storage')
+const h = require('./core/hexo')
+// h.init(storage.get('config').root)
 
 // #region validate
 exports.v = {
@@ -136,6 +135,16 @@ exports.notFound = async (ctx, next) => {
     if (err.message === 'Not found') {
       ctx.status = 404
       ctx.body = { success: false, message: 'id not found' }
+    } else throw err
+  }
+}
+exports.hexoInitiating = async (ctx, next) => {
+  try {
+    await next()
+  } catch (err) {
+    if (err.message === 'Hexo initiating') {
+      ctx.status = 503
+      ctx.body = { success: false, message: 'Hexo initiating' }
     } else throw err
   }
 }

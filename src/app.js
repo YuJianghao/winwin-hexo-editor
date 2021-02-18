@@ -42,6 +42,9 @@ app.use(koaLogger((str, args) => {
 
 app.use(require('koa-static')(require('path').resolve(__dirname, '../frontend/dist/pwa')))
 
+const install = require('./install')
+app.use(install.routes(), install.allowedMethods())
+
 const auth = require('./auth/router')
 const { jwtAuth, requestAccessToken } = require('./auth/controller')
 app.use(auth.routes(), auth.allowedMethods())
@@ -50,4 +53,5 @@ app.use(requestAccessToken)
 
 const hexo = require('./hexo/router')
 app.use(hexo.routes(), hexo.allowedMethods())
+
 module.exports = app
