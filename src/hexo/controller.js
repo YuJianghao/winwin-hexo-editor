@@ -103,6 +103,31 @@ exports.publish = async (ctx, next) => {
 }
 // #endregion
 
+// #region git
+exports.gitSync = async (ctx, next) => {
+  await h.gitSync()
+  ctx.status = 200
+}
+exports.gitSave = async (ctx, next) => {
+  await h.gitSave()
+  ctx.status = 200
+}
+exports.notGitRepo = async (ctx, next) => {
+  try {
+    await next()
+  } catch (e) {
+    // TODO 其他平台和git版本如何检测
+    if (e.message.indexOf('not a git repo') > -1) {
+      ctx.status = 503
+      ctx.body = {
+        success: false,
+        message: 'not a git repo'
+      }
+    } else throw e
+  }
+}
+// #endregion
+
 // #region error handler
 exports.notFound = async (ctx, next) => {
   try {

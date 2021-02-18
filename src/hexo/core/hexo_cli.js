@@ -1,6 +1,7 @@
 const chalk = require('chalk')
 const { spawn } = require('hexo-util')
 const expandHomeDir = require('expand-home-dir')
+const { isDev } = require('../../util/common')
 
 class HexoCLI {
   /**
@@ -42,7 +43,7 @@ class HexoCLI {
       return res
     } catch (err) {
       this.logger.error('Fail to run `' + string + '`')
-      this.logger.error(err)
+      // this.logger.error(err)
       throw err
     }
   }
@@ -137,6 +138,33 @@ class HexoCLI {
   */
   async version () {
     this.runcli(this.HEXO_ROOT, 'hexo', ['version'])
+  }
+
+  async gitSync () {
+    await this.runcli(this.HEXO_ROOT, 'git', ['reset', '--hard'])
+    try {
+      await this.runcli(this.HEXO_ROOT, 'git', ['pull'])
+    } catch (e) {
+      if (e.message.indexOf('no tracking information' > 0)) {
+        this.logger.info('Local git reset')
+      } else throw e
+    }
+  }
+
+  async gitSave () {
+    await this.runcli(this.HEXO_ROOT, 'git', ['add', '.', '--all'])
+    try {
+      await this.runcli(this.HEXO_ROOT, 'git', ['commit', '-m', `server update ${new Date().toString()}`])
+    } catch (e) {
+      if (e.code !== 1) { throw e }
+    }
+    try {
+      await this.runcli(this.HEXO_ROOT, 'git', ['push'])
+    } catch (e) {
+      if (e.message.indexOf('No configured push destination' > 0)) {
+        this.logger.info('Local git commit')
+      } else throw e
+    }
   }
 }
 module.exports = HexoCLI

@@ -16,4 +16,8 @@ router.post('/new', validateRequestBody(controller.v.new), controller.notFound, 
 router.post('/update', validateRequestBody(controller.v.update), controller.notFound, controller.update)
 router.post('/delete', validateRequestBody(controller.v.delete), controller.notFound, controller.delete)
 router.post('/publish', validateRequestBody(controller.v.publish), controller.notFound, controller.publish)
+
+router.post('/git/sync', controller.notGitRepo, controller.gitSync)
+router.post('/git/save', controller.notGitRepo, controller.gitSave)
+
 module.exports = router

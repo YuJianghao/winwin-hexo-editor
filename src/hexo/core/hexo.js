@@ -195,5 +195,13 @@ class Hexo {
     const source = await this.hcli.publish(filename, layout)
     return this._getBySource(source)
   }
+
+  async gitSync () {
+    return this.hcli.gitSync()
+  }
+
+  async gitSave () {
+    return this.hcli.gitSave()
+  }
 }
 module.exports = Hexo
