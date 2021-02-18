@@ -5,12 +5,5 @@ try {
   user = {}
 }
 module.exports = Object.assign({
-  port: 5777,
-  hexoRoot: '',
-  apikeySecret: 'apikey',
-  jwtSecret: 'secret',
-  jwtExpire: '1h',
-  jwtRefresh: '7d',
-  username: 'admin',
-  password: 'admin'
+  port: 5777
 }, user)

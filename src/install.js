@@ -1,54 +1,66 @@
 const Router = require('koa-router')
-const { initHexo, HexoError } = require('./server')
-const { dataService } = require('./service/data_service')
-const { configService } = require('./service/config_service')
-const { UserService } = require('./service/user_service')
-const router = new Router()
-const config = require('../config.default')
-router.prefix('/install')
-router.get('/info', async (ctx, next) => {
-  if (configService.isInstalled()) {
-    ctx.status = 404
-  } else {
-    ctx.status = 200
-  }
-})
-router.post('/do', async (ctx, next) => {
-  if (configService.isInstalled()) {
-    ctx.status = 404
-    return
-  }
-  const username = ctx.request.body.username || config.username
-  const password = ctx.request.body.password || config.password
-  const HEXO_ROOT = ctx.request.body.HEXO_ROOT
-  const JWT_SECRET = ctx.request.body.JWT_SECRET || config.jwtSecret
-  const JW_EXPIRE = ctx.request.body.JW_EXPIRE || config.jwtExpire
-  const JW_REFRESH = ctx.request.body.JW_REFRESH || config.jwtRefresh
-  const APIKEY_SECRET = ctx.request.body.APIKEY_SECRET || config.apikeySecret
-  try {
-    await dataService.clear()
-    await UserService.addUser(username, password)
-    configService.clear()
-    configService.setJwtSecret(JWT_SECRET)
-    configService.setJwtExpire(JW_EXPIRE)
-    configService.setJwtRefresh(JW_REFRESH)
-    configService.setApikeySecret(APIKEY_SECRET)
-    await configService.setHexoRoot(HEXO_ROOT)
-    await initHexo(HEXO_ROOT)
-    configService.markInstalled()
-    ctx.body = 'installed'
-  } catch (err) {
-    if (err.code === HexoError.NOT_BLOG_ROOT || err.code === HexoError.EMPTY_HEXO_ROOT) {
-      ctx.status = 400
-      ctx.body = {
-        success: false,
-        message: err.message,
-        data: err.data
-      }
-      return
-    }
-    throw err
-  }
-})
+const storage = require('./services/storage')
+const hexo = require('./hexo/core/hexo')
+const Joi = require('joi')
+const { validateRequestBody } = require('./util/middlewares')
+const sha1 = require('crypto-js/sha1')
+const logger = require('log4js').getLogger('installer')
 
+const router = new Router()
+router.prefix('/install')
+router.use(async (ctx, next) => {
+  const config = storage.get('config') || {}
+  if (config.installed) {
+    ctx.status = 404
+  } else await next()
+})
+const install = Joi.object({
+  root: Joi.string().required(),
+  secret: Joi.string().required(),
+  expire: Joi.string().required(),
+  refresh: Joi.string().required(),
+  username: Joi.string().required(),
+  password: Joi.string().required()
+})
+router.get('/', (ctx) => { ctx.status = 200 })
+router.post('/', validateRequestBody(install), async (ctx, next) => {
+  const { root, secret, expire, refresh, username, password } = ctx.request.body
+  try {
+    await hexo.checkIsBlog(root)
+  } catch (err) {
+    ctx.status = 400
+    ctx.body = {
+      success: false,
+      message: `'${root}' is not a hexo blog`
+    }
+  }
+  const config = storage.get('config') || {}
+  config.root = root
+  config.secret = secret
+  config.expire = expire
+  config.refresh = refresh
+  config.username = username
+  config.password = sha1(password).toString()
+  config.installed = true
+  storage.set('config', config)
+  hexo.init(root)
+  ctx.status = 200
+  logger.info('installed')
+})
+const root = Joi.object({
+  root: Joi.string().required()
+})
+router.post('/checkroot', validateRequestBody(root), async (ctx, next) => {
+  const { root } = ctx.request.body
+  try {
+    await hexo.checkIsBlog(root)
+    ctx.status = 200
+  } catch (err) {
+    ctx.status = 400
+    ctx.body = {
+      success: false,
+      message: `'${root}' is not a hexo blog`
+    }
+  }
+})
 module.exports = router
