@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-
 /**
  * load config
  */
-const config = require('../config.default')
+const storage = require('../src/services/storage')
+const config = storage.get('config') || {}
 
 /**
  * logger
  */
 
-require('../src/logger')
+require('../src/util/logger')
 const logger = require('log4js').getLogger('server')
 logger.info('Starting server')
 
@@ -40,6 +40,7 @@ const server = http.createServer(app.callback())
 server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
+if (config.installed)require('../src/hexo/core/hexo').init(config.root)
 
 /**
  * Normalize a port into a number, string, or false.

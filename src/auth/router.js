@@ -1,20 +1,8 @@
-const router = require('koa-router')()
-const auth = require('./controller')
-
-router.prefix('/auth')
-
-router.post('/token', auth.basicAuth, auth.getToken)
-
-router.post('/refresh', auth.jwtAuth, auth.requestRefreshToken, auth.getToken)
-
-router.post('/apikeytoken', auth.jwtAuth, auth.requestApikey)
-
-router.get('/apikeys', auth.jwtAuth, auth.getAPIKEYInfo)
-
-router.delete('/apikey', auth.apiKeyAuth, auth.removeApikey)
-
-router.delete('/apikey/:id', auth.jwtAuth, auth.removeApikey)
-
-router.post('/apikey', auth.apiKeyJwtAuth, auth.addApikey)
-
+const Router = require('koa-router')
+const controller = require('./controller')
+const router = new Router()
+router.post('/login', controller.basicAuth, controller.getToken)
+router.post('/refresh', controller.jwtAuth, controller.requestRefreshToken, controller.getToken)
+router.get('/info', controller.jwtAuth, controller.requestAccessToken, controller.info)
+router.post('/logout', controller.jwtAuth, controller.requestAccessToken, controller.logout)
 module.exports = router

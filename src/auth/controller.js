@@ -1,29 +1,51 @@
+// TODO: basic-auth
+// TODO: jwt-auth
+// TODO: apikey-auth
 const auth = require('basic-auth')
 const jwt = require('jsonwebtoken')
 const compose = require('koa-compose')
-const logger = require('log4js').getLogger('server:auth')
-const parallel = require('../lib/koa-parallel')
-const fs = require('fs')
-if (!fs.existsSync('./data/'))fs.mkdirSync('./data')
-const { configService, ConfigServiceError } = require('../service/config_service')
-const { ApikeyService, ApikeyServiceError } = require('../service/apikey_service')
-const { UserService } = require('../service/user_service')
-const { DataServiceError } = require('../service/data_service')
-
-class AuthError extends Error {
-  constructor (message, code) {
-    super(message || code)
-    Error.captureStackTrace(this)
-    this.code = code
-    this.status = 401
+const { SHA1 } = require('crypto-js')
+const storage = require('../services/storage')
+const logger = require('log4js').getLogger('auth')
+exports.basicAuth = async function (ctx, next) {
+  // get name and pass from reqest header
+  const user = auth(ctx.request)
+  if (!user) {
+    // if not a valide basic auth header
+    const err = new Error()
+    err.status = 401
+    err.message = 'basic authentication required'
+    throw err
+  } else {
+    // find if user exist in database
+    let valid = true
+    if (user.name !== storage.get('config').username)valid = false
+    else if (SHA1(user.pass).toString() !== storage.get('config').password)valid = false
+    // let query = await User.find(user)
+    if (valid) {
+      logger.info('basic auth pass')
+      await next()
+    } else {
+      const err = new Error()
+      err.status = 401
+      err.message = 'wrong username or password'
+      throw err
+    }
   }
 }
-AuthError.prototype.name = 'AuthError'
-AuthError.AuthticationError = 'AuthticationError'
-AuthError.NO_APIKEY = 'NO_APIKEY'
-AuthError.NO_BEARER_TOKEN = 'NO_BEARER_TOKEN'
-AuthError.API_TOKEN_EXPIRE = 'API_TOKEN_EXPIRE'
 
+exports.getToken = async function (ctx, next) {
+  var accessToken = jwt.sign({ type: 'access' }, storage.get('config').secret, { expiresIn: storage.get('config').expire })
+  var refreshToken = jwt.sign({ type: 'refresh' }, storage.get('config').secret, { expiresIn: storage.get('config').refresh })
+  ctx.body = {
+    success: true,
+    message: 'success',
+    data: { accessToken, refreshToken }
+  }
+}
+function extractToken (ctx) {
+  return ctx.header.authorization.split(' ')[1]
+}
 function resolveAuthorizationHeader (ctx) {
   if (!ctx.header || !ctx.header.authorization) {
     return
@@ -39,191 +61,84 @@ function resolveAuthorizationHeader (ctx) {
       return credentials
     }
   }
-  ctx.throw(401, 'Bad Authorization header format. Format is "Authorization: Bearer <token>"')
+  throw new Error('Authtication Error')
 }
-
-exports.apiKeyAuth = async function (ctx, next) {
-  const apikey = resolveAuthorizationHeader(ctx)
-  if (!apikey) {
-    ctx.throw(new AuthError('APIKEY is required', AuthError.NO_APIKEY))
-  } else {
-    if (await ApikeyService.hasApikey(apikey)) {
-      logger.debug('apikey auth pass')
-      ctx.state.apikey = apikey
-      ctx.state.user = ApikeyService.getUserFromApikey(apikey).toObject()
-      ctx.state.user.id = ctx.state.user._id
-      delete ctx.state.user._id
-      await next()
-    } else {
-      logger.debug('apikey auth failed, try others')
-      ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
-    }
-  }
-}
-
-exports.requestApikey = async function (ctx, next) {
-  const token = ApikeyService.requestApikey(ctx.state.user.id)
-  ctx.body = {
-    success: true,
-    data: {
-      token
-    }
-  }
-}
-
-exports.removeApikey = async function (ctx, next) {
-  if (ctx.state.apikey) {
-    const apikey = ctx.state.apikey
-    await ApikeyService.removeApikeyByApikey(apikey)
-  } else {
-    const _id = ctx.params.id
-    await ApikeyService.removeApikeyById(_id)
-  }
-  ctx.body = {
-    success: true
-  }
-}
-
-exports.addApikey = async function (ctx, next) {
-  // 这个apikey只是一个随机字符串没啥含义
-  const id = ctx.state.user.id
-  const deviceType = ctx.request.body.deviceType
-  const deviceSystem = ctx.request.body.deviceSystem
-  let data
+exports.jwtAuth = compose([async (ctx, next) => {
   try {
-    data = await ApikeyService.addApikey({ id, deviceType, deviceSystem })
+    await next()
   } catch (err) {
-    if (err.code === ConfigServiceError.BAD_OPTIONS) {
-      logger.debug(err.message)
-      ctx.status = 400
+    if (err.message === 'Authtication Error') {
+      ctx.status = 401
       ctx.body = {
         success: false,
-        message: err.message
+        message: 'Authtication Error'
       }
-    } else {
-      throw err
     }
   }
-  ctx.body = {
-    success: true,
-    data
-  }
-}
-
-exports.getAPIKEYInfo = async function (ctx, next) {
-  ctx.body = {
-    success: true,
-    data: {
-      apikeys: ApikeyService.getApikeysInfo()
-    }
-  }
-}
-
-exports.apiKeyJwtAuth = async function (ctx, next) {
+}, async function (ctx, next) {
+  // 为了动态读取secret
   const token = resolveAuthorizationHeader(ctx)
   if (!token) {
-    ctx.throw(new AuthError('APIKEY is required', AuthError.NO_APIKEY))
-  } else {
-    let decoded
-    try {
-      decoded = ApikeyService.decodeApikeyToken(token)
-    } catch (e) {
-      if (e.code === ApikeyServiceError.INVALID_APIKEY_TOKEN) {
-        ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
-      }
-      throw e
-    }
-    ctx.state.user = decoded
-    await next()
-  }
-}
-
-exports.jwtAuth = async function (ctx, next) {
-  const token = resolveAuthorizationHeader(ctx)
-  if (!token) {
-    ctx.throw(new AuthError('Bearer token required', AuthError.NO_BEARER_TOKEN))
+    throw new Error('Authtication Error')
   } else {
     try {
-      const decoded = jwt.verify(token, configService.getJwtSecret())
+      const decoded = jwt.verify(token, storage.get('config').secret)
       logger.debug('jwt auth pass')
       ctx.state.user = decoded
     } catch (err) {
-      ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
-    }
-    if (!await UserService.hasUserById(ctx.state.user.id)) {
-      ctx.throw(new AuthError('Authtication Error', AuthError.AuthticationError))
+      throw new Error('Authtication Error')
     }
     await next()
   }
+}, blacklist])
+
+/**
+ * 讲当前token加入黑名单
+ */
+async function blacklist (ctx, next) {
+  const token = extractToken(ctx)
+  if ((storage.get('blacklist') || []).map(o => o.token).includes(token)) {
+    logger.info('block invalid token')
+    const err = new Error()
+    err.status = 401
+    err.message = 'Authentication Error'
+    throw err
+  }
+  await next()
 }
 
 exports.requestAccessToken = async function (ctx, next) {
-  if (ctx.state.user.type === 'refresh') {
+  if (ctx.state.user.type !== 'access') {
     const err = new Error()
-    err.status = 400
+    err.status = 403
     err.name = 'Require Access token'
     err.message = 'Access Token is required.'
     throw err
   }
   await next()
 }
-
 exports.requestRefreshToken = async function (ctx, next) {
-  if (ctx.state.user.type === 'access') {
+  if (ctx.state.user.type !== 'refresh') {
     const err = new Error()
-    err.status = 400
+    err.status = 403
     err.name = 'Require Refresh token'
     err.message = 'Refresh Token is required.'
     throw err
   }
+  logger.info('refresh token used')
   await next()
 }
-
-exports.basicAuth = async function (ctx, next) {
-  // get name and pass from reqest header
-  var user = auth(ctx.request)
-  if (!user) {
-    // if not a valide basic auth header
-    ctx.status = 401
-    ctx.body = {
-      success: false,
-      message: 'basic authentication required'
-    }
-  } else {
-    // find if user exist in database
-    var dbuser = await UserService.hasUserWithPassword(user.name, user.pass)
-    // var query = await User.find(user)
-    if (dbuser) {
-      // if user exist then set id
-      ctx.state.id = dbuser._id
-      ctx.state.name = dbuser.username
-      await next()
-    } else {
-      ctx.status = 401
-      ctx.body = {
-        success: false,
-        message: 'wrong username or password'
-      }
-    }
-  }
+exports.logout = async (ctx, next) => {
+  const token = extractToken(ctx)
+  let blacklist = (storage.get('blacklist') || [])
+  blacklist.push({ token, exp: ctx.state.user.exp })
+  blacklist = blacklist.filter(o => o.exp > parseInt((new Date()).valueOf() / 1000, 10))
+  logger.info('block token')
+  storage.set('blacklist', blacklist)
+  ctx.status = 200
 }
-
-exports.getToken = async function (ctx, next) {
-  // set id and token type into jwt payload
-  const id = ctx.state.id || ctx.state.user.id
-  const name = ctx.state.name || ctx.state.user.name
-  var token = jwt.sign({ id, name, type: 'access' }, configService.getJwtSecret(), { expiresIn: configService.getJwtExpire() })
-  var refreshToken = jwt.sign({ id, name, type: 'refresh' }, configService.getJwtSecret(), { expiresIn: configService.getJwtRefresh() })
+exports.info = async (ctx, next) => {
   ctx.body = {
-    success: true,
-    message: 'success',
-    data: { id, name, token, refreshToken }
+    name: storage.get('config').username
   }
 }
-
-exports.apikeyOrJwt = parallel([{
-  fn: exports.apiKeyAuth,
-  validator: err => err.status === 401
-}, {
-  fn: compose([exports.jwtAuth, exports.requestAccessToken])
-}])
