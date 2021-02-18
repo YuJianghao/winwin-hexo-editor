@@ -15,4 +15,5 @@ router.get('/categories', controller.listCategory)
 router.post('/new', validateRequestBody(controller.v.new), controller.notFound, controller.new)
 router.post('/update', validateRequestBody(controller.v.update), controller.notFound, controller.update)
 router.post('/delete', validateRequestBody(controller.v.delete), controller.notFound, controller.delete)
+router.post('/publish', validateRequestBody(controller.v.publish), controller.notFound, controller.publish)
 module.exports = router

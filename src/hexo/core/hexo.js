@@ -78,9 +78,16 @@ class Hexo {
   async new (title, opt = { layout: undefined, path: undefined, slug: undefined, replace: false }) {
     this._checkReady()
     const source = await this.hcli.new(...arguments)
+    return this._getBySource(source)
+  }
+
+  async _getBySource (source) {
     await this.hapi.freload()
     const post = (await this.listPost()).concat(await this.listPage()).filter(p => p.full_source === source)
-    if (post.length < 1) throw new Error('Not found')
+    if (post.length < 1) {
+      this.logger.log('new id not found')
+      throw new Error('Not found')
+    }
     if (post.length > 1) throw new Error('Duplicate fail found, retry later')
     return post[0]
   }
@@ -92,7 +99,9 @@ class Hexo {
    */
   async _getSource (id, page = false) {
     const res = (page ? (await this.hapi.listPage()) : (await this.hapi.listPost())).filter(r => r._id === id)
-    if (res.length < 1) throw new Error('Not found')
+    if (res.length < 1) {
+      throw new Error('Not found')
+    }
     return res[0].full_source
   }
 
@@ -103,7 +112,9 @@ class Hexo {
    */
   async _getRaw (id, page = false) {
     const res = (page ? (await this.hapi.listPage()) : (await this.hapi.listPost())).filter(r => r._id === id)
-    if (res.length < 1) throw new Error('Not found')
+    if (res.length < 1) {
+      throw new Error('Not found')
+    }
     return res[0].raw
   }
 
@@ -174,11 +185,15 @@ class Hexo {
   async publish (id, layout = 'post') {
     this._checkReady()
     const posts = (await this.listPost()).filter(p => p._id === id)
-    if (posts.length < 1) throw new Error('Not found')
+    if (posts.length < 1) {
+      this.logger.log('publish id not found')
+      throw new Error('Not found')
+    }
     const post = posts[0]
     if (post.published) throw new Error('Already published')
     const filename = path.basename(post.source, path.extname(post.source))
-    return this.hcli.publish(filename, layout)
+    const source = await this.hcli.publish(filename, layout)
+    return this._getBySource(source)
   }
 }
 module.exports = Hexo

@@ -108,7 +108,8 @@ class HexoCLI {
     const args = ['publish']
     if (layout)args.push(layout)
     args.push(filename)
-    await this.runcli(this.HEXO_ROOT, 'hexo', args)
+    const info = await this.runcli(this.HEXO_ROOT, 'hexo', args)
+    return expandHomeDir(info.split('Published: ')[1].trim())
   }
 
   async server () {

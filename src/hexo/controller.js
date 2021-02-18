@@ -31,6 +31,9 @@ exports.v = {
   delete: Joi.object({
     id: Joi.string().required(),
     page: Joi.boolean()
+  }),
+  publish: Joi.object({
+    id: Joi.string().required()
   })
 }
 // #endregion
@@ -87,6 +90,15 @@ exports.update = async (ctx, next) => {
 exports.delete = async (ctx, next) => {
   const { id, page } = ctx.request.body
   await h.delete(id, page)
+  ctx.status = 200
+}
+// #endregion
+
+// #region publish
+exports.publish = async (ctx, next) => {
+  const { id } = ctx.request.body
+  const res = await h.publish(id)
+  ctx.body = res
   ctx.status = 200
 }
 // #endregion
