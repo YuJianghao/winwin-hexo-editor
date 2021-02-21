@@ -30,7 +30,6 @@ router.post('/', validateRequestBody(install), async (ctx, next) => {
   } catch (err) {
     ctx.status = 400
     ctx.body = {
-      success: false,
       message: `'${root}' is not a hexo blog`
     }
   }
@@ -58,7 +57,6 @@ router.post('/checkroot', validateRequestBody(root), async (ctx, next) => {
   } catch (err) {
     ctx.status = 400
     ctx.body = {
-      success: false,
       message: `'${root}' is not a hexo blog`
     }
   }

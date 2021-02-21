@@ -37,11 +37,7 @@ exports.basicAuth = async function (ctx, next) {
 exports.getToken = async function (ctx, next) {
   var accessToken = jwt.sign({ type: 'access' }, storage.get('config').secret, { expiresIn: storage.get('config').expire })
   var refreshToken = jwt.sign({ type: 'refresh' }, storage.get('config').secret, { expiresIn: storage.get('config').refresh })
-  ctx.body = {
-    success: true,
-    message: 'success',
-    data: { accessToken, refreshToken }
-  }
+  ctx.body = { accessToken, refreshToken }
 }
 function extractToken (ctx) {
   return ctx.header.authorization.split(' ')[1]
@@ -70,7 +66,6 @@ exports.jwtAuth = compose([async (ctx, next) => {
     if (err.message === 'Authtication Error') {
       ctx.status = 401
       ctx.body = {
-        success: false,
         message: 'Authtication Error'
       }
     }

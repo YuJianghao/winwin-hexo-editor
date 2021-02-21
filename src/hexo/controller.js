@@ -119,7 +119,6 @@ exports.notGitRepo = async (ctx, next) => {
     if (e.message.indexOf('not a git repo') > -1) {
       ctx.status = 503
       ctx.body = {
-        success: false,
         message: 'not a git repo'
       }
     } else throw e
@@ -134,7 +133,7 @@ exports.notFound = async (ctx, next) => {
   } catch (err) {
     if (err.message === 'Not found') {
       ctx.status = 404
-      ctx.body = { success: false, message: 'id not found' }
+      ctx.body = { message: 'id not found' }
     } else throw err
   }
 }
@@ -144,7 +143,7 @@ exports.hexoInitiating = async (ctx, next) => {
   } catch (err) {
     if (err.message === 'Hexo initiating') {
       ctx.status = 503
-      ctx.body = { success: false, message: 'Hexo initiating' }
+      ctx.body = { message: 'Hexo initiating' }
     } else throw err
   }
 }
