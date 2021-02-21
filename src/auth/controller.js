@@ -5,6 +5,7 @@ const auth = require('basic-auth')
 const jwt = require('jsonwebtoken')
 const compose = require('koa-compose')
 const { SHA1 } = require('crypto-js')
+const { v4: uuidv4 } = require('uuid')
 const storage = require('../services/storage')
 const logger = require('log4js').getLogger('auth')
 exports.basicAuth = async function (ctx, next) {
@@ -19,8 +20,8 @@ exports.basicAuth = async function (ctx, next) {
   } else {
     // find if user exist in database
     let valid = true
-    if (user.name !== storage.get('config').username)valid = false
-    else if (SHA1(user.pass).toString() !== storage.get('config').password)valid = false
+    if (user.name !== storage.get('config').username) valid = false
+    else if (SHA1(user.pass).toString() !== storage.get('config').password) valid = false
     // let query = await User.find(user)
     if (valid) {
       logger.info('basic auth pass')
@@ -35,8 +36,12 @@ exports.basicAuth = async function (ctx, next) {
 }
 
 exports.getToken = async function (ctx, next) {
-  var accessToken = jwt.sign({ type: 'access' }, storage.get('config').secret, { expiresIn: storage.get('config').expire })
-  var refreshToken = jwt.sign({ type: 'refresh' }, storage.get('config').secret, { expiresIn: storage.get('config').refresh })
+  const uuid = uuidv4()
+  const accessToken = jwt.sign({ type: 'access', uuid }, storage.get('config').secret, { expiresIn: storage.get('config').expire })
+  const refreshToken = jwt.sign({ type: 'refresh', uuid }, storage.get('config').secret, { expiresIn: storage.get('config').refresh })
+  const refreshTokens = storage.get('refresh') || {}
+  refreshTokens[uuid] = refreshToken
+  storage.set('refresh', refreshTokens)
   ctx.body = { accessToken, refreshToken }
 }
 function extractToken (ctx) {
@@ -85,15 +90,15 @@ exports.jwtAuth = compose([async (ctx, next) => {
     }
     await next()
   }
-}, blacklist])
+}])
 
 /**
- * 讲当前token加入黑名单
+ * 检查当前refresh token是否在黑名单
  */
-async function blacklist (ctx, next) {
+exports.blacklist = async (ctx, next) => {
   const token = extractToken(ctx)
   if ((storage.get('blacklist') || []).map(o => o.token).includes(token)) {
-    logger.info('block invalid token')
+    logger.info('block invalid refresh token')
     const err = new Error()
     err.status = 401
     err.message = 'Authentication Error'
@@ -106,8 +111,7 @@ exports.requestAccessToken = async function (ctx, next) {
   if (ctx.state.user.type !== 'access') {
     const err = new Error()
     err.status = 403
-    err.name = 'Require Access token'
-    err.message = 'Access Token is required.'
+    err.message = 'Require Access Token'
     throw err
   }
   await next()
@@ -116,8 +120,7 @@ exports.requestRefreshToken = async function (ctx, next) {
   if (ctx.state.user.type !== 'refresh') {
     const err = new Error()
     err.status = 403
-    err.name = 'Require Refresh token'
-    err.message = 'Refresh Token is required.'
+    err.message = 'Require Refresh Token'
     throw err
   }
   logger.info('refresh token used')
@@ -126,10 +129,16 @@ exports.requestRefreshToken = async function (ctx, next) {
 exports.logout = async (ctx, next) => {
   const token = extractToken(ctx)
   let blacklist = (storage.get('blacklist') || [])
-  blacklist.push({ token, exp: ctx.state.user.exp })
-  blacklist = blacklist.filter(o => o.exp > parseInt((new Date()).valueOf() / 1000, 10))
-  logger.info('block token')
-  storage.set('blacklist', blacklist)
+  const refreshTokens = (storage.get('refresh') || {})
+  const refreshToken = refreshTokens[ctx.state.user.uuid]
+  if (refreshToken) {
+    blacklist.push({ token, exp: ctx.state.user.exp })
+    blacklist = blacklist.filter(o => o.exp > parseInt((new Date()).valueOf() / 1000, 10))
+    logger.info('block token')
+    storage.set('blacklist', blacklist)
+    delete refreshTokens[ctx.state.user.uuid]
+    storage.set('refresh', refreshTokens)
+  }
   ctx.status = 200
 }
 exports.info = async (ctx, next) => {
