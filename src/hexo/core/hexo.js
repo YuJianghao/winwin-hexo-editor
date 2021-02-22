@@ -146,6 +146,7 @@ class Hexo {
     this._checkReady()
     const source = await this._getSource(id, page)
     fs.unlinkSync(source)
+    await this.hapi.freload()
     this.logger.info('Delete file', chalk.magenta(source))
   }
 
