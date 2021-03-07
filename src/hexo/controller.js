@@ -1,6 +1,7 @@
 const Joi = require('joi')
 // const storage = require('../services/storage')
 const h = require('./core/hexo')
+const { search } = require('./search')
 // h.init(storage.get('config').root)
 
 // #region validate
@@ -33,6 +34,11 @@ exports.v = {
   }),
   publish: Joi.object({
     id: Joi.string().required()
+  })
+}
+exports.qv = {
+  search: Joi.object({
+    query: Joi.string().required()
   })
 }
 // #endregion
@@ -146,5 +152,10 @@ exports.hexoInitiating = async (ctx, next) => {
       ctx.body = { message: 'Hexo initiating' }
     } else throw err
   }
+}
+// #endregion
+// #region search
+exports.search = async (ctx, next) => {
+  ctx.body = await search(ctx.query.query)
 }
 // #endregion

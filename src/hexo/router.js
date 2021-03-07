@@ -1,6 +1,6 @@
 const Router = require('koa-router')
 const controller = require('./controller')
-const { validateRequestBody } = require('../util/middlewares')
+const { validateRequestBody, validateRequestQuery } = require('../util/middlewares')
 const router = new Router()
 
 router.use(controller.hexoInitiating)
@@ -21,5 +21,7 @@ router.post('/publish', validateRequestBody(controller.v.publish), controller.no
 
 router.post('/git/sync', controller.notGitRepo, controller.gitSync)
 router.post('/git/save', controller.notGitRepo, controller.gitSave)
+
+router.get('/search', validateRequestQuery(controller.qv.search), controller.search)
 
 module.exports = router
