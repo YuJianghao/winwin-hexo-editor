@@ -1,10 +1,10 @@
 const Router = require('koa-router')
 const { IStorageService } = require('./services/storageService')
-const hexo = require('./hexo/core/hexo')
 const Joi = require('joi')
 const { validateRequestBody } = require('./util/middlewares')
 const sha1 = require('crypto-js/sha1')
 const DI = require('./util/di')
+const { IHexo } = require('./hexo/core/hexo')
 const logger = require('log4js').getLogger('installer')
 
 const router = new Router()
@@ -26,6 +26,7 @@ const install = Joi.object({
 })
 router.get('/', (ctx) => { ctx.status = 200 })
 router.post('/', validateRequestBody(install), async (ctx, next) => {
+  const hexo = DI.inject(IHexo)
   const storage = DI.inject(IStorageService)
   const { root, secret, expire, refresh, username, password } = ctx.request.body
   try {
@@ -53,6 +54,7 @@ const root = Joi.object({
   root: Joi.string().required()
 })
 router.post('/checkroot', validateRequestBody(root), async (ctx, next) => {
+  const hexo = DI.inject(IHexo)
   const { root } = ctx.request.body
   try {
     await hexo.checkIsBlog(root)

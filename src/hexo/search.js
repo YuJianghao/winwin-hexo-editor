@@ -1,5 +1,8 @@
-const hexo = require('./core/hexo')
+const DI = require('../util/di')
+const { IHexo } = require('./core/hexo')
+
 exports.search = async (query) => {
+  const hexo = DI.inject(IHexo)
   const regexp = new RegExp(query, 'gi')
   const posts = await hexo.listPost()
   const pages = await hexo.listPage()

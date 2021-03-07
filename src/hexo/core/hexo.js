@@ -206,4 +206,6 @@ class Hexo {
     return this.hcli.gitSave()
   }
 }
-module.exports = new Hexo()
+const IHexo = 'IHexo'
+DI.provide(IHexo, Hexo)
+exports.IHexo = IHexo
