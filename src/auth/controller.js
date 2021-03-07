@@ -6,9 +6,11 @@ const jwt = require('jsonwebtoken')
 const compose = require('koa-compose')
 const { SHA1 } = require('crypto-js')
 const { v4: uuidv4 } = require('uuid')
-const storage = require('../services/storage')
+const DI = require('../util/di')
+const { IStorageService } = require('../services/storageService')
 const logger = require('log4js').getLogger('auth')
 exports.basicAuth = async function (ctx, next) {
+  const storage = DI.inject(IStorageService)
   // get name and pass from reqest header
   const user = auth(ctx.request)
   if (!user) {
@@ -36,6 +38,7 @@ exports.basicAuth = async function (ctx, next) {
 }
 
 exports.getToken = async function (ctx, next) {
+  const storage = DI.inject(IStorageService)
   const uuid = uuidv4()
   const accessToken = jwt.sign({ type: 'access', uuid }, storage.get('config').secret, { expiresIn: storage.get('config').expire })
   const refreshToken = jwt.sign({ type: 'refresh', uuid }, storage.get('config').secret, { expiresIn: storage.get('config').refresh })
@@ -76,6 +79,7 @@ exports.jwtAuth = compose([async (ctx, next) => {
     }
   }
 }, async function (ctx, next) {
+  const storage = DI.inject(IStorageService)
   // 为了动态读取secret
   const token = resolveAuthorizationHeader(ctx)
   if (!token) {
@@ -96,6 +100,7 @@ exports.jwtAuth = compose([async (ctx, next) => {
  * 检查当前refresh token是否在黑名单
  */
 exports.blacklist = async (ctx, next) => {
+  const storage = DI.inject(IStorageService)
   const token = extractToken(ctx)
   if ((storage.get('blacklist') || []).map(o => o.token).includes(token)) {
     logger.info('block invalid refresh token')
@@ -127,6 +132,7 @@ exports.requestRefreshToken = async function (ctx, next) {
   await next()
 }
 exports.logout = async (ctx, next) => {
+  const storage = DI.inject(IStorageService)
   const token = extractToken(ctx)
   let blacklist = (storage.get('blacklist') || [])
   const refreshTokens = (storage.get('refresh') || {})
@@ -142,6 +148,7 @@ exports.logout = async (ctx, next) => {
   ctx.status = 200
 }
 exports.info = async (ctx, next) => {
+  const storage = DI.inject(IStorageService)
   ctx.body = {
     name: storage.get('config').username
   }

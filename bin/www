@@ -1,24 +1,32 @@
 #!/usr/bin/env node
-/**
- * load config
- */
-const storage = require('../src/services/storage')
-const config = storage.get('config') || {}
 
 /**
- * logger
- */
+  * logger
+  */
 
 require('../src/util/logger')
 const logger = require('log4js').getLogger('server')
 logger.info('Starting server')
-
 /**
  * Module dependencies.
  */
 
 const app = require('../src/app')
 const http = require('http')
+const DI = require('../src/util/di')
+const { IStorageService } = require('../src/services/storageService')
+
+/**
+ * load config
+ */
+const storage = DI.inject(IStorageService)
+const config = storage.get('config') || {}
+
+/**
+ * Create HTTP server.
+ */
+
+const server = http.createServer(app.callback())
 
 /**
  * Get port from environment and store in Express.
@@ -26,12 +34,6 @@ const http = require('http')
 
 const port = normalizePort(config.port || '3000')
 // app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-
-const server = http.createServer(app.callback())
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -1,10 +1,11 @@
 require('../../util/logger')
-const HexoAPI = require('./hexo_api')
-const HexoCLI = require('./hexo_cli')
 const fs = require('hexo-fs')
 const path = require('path')
 const chalk = require('chalk')
 const { restrictedKeys } = require('./util')
+const DI = require('../../util/di')
+const { IHexoAPI } = require('./hexo_api')
+const { IHexoCLI } = require('./hexo_cli')
 
 class Hexo {
   _checkReady () {
@@ -20,7 +21,7 @@ class Hexo {
   checkIsBlog (cwd) {
     let file
     try {
-      // 检查是否有对应文件
+    // 检查是否有对应文件
       file = fs.readFileSync(path.join(cwd, 'package.json'))
       fs.readFileSync(path.join(cwd, '_config.yml'))
     } catch (err) {
@@ -35,12 +36,12 @@ class Hexo {
   }
 
   async init (cwd) {
-    // TOD： 验证是不是hexo目录
+  // TOD： 验证是不是hexo目录
     this.cwd = cwd
     this.checkIsBlog(cwd)
-    this.hapi = new HexoAPI(this.cwd)
+    this.hapi = DI.inject(IHexoAPI)
     await this.hapi.init()
-    this.hcli = new HexoCLI(this.cwd)
+    this.hcli = DI.inject(IHexoCLI)
     this.logger = require('log4js').getLogger('hexo')
     this.ready = true
   }

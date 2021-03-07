@@ -1,6 +1,8 @@
 const chalk = require('chalk')
 const { spawn } = require('hexo-util')
 const expandHomeDir = require('expand-home-dir')
+const DI = require('../../util/di')
+const { IStorageService } = require('../../services/storageService')
 
 class HexoCLI {
   /**
@@ -8,7 +10,8 @@ class HexoCLI {
    * @param {String} HEXO_ROOT hexo路径
    */
   constructor (HEXO_ROOT) {
-    this.HEXO_ROOT = HEXO_ROOT
+    this._storageService = DI.inject(IStorageService)
+    this.HEXO_ROOT = this._storageService.get('config').root
     this.logger = require('log4js').getLogger('hexo')
   }
 
@@ -166,4 +169,6 @@ class HexoCLI {
     }
   }
 }
-module.exports = HexoCLI
+const IHexoCLI = 'IHexoCLI'
+DI.provide(IHexoCLI, HexoCLI)
+exports.IHexoCLI = IHexoCLI

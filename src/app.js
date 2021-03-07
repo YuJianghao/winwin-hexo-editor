@@ -7,6 +7,10 @@ const koaLogger = require('koa-logger')
 const cors = require('koa-cors')
 const log4js = require('log4js')
 const logger = log4js.getLogger('server')
+// #region services
+require('./services')
+require('./hexo/core')
+// #endregion
 
 // error handler
 onerror(app)

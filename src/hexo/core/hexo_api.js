@@ -3,6 +3,8 @@ const hfm = require('hexo-front-matter')
 const { throttle } = require('lodash')
 const LTT = require('list-to-tree')
 const { restrictedKeys } = require('./util')
+const DI = require('../../util/di')
+const { IStorageService } = require('../../services/storageService')
 /**
    * Transform categories to string[][]
    * @param {string | string[] | string[][]} categories
@@ -80,10 +82,10 @@ function categoryDocument2Object (doc) {
 class HexoAPI {
   /**
    * 有关hexo的api操作封装
-   * @param {String} HEXO_ROOT hexo路径
    */
-  constructor (HEXO_ROOT) {
-    this.HEXO_ROOT = HEXO_ROOT
+  constructor () {
+    this._storageService = DI.inject(IStorageService)
+    this.HEXO_ROOT = this._storageService.get('config').root
     this.logger = require('log4js').getLogger('hexo')
     this.hexo = new Hexo(this.HEXO_ROOT, {
       debug: false,
@@ -148,4 +150,6 @@ class HexoAPI {
     return str
   }
 }
-module.exports = HexoAPI
+const IHexoAPI = 'IHexoAPI'
+DI.provide(IHexoAPI, HexoAPI)
+exports.IHexoAPI = IHexoAPI
