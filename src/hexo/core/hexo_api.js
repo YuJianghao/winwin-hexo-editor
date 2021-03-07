@@ -5,6 +5,8 @@ const LTT = require('list-to-tree')
 const { restrictedKeys } = require('./util')
 const DI = require('../../util/di')
 const { IStorageService } = require('../../services/storageService')
+const { IConfigService } = require('../../services/configService')
+const HexoConfig = require('./config')
 /**
    * Transform categories to string[][]
    * @param {string | string[] | string[][]} categories
@@ -84,8 +86,9 @@ class HexoAPI {
    * 有关hexo的api操作封装
    */
   constructor () {
+    this._configService = DI.inject(IConfigService)
     this._storageService = DI.inject(IStorageService)
-    this.HEXO_ROOT = this._storageService.get('config').root
+    this.HEXO_ROOT = this._configService.get(HexoConfig.HEXO_ROOT)
     this.logger = require('log4js').getLogger('hexo')
     this.hexo = new Hexo(this.HEXO_ROOT, {
       debug: false,

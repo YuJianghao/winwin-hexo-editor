@@ -2,15 +2,13 @@
 // TODO: jwt-auth
 // TODO: apikey-auth
 const auth = require('basic-auth')
-const jwt = require('jsonwebtoken')
 const compose = require('koa-compose')
-const { SHA1 } = require('crypto-js')
-const { v4: uuidv4 } = require('uuid')
 const DI = require('../util/di')
 const { IStorageService } = require('../services/storageService')
+const { IAuthService } = require('./authService')
 const logger = require('log4js').getLogger('auth')
 exports.basicAuth = async function (ctx, next) {
-  const storage = DI.inject(IStorageService)
+  const authService = DI.inject(IAuthService)
   // get name and pass from reqest header
   const user = auth(ctx.request)
   if (!user) {
@@ -21,9 +19,7 @@ exports.basicAuth = async function (ctx, next) {
     throw err
   } else {
     // find if user exist in database
-    let valid = true
-    if (user.name !== storage.get('config').username) valid = false
-    else if (SHA1(user.pass).toString() !== storage.get('config').password) valid = false
+    const valid = authService.basicAuth(user.name, user.pass)
     // let query = await User.find(user)
     if (valid) {
       logger.info('basic auth pass')
@@ -38,14 +34,8 @@ exports.basicAuth = async function (ctx, next) {
 }
 
 exports.getToken = async function (ctx, next) {
-  const storage = DI.inject(IStorageService)
-  const uuid = uuidv4()
-  const accessToken = jwt.sign({ type: 'access', uuid }, storage.get('config').secret, { expiresIn: storage.get('config').expire })
-  const refreshToken = jwt.sign({ type: 'refresh', uuid }, storage.get('config').secret, { expiresIn: storage.get('config').refresh })
-  const refreshTokens = storage.get('refresh') || {}
-  refreshTokens[uuid] = refreshToken
-  storage.set('refresh', refreshTokens)
-  ctx.body = { accessToken, refreshToken }
+  const authService = DI.inject(IAuthService)
+  ctx.body = authService.getToken()
 }
 function extractToken (ctx) {
   return ctx.header.authorization.split(' ')[1]
@@ -79,14 +69,14 @@ exports.jwtAuth = compose([async (ctx, next) => {
     }
   }
 }, async function (ctx, next) {
-  const storage = DI.inject(IStorageService)
+  const authService = DI.inject(IAuthService)
   // 为了动态读取secret
   const token = resolveAuthorizationHeader(ctx)
   if (!token) {
     throw new Error('Authtication Error')
   } else {
     try {
-      const decoded = jwt.verify(token, storage.get('config').secret)
+      const decoded = authService.verifyToken(token)
       logger.debug('jwt auth pass')
       ctx.state.user = decoded
     } catch (err) {
@@ -148,8 +138,6 @@ exports.logout = async (ctx, next) => {
   ctx.status = 200
 }
 exports.info = async (ctx, next) => {
-  const storage = DI.inject(IStorageService)
-  ctx.body = {
-    name: storage.get('config').username
-  }
+  const authService = DI.inject(IAuthService)
+  ctx.body = authService.getUserInfo()
 }

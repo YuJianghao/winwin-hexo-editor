@@ -6,8 +6,14 @@ const { restrictedKeys } = require('./util')
 const DI = require('../../util/di')
 const { IHexoAPI } = require('./hexo_api')
 const { IHexoCLI } = require('./hexo_cli')
+const { IConfigService } = require('../../services/configService')
+const HexoConfig = require('./config')
 
 class Hexo {
+  constructor () {
+    this._configService = DI.inject(IConfigService)
+  }
+
   _checkReady () {
     if (!this.ready) throw new Error('Hexo initiating')
   }
@@ -21,7 +27,7 @@ class Hexo {
   checkIsBlog (cwd) {
     let file
     try {
-    // 检查是否有对应文件
+      // 检查是否有对应文件
       file = fs.readFileSync(path.join(cwd, 'package.json'))
       fs.readFileSync(path.join(cwd, '_config.yml'))
     } catch (err) {
@@ -35,10 +41,10 @@ class Hexo {
     if (!packageJSON.dependencies.hexo) throw new Error('Not blog')
   }
 
-  async init (cwd) {
-  // TOD： 验证是不是hexo目录
-    this.cwd = cwd
-    this.checkIsBlog(cwd)
+  async init () {
+    // TOD： 验证是不是hexo目录
+    this.cwd = this._configService.get(HexoConfig.HEXO_ROOT)
+    this.checkIsBlog(this.cwd)
     this.hapi = DI.inject(IHexoAPI)
     await this.hapi.init()
     this.hcli = DI.inject(IHexoCLI)

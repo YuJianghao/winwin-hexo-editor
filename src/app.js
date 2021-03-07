@@ -8,6 +8,7 @@ const cors = require('koa-cors')
 const log4js = require('log4js')
 const logger = log4js.getLogger('server')
 // #region services
+require('./auth/authService')
 require('./services')
 require('./hexo/core')
 // #endregion

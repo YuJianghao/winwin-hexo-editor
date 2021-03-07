@@ -5,7 +5,10 @@ const { validateRequestBody } = require('./util/middlewares')
 const sha1 = require('crypto-js/sha1')
 const DI = require('./util/di')
 const { IHexo } = require('./hexo/core/hexo')
+const { IConfigService } = require('./services/configService')
 const logger = require('log4js').getLogger('installer')
+const AuthConfig = require('./auth/config')
+const HexoConfig = require('./hexo/core/config')
 
 const router = new Router()
 router.prefix('/install')
@@ -37,16 +40,17 @@ router.post('/', validateRequestBody(install), async (ctx, next) => {
       message: `'${root}' is not a hexo blog`
     }
   }
+  const configService = DI.inject(IConfigService)
+  configService.set(HexoConfig.HEXO_ROOT, root)
+  configService.set(AuthConfig.AUTH_SECRET, secret)
+  configService.set(AuthConfig.AUTH_EXPIRE, expire)
+  configService.set(AuthConfig.AUTH_REFRESH, refresh)
+  configService.set(AuthConfig.AUTH_USERNAME, username)
+  configService.set(AuthConfig.AUTH_PASSWORD, sha1(password).toString())
   const config = storage.get('config') || {}
-  config.root = root
-  config.secret = secret
-  config.expire = expire
-  config.refresh = refresh
-  config.username = username
-  config.password = sha1(password).toString()
   config.installed = true
   storage.set('config', config)
-  hexo.init(root)
+  hexo.init()
   ctx.status = 200
   logger.info('installed')
 })
