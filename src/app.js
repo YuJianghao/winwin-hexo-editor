@@ -6,16 +6,10 @@ const bodyparser = require('koa-bodyparser')
 const koaLogger = require('koa-logger')
 const cors = require('koa-cors')
 const DI = require('./util/di')
-const { ILogService, LogDescriptor } = require('./util/logger')
+const { ILogService, LogDescriptor } = require('./base/logService')
 const logService = DI.inject(ILogService)
 const serverLogger = logService.get('server')
 const httpLogger = logService.get('http')
-// #region services
-require('./auth/authService')
-require('./install/installService')
-require('./base')
-require('./hexo/core')
-// #endregion
 
 // error handler
 onerror(app)

@@ -4,7 +4,6 @@ const { throttle } = require('lodash')
 const LTT = require('list-to-tree')
 const { restrictedKeys } = require('./util')
 const DI = require('../../util/di')
-const { IStorageService } = require('../../base/storageService')
 const { IConfigService } = require('../../base/configService')
 const HexoConfig = require('./config')
 /**
@@ -87,7 +86,6 @@ class HexoAPI {
    */
   constructor () {
     this._configService = DI.inject(IConfigService)
-    this._storageService = DI.inject(IStorageService)
     this.HEXO_ROOT = this._configService.get(HexoConfig.HEXO_ROOT)
     this.logger = require('log4js').getLogger('hexo')
     this.hexo = new Hexo(this.HEXO_ROOT, {

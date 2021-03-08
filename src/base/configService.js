@@ -1,22 +1,15 @@
-const AuthConfig = require('../auth/config')
-const HexoConfig = require('../hexo/core/config')
-const { InstallConfig } = require('../install/config')
 const DI = require('../util/di')
 const { IStorageService } = require('./storageService')
+function error (message) {
+  const err = new Error(message)
+  err.name = 'ConfigService'
+  throw err
+}
 
 class ConfigService {
   constructor () {
     this._storageService = DI.inject(IStorageService)
     this._map = new Map()
-    // defalut username is admin
-    this.register(AuthConfig.AUTH_USERNAME, genDescriptor('admin', 'string'))
-    // default password is admin SHA1(SHA1('admin').toString()).toString()
-    this.register(AuthConfig.AUTH_PASSWORD, genDescriptor('7b2e9f54cdff413fcde01f330af6896c3cd7e6cd', 'string'))
-    this.register(AuthConfig.AUTH_SECRET, genDescriptor('secret', 'string'))
-    this.register(AuthConfig.AUTH_EXPIRE, genDescriptor('1h', 'string'))
-    this.register(AuthConfig.AUTH_REFRESH, genDescriptor('7d', 'string'))
-    this.register(HexoConfig.HEXO_ROOT, genDescriptor('', 'string', true))
-    this.register(InstallConfig.INSTALLED, genDescriptor('installed', 'string', false))
   }
 
   getConfigDefs () {
@@ -32,14 +25,14 @@ class ConfigService {
   }
 
   _hasKey (key) {
-    if (!this._map.has(key)) { throw Error('Unknown config key: ' + key) }
+    if (!this._map.has(key)) { error('Unknown config key: ' + key) }
   }
 
   get (key) {
     this._hasKey(key)
     const config = this.getConfig()
     if (Object.prototype.hasOwnProperty.call(config, key)) return config[key]
-    else if (this._map.get(key).required) throw new Error(`config ${key} shoundn't be null`)
+    else if (this._map.get(key).required) error(`config ${key} shoundn't be null`)
     else return this._map.get(key).defaultValue
   }
 
@@ -57,7 +50,7 @@ class ConfigService {
     return true
   }
 }
-function genDescriptor (defaultValue, type, required = false) {
+exports.genDescriptor = (defaultValue, type, required = false) => {
   return { defaultValue, type, required }
 }
 const IConfigService = 'IConfigService'

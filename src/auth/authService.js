@@ -1,9 +1,20 @@
+// #region config
+const DI = require('../util/di')
+const AuthConfig = require('./config')
+const { IConfigService, genDescriptor } = require('../base/configService')
+const configService = DI.inject(IConfigService)
+// defalut username is admin
+configService.register(AuthConfig.AUTH_USERNAME, genDescriptor('admin', 'string'))
+// default password is admin SHA1(SHA1('admin').toString()).toString()
+configService.register(AuthConfig.AUTH_PASSWORD, genDescriptor('7b2e9f54cdff413fcde01f330af6896c3cd7e6cd', 'string'))
+configService.register(AuthConfig.AUTH_SECRET, genDescriptor('secret', 'string'))
+configService.register(AuthConfig.AUTH_EXPIRE, genDescriptor('1h', 'string'))
+configService.register(AuthConfig.AUTH_REFRESH, genDescriptor('7d', 'string'))
+// #endregion
+
 const { v4: uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
-const DI = require('../util/di')
-const { IConfigService } = require('../base/configService')
 const { SHA1 } = require('crypto-js')
-const AuthConfig = require('./config')
 const { IStorageService } = require('../base/storageService')
 
 class AuthService {

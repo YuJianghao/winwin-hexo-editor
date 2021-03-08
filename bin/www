@@ -1,36 +1,32 @@
 #!/usr/bin/env node
 
-// #region init logger
-const { ILogService, LogDescriptor, LogService } = require('../src/util/logger')
-const logService = new LogService()
+require('./init')
+
+// #region setup services
+require('../src/base')
+require('../src/auth/authService')
+require('../src/install/installService')
+require('../src/hexo/core')
+// then all services are available
 // #endregion
 
-// #region init DI
-const DI = require('../src/util/di')
-DI.setLogger(logService.get('di'))
-const ctors = new Map()
-ctors.set(ILogService, LogService)
-const services = new Map()
-services.set(ILogService, logService)
-DI.from(ctors, services)
-// #endregion
-
-const logger = logService.get('server')
-logger.info('Starting server')
-/**
- * Module dependencies.
- */
-
+// #region  dependences
 const app = require('../src/app')
 const http = require('http')
-const { IStorageService } = require('../src/base/storageService')
+const DI = require('../src/util/di')
 const { IHexo } = require('../src/hexo/core/hexo')
+const { IConfigService } = require('../src/base/configService')
+const { InstallConfig } = require('../src/install/config')
+const { ILogService } = require('../src/base/logService')
+// #endregion
 
-/**
- * load config
- */
-const storage = DI.inject(IStorageService)
-const config = storage.get('config') || {}
+// #endregion setup logger
+const logService = DI.inject(ILogService)
+const logger = logService.get('server')
+logger.info('Starting server')
+// #endregion
+
+const configService = DI.inject(IConfigService)
 
 /**
  * Create HTTP server.
@@ -42,7 +38,7 @@ const server = http.createServer(app.callback())
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(config.port || '3000')
+const port = normalizePort(configService.get(InstallConfig.PORT) || '3000')
 // app.set('port', port);
 
 /**
@@ -52,9 +48,9 @@ const port = normalizePort(config.port || '3000')
 server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
-if (config.installed) {
+if (configService.get(InstallConfig.INSTALLED)) {
   const hexo = DI.inject(IHexo)
-  hexo.init(config.root).catch((err) => {
+  hexo.init().catch((err) => {
     logger.error(err)
     process.exit(1)
   })

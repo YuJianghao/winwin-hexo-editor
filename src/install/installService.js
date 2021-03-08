@@ -1,3 +1,5 @@
+
+require('./config')
 const { SHA1 } = require('crypto-js')
 const AuthConfig = require('../auth/config')
 const { IConfigService } = require('../base/configService')

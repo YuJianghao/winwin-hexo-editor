@@ -1,4 +1,4 @@
-require('../../util/logger')
+require('./config')
 const fs = require('hexo-fs')
 const path = require('path')
 const chalk = require('chalk')

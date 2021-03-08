@@ -2,16 +2,17 @@ const chalk = require('chalk')
 const { spawn } = require('hexo-util')
 const expandHomeDir = require('expand-home-dir')
 const DI = require('../../util/di')
-const { IStorageService } = require('../../base/storageService')
+const HexoConfig = require('./config')
+const { IConfigService } = require('../../base/configService')
 
 class HexoCLI {
   /**
    * 有关hexo的cli操作封装
    * @param {String} HEXO_ROOT hexo路径
    */
-  constructor (HEXO_ROOT) {
-    this._storageService = DI.inject(IStorageService)
-    this.HEXO_ROOT = this._storageService.get('config').root
+  constructor () {
+    this._configService = DI.inject(IConfigService)
+    this.HEXO_ROOT = this._configService.get(HexoConfig.HEXO_ROOT)
     this.logger = require('log4js').getLogger('hexo')
   }
 

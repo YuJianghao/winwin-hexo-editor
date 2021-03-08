@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const {
   isDev
-} = require('./common')
+} = require('../util/common')
 /**
  * 日志目录
  */
@@ -16,7 +16,7 @@ if (!fs.existsSync(LOG_FOLDER)) {
 }
 function error (message) {
   const err = new Error(message)
-  err.name = 'LOGGER'
+  err.name = 'LogService'
   throw err
 }
 class LogDescriptor {
