@@ -1,31 +1,25 @@
 #!/usr/bin/env node
-/**
- * load config
- */
-const storage = require('../src/services/storage')
-const config = storage.get('config') || {}
 
-/**
- * logger
- */
+require('./init')
+require('./base')
 
-require('../src/util/logger')
-const logger = require('log4js').getLogger('server')
-logger.info('Starting server')
-
-/**
- * Module dependencies.
- */
-
-const app = require('../src/app')
+// #region  dependences
+const app = require('./app')
 const http = require('http')
+const DI = require('./util/di')
+const { IHexo } = require('./hexo/core/hexo')
+const { IConfigService } = require('./base/configService')
+const { InstallConfig } = require('./install/config')
+const { ILogService } = require('./base/logService')
+// #endregion
 
-/**
- * Get port from environment and store in Express.
- */
+// #endregion setup logger
+const logService = DI.inject(ILogService)
+const logger = logService.get('server')
+logger.info('Starting server')
+// #endregion
 
-const port = normalizePort(config.port || '3000')
-// app.set('port', port);
+const configService = DI.inject(IConfigService)
 
 /**
  * Create HTTP server.
@@ -34,13 +28,26 @@ const port = normalizePort(config.port || '3000')
 const server = http.createServer(app.callback())
 
 /**
+ * Get port from environment and store in Express.
+ */
+
+const port = normalizePort(configService.get(InstallConfig.PORT) || '3000')
+// app.set('port', port);
+
+/**
  * Listen on provided port, on all network interfaces.
  */
 
 server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
-if (config.installed)require('../src/hexo/core/hexo').init(config.root).catch(() => { process.exit(1) })
+if (configService.get(InstallConfig.INSTALLED)) {
+  const hexo = DI.inject(IHexo)
+  hexo.init().catch((err) => {
+    logger.error(err)
+    process.exit(1)
+  })
+}
 
 /**
  * Normalize a port into a number, string, or false.

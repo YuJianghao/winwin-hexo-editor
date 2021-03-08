@@ -2,13 +2,14 @@
 // TODO: jwt-auth
 // TODO: apikey-auth
 const auth = require('basic-auth')
-const jwt = require('jsonwebtoken')
 const compose = require('koa-compose')
-const { SHA1 } = require('crypto-js')
-const { v4: uuidv4 } = require('uuid')
-const storage = require('../services/storage')
-const logger = require('log4js').getLogger('auth')
+const DI = require('../util/di')
+const { IStorageService } = require('../base/storageService')
+const { IAuthService } = require('./authService')
+const { ILogService } = require('../base/logService')
+const logger = DI.inject(ILogService).get('auth')
 exports.basicAuth = async function (ctx, next) {
+  const authService = DI.inject(IAuthService)
   // get name and pass from reqest header
   const user = auth(ctx.request)
   if (!user) {
@@ -19,12 +20,9 @@ exports.basicAuth = async function (ctx, next) {
     throw err
   } else {
     // find if user exist in database
-    let valid = true
-    if (user.name !== storage.get('config').username) valid = false
-    else if (SHA1(user.pass).toString() !== storage.get('config').password) valid = false
+    const valid = authService.basicAuth(user.name, user.pass)
     // let query = await User.find(user)
     if (valid) {
-      logger.info('basic auth pass')
       await next()
     } else {
       const err = new Error()
@@ -36,13 +34,8 @@ exports.basicAuth = async function (ctx, next) {
 }
 
 exports.getToken = async function (ctx, next) {
-  const uuid = uuidv4()
-  const accessToken = jwt.sign({ type: 'access', uuid }, storage.get('config').secret, { expiresIn: storage.get('config').expire })
-  const refreshToken = jwt.sign({ type: 'refresh', uuid }, storage.get('config').secret, { expiresIn: storage.get('config').refresh })
-  const refreshTokens = storage.get('refresh') || {}
-  refreshTokens[uuid] = refreshToken
-  storage.set('refresh', refreshTokens)
-  ctx.body = { accessToken, refreshToken }
+  const authService = DI.inject(IAuthService)
+  ctx.body = authService.getToken()
 }
 function extractToken (ctx) {
   return ctx.header.authorization.split(' ')[1]
@@ -76,14 +69,14 @@ exports.jwtAuth = compose([async (ctx, next) => {
     }
   }
 }, async function (ctx, next) {
+  const authService = DI.inject(IAuthService)
   // 为了动态读取secret
   const token = resolveAuthorizationHeader(ctx)
   if (!token) {
     throw new Error('Authtication Error')
   } else {
     try {
-      const decoded = jwt.verify(token, storage.get('config').secret)
-      logger.debug('jwt auth pass')
+      const decoded = authService.verifyToken(token)
       ctx.state.user = decoded
     } catch (err) {
       throw new Error('Authtication Error')
@@ -96,6 +89,7 @@ exports.jwtAuth = compose([async (ctx, next) => {
  * 检查当前refresh token是否在黑名单
  */
 exports.blacklist = async (ctx, next) => {
+  const storage = DI.inject(IStorageService)
   const token = extractToken(ctx)
   if ((storage.get('blacklist') || []).map(o => o.token).includes(token)) {
     logger.info('block invalid refresh token')
@@ -127,6 +121,7 @@ exports.requestRefreshToken = async function (ctx, next) {
   await next()
 }
 exports.logout = async (ctx, next) => {
+  const storage = DI.inject(IStorageService)
   const token = extractToken(ctx)
   let blacklist = (storage.get('blacklist') || [])
   const refreshTokens = (storage.get('refresh') || {})
@@ -142,7 +137,6 @@ exports.logout = async (ctx, next) => {
   ctx.status = 200
 }
 exports.info = async (ctx, next) => {
-  ctx.body = {
-    name: storage.get('config').username
-  }
+  const authService = DI.inject(IAuthService)
+  ctx.body = authService.getUserInfo()
 }

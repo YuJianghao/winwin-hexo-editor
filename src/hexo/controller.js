@@ -1,8 +1,7 @@
 const Joi = require('joi')
-// const storage = require('../services/storage')
-const h = require('./core/hexo')
+const DI = require('../util/di')
+const { IHexo } = require('./core/hexo')
 const { search } = require('./search')
-// h.init(storage.get('config').root)
 
 // #region validate
 exports.v = {
@@ -45,38 +44,46 @@ exports.qv = {
 
 // #region actions
 exports.generate = async (ctx, next) => {
-  await h.generate(ctx.request.body)
+  const hexo = DI.inject(IHexo)
+  await hexo.generate(ctx.request.body)
   ctx.status = 200
 }
 exports.deploy = async (ctx, next) => {
-  await h.deploy(ctx.request.body)
+  const hexo = DI.inject(IHexo)
+  await hexo.deploy(ctx.request.body)
   ctx.status = 200
 }
 exports.clean = async (ctx, next) => {
-  await h.clean()
+  const hexo = DI.inject(IHexo)
+  await hexo.clean()
   ctx.status = 200
 }
 // #endregion
 
 // #region list
 exports.listPost = async (ctx, next) => {
-  ctx.body = await h.listPost()
+  const hexo = DI.inject(IHexo)
+  ctx.body = await hexo.listPost()
 }
 exports.listPage = async (ctx, next) => {
-  ctx.body = await h.listPage()
+  const hexo = DI.inject(IHexo)
+  ctx.body = await hexo.listPage()
 }
 exports.listTag = async (ctx, next) => {
-  ctx.body = await h.listTag()
+  const hexo = DI.inject(IHexo)
+  ctx.body = await hexo.listTag()
 }
 exports.listCategory = async (ctx, next) => {
-  ctx.body = await h.listCategory()
+  const hexo = DI.inject(IHexo)
+  ctx.body = await hexo.listCategory()
 }
 // #endregion
 
 // #region new
 exports.new = async (ctx, next) => {
+  const hexo = DI.inject(IHexo)
   const { title, layout, path, slug, replace } = ctx.request.body
-  const res = await h.new(title, { layout, path, slug, replace })
+  const res = await hexo.new(title, { layout, path, slug, replace })
   ctx.status = 200
   ctx.body = res
 }
@@ -84,8 +91,9 @@ exports.new = async (ctx, next) => {
 
 // #region update
 exports.update = async (ctx, next) => {
+  const hexo = DI.inject(IHexo)
   const { id, page, obj } = ctx.request.body
-  const res = await h.write(id, obj, page)
+  const res = await hexo.write(id, obj, page)
   ctx.status = 200
   ctx.body = res
 }
@@ -93,16 +101,18 @@ exports.update = async (ctx, next) => {
 
 // #region delete
 exports.delete = async (ctx, next) => {
+  const hexo = DI.inject(IHexo)
   const { id, page } = ctx.request.body
-  await h.delete(id, page)
+  await hexo.delete(id, page)
   ctx.status = 200
 }
 // #endregion
 
 // #region publish
 exports.publish = async (ctx, next) => {
+  const hexo = DI.inject(IHexo)
   const { id } = ctx.request.body
-  const res = await h.publish(id)
+  const res = await hexo.publish(id)
   ctx.body = res
   ctx.status = 200
 }
@@ -110,11 +120,13 @@ exports.publish = async (ctx, next) => {
 
 // #region git
 exports.gitSync = async (ctx, next) => {
-  await h.gitSync()
+  const hexo = DI.inject(IHexo)
+  await hexo.gitSync()
   ctx.status = 200
 }
 exports.gitSave = async (ctx, next) => {
-  await h.gitSave()
+  const hexo = DI.inject(IHexo)
+  await hexo.gitSave()
   ctx.status = 200
 }
 exports.notGitRepo = async (ctx, next) => {
@@ -128,29 +140,6 @@ exports.notGitRepo = async (ctx, next) => {
         message: 'not a git repo'
       }
     } else throw e
-  }
-}
-// #endregion
-
-// #region error handler
-exports.notFound = async (ctx, next) => {
-  try {
-    await next()
-  } catch (err) {
-    if (err.message === 'Not found') {
-      ctx.status = 404
-      ctx.body = { message: 'id not found' }
-    } else throw err
-  }
-}
-exports.hexoInitiating = async (ctx, next) => {
-  try {
-    await next()
-  } catch (err) {
-    if (err.message === 'Hexo initiating') {
-      ctx.status = 503
-      ctx.body = { message: 'Hexo initiating' }
-    } else throw err
   }
 }
 // #endregion

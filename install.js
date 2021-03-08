@@ -1,8 +1,14 @@
+require('./src/init')
+require('./src/base')
+require('./src/install/config')
 const fs = require('fs')
 const chalk = require('chalk')
 const { spawn } = require('hexo-util')
 const inquirer = require('inquirer')
-const storage = require('./src/services/storage')
+const DI = require('./src/util/di')
+const { IConfigService } = require('./src/base/configService')
+const { InstallConfig } = require('./src/install/config')
+const configStorage = DI.inject(IConfigService)
 class Printer {
   constructor (prefix) {
     this.prefix = prefix
@@ -86,9 +92,7 @@ async function install () {
       },
       prefix: chalk.blue('?')
     }])
-  const config = storage.get('config') || {}
-  config.port = answer1.port
-  storage.set('config', config)
+  configStorage.set(InstallConfig.PORT, answer1.port)
 
   printer.printSection('Ready to go!')
   const answer2 = await inquirer.prompt([{

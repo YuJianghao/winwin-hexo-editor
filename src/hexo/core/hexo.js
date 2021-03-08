@@ -1,12 +1,20 @@
-require('../../util/logger')
-const HexoAPI = require('./hexo_api')
-const HexoCLI = require('./hexo_cli')
+require('./config')
 const fs = require('hexo-fs')
 const path = require('path')
 const chalk = require('chalk')
 const { restrictedKeys } = require('./util')
+const DI = require('../../util/di')
+const { IHexoAPI } = require('./hexo_api')
+const { IHexoCLI } = require('./hexo_cli')
+const { IConfigService } = require('../../base/configService')
+const HexoConfig = require('./config')
+const { ILogService } = require('../../base/logService')
 
 class Hexo {
+  constructor () {
+    this._configService = DI.inject(IConfigService)
+  }
+
   _checkReady () {
     if (!this.ready) throw new Error('Hexo initiating')
   }
@@ -34,14 +42,14 @@ class Hexo {
     if (!packageJSON.dependencies.hexo) throw new Error('Not blog')
   }
 
-  async init (cwd) {
+  async init () {
     // TOD： 验证是不是hexo目录
-    this.cwd = cwd
-    this.checkIsBlog(cwd)
-    this.hapi = new HexoAPI(this.cwd)
+    this.cwd = this._configService.get(HexoConfig.HEXO_ROOT)
+    this.checkIsBlog(this.cwd)
+    this.hapi = DI.inject(IHexoAPI)
     await this.hapi.init()
-    this.hcli = new HexoCLI(this.cwd)
-    this.logger = require('log4js').getLogger('hexo')
+    this.hcli = DI.inject(IHexoCLI)
+    this._logger = DI.inject(ILogService).get('hexo')
     this.ready = true
   }
 
@@ -85,7 +93,7 @@ class Hexo {
     await this.hapi.freload()
     const post = (await this.listPost()).concat(await this.listPage()).filter(p => p.full_source === source)
     if (post.length < 1) {
-      this.logger.log('new id not found')
+      this._logger.log('new id not found')
       throw new Error('Not found')
     }
     if (post.length > 1) throw new Error('Duplicate fail found, retry later')
@@ -132,7 +140,7 @@ class Hexo {
     const string = await this.hapi.stringify(await this._getRaw(id, page), article)
     const source = await this._getSource(id, page)
     fs.writeFileSync(source, string)
-    this.logger.info('Write file', chalk.magenta(source))
+    this._logger.info('Write file', chalk.magenta(source))
     await this.hapi.freload()
     return (page ? (await this.listPage()) : (await this.listPost())).filter(p => p._id === id)[0]
   }
@@ -147,7 +155,7 @@ class Hexo {
     const source = await this._getSource(id, page)
     fs.unlinkSync(source)
     await this.hapi.freload()
-    this.logger.info('Delete file', chalk.magenta(source))
+    this._logger.info('Delete file', chalk.magenta(source))
   }
 
   /**
@@ -187,7 +195,7 @@ class Hexo {
     this._checkReady()
     const posts = (await this.listPost()).filter(p => p._id === id)
     if (posts.length < 1) {
-      this.logger.log('publish id not found')
+      this._logger.log('publish id not found')
       throw new Error('Not found')
     }
     const post = posts[0]
@@ -205,4 +213,6 @@ class Hexo {
     return this.hcli.gitSave()
   }
 }
-module.exports = new Hexo()
+const IHexo = 'IHexo'
+DI.provide(IHexo, Hexo)
+exports.IHexo = IHexo

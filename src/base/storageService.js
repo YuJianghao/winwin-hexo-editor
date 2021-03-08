@@ -1,10 +1,11 @@
 
-const { SHA1 } = require('crypto-js')
+// const { SHA1 } = require('crypto-js')
 const { existsSync, mkdirSync } = require('fs')
 const { throttle } = require('lodash')
 const path = require('path')
 const JSONdb = require('simple-json-db')
-class Storage {
+const DI = require('../util/di')
+class StorageService {
   constructor () {
     const root = path.resolve(process.cwd(), './data')
     const name = 'sjson.db'
@@ -29,6 +30,9 @@ class Storage {
     this.db.sync()
   }
 }
-const storage = new Storage()
+const IStorageService = 'IStorageService'
+DI.provide(IStorageService, StorageService)
+// const storage = new Storage()
 // console.log(SHA1('admin').toString())
-module.exports = storage
+// module.exports = storage
+exports.IStorageService = IStorageService
