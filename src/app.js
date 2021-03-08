@@ -9,7 +9,8 @@ const log4js = require('log4js')
 const logger = log4js.getLogger('server')
 // #region services
 require('./auth/authService')
-require('./services')
+require('./install/installService')
+require('./base')
 require('./hexo/core')
 // #endregion
 
@@ -46,7 +47,7 @@ app.use(koaLogger((str, args) => {
 
 app.use(require('koa-static')(require('path').resolve(__dirname, '../frontend/dist/pwa')))
 
-const install = require('./install')
+const install = require('./install/router')
 app.use(install.routes(), install.allowedMethods())
 
 const auth = require('./auth/router')

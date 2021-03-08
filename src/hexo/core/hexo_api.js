@@ -4,8 +4,8 @@ const { throttle } = require('lodash')
 const LTT = require('list-to-tree')
 const { restrictedKeys } = require('./util')
 const DI = require('../../util/di')
-const { IStorageService } = require('../../services/storageService')
-const { IConfigService } = require('../../services/configService')
+const { IStorageService } = require('../../base/storageService')
+const { IConfigService } = require('../../base/configService')
 const HexoConfig = require('./config')
 /**
    * Transform categories to string[][]

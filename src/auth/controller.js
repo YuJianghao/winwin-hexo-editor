@@ -4,7 +4,7 @@
 const auth = require('basic-auth')
 const compose = require('koa-compose')
 const DI = require('../util/di')
-const { IStorageService } = require('../services/storageService')
+const { IStorageService } = require('../base/storageService')
 const { IAuthService } = require('./authService')
 const logger = require('log4js').getLogger('auth')
 exports.basicAuth = async function (ctx, next) {

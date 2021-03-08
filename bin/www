@@ -14,7 +14,7 @@ logger.info('Starting server')
 const app = require('../src/app')
 const http = require('http')
 const DI = require('../src/util/di')
-const { IStorageService } = require('../src/services/storageService')
+const { IStorageService } = require('../src/base/storageService')
 const { IHexo } = require('../src/hexo/core/hexo')
 
 /**

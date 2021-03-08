@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const { spawn } = require('hexo-util')
 const expandHomeDir = require('expand-home-dir')
 const DI = require('../../util/di')
-const { IStorageService } = require('../../services/storageService')
+const { IStorageService } = require('../../base/storageService')
 
 class HexoCLI {
   /**

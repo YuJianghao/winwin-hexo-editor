@@ -1,9 +1,7 @@
 const Joi = require('joi')
 const DI = require('../util/di')
 const { IHexo } = require('./core/hexo')
-// const storage = require('../services/storage')
 const { search } = require('./search')
-// h.init(storage.get('config').root)
 
 // #region validate
 exports.v = {
@@ -142,29 +140,6 @@ exports.notGitRepo = async (ctx, next) => {
         message: 'not a git repo'
       }
     } else throw e
-  }
-}
-// #endregion
-
-// #region error handler
-exports.notFound = async (ctx, next) => {
-  try {
-    await next()
-  } catch (err) {
-    if (err.message === 'Not found') {
-      ctx.status = 404
-      ctx.body = { message: 'id not found' }
-    } else throw err
-  }
-}
-exports.hexoInitiating = async (ctx, next) => {
-  try {
-    await next()
-  } catch (err) {
-    if (err.message === 'Hexo initiating') {
-      ctx.status = 503
-      ctx.body = { message: 'Hexo initiating' }
-    } else throw err
   }
 }
 // #endregion

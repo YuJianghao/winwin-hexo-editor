@@ -1,10 +1,10 @@
 const { v4: uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
 const DI = require('../util/di')
-const { IConfigService } = require('../services/configService')
+const { IConfigService } = require('../base/configService')
 const { SHA1 } = require('crypto-js')
 const AuthConfig = require('./config')
-const { IStorageService } = require('../services/storageService')
+const { IStorageService } = require('../base/storageService')
 
 class AuthService {
   constructor () {

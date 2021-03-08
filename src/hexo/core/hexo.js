@@ -6,7 +6,7 @@ const { restrictedKeys } = require('./util')
 const DI = require('../../util/di')
 const { IHexoAPI } = require('./hexo_api')
 const { IHexoCLI } = require('./hexo_cli')
-const { IConfigService } = require('../../services/configService')
+const { IConfigService } = require('../../base/configService')
 const HexoConfig = require('./config')
 
 class Hexo {
