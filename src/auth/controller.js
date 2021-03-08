@@ -6,7 +6,8 @@ const compose = require('koa-compose')
 const DI = require('../util/di')
 const { IStorageService } = require('../base/storageService')
 const { IAuthService } = require('./authService')
-const logger = require('log4js').getLogger('auth')
+const { ILogService } = require('../base/logService')
+const logger = DI.inject(ILogService).get('auth')
 exports.basicAuth = async function (ctx, next) {
   const authService = DI.inject(IAuthService)
   // get name and pass from reqest header
@@ -22,7 +23,6 @@ exports.basicAuth = async function (ctx, next) {
     const valid = authService.basicAuth(user.name, user.pass)
     // let query = await User.find(user)
     if (valid) {
-      logger.info('basic auth pass')
       await next()
     } else {
       const err = new Error()
@@ -77,7 +77,6 @@ exports.jwtAuth = compose([async (ctx, next) => {
   } else {
     try {
       const decoded = authService.verifyToken(token)
-      logger.debug('jwt auth pass')
       ctx.state.user = decoded
     } catch (err) {
       throw new Error('Authtication Error')

@@ -4,6 +4,7 @@ const expandHomeDir = require('expand-home-dir')
 const DI = require('../../util/di')
 const HexoConfig = require('./config')
 const { IConfigService } = require('../../base/configService')
+const { ILogService } = require('../../base/logService')
 
 class HexoCLI {
   /**
@@ -13,7 +14,7 @@ class HexoCLI {
   constructor () {
     this._configService = DI.inject(IConfigService)
     this.HEXO_ROOT = this._configService.get(HexoConfig.HEXO_ROOT)
-    this.logger = require('log4js').getLogger('hexo')
+    this._logger = DI.inject(ILogService).get('hexo')
   }
 
   /**
@@ -38,14 +39,14 @@ class HexoCLI {
       if (key.toString().includes(' ')) return '"' + key + '"'
       else return key
     }).join(' ')
-    this.logger.info('Run ' + chalk.blue('`' + string + '`') + ' ' + chalk.gray(cwd))
+    this._logger.info('Run ' + chalk.blue('`' + string + '`') + ' ' + chalk.gray(cwd))
     try {
       const res = await spawn(command, args, { cwd })
-      this.logger.info(res)
-      this.logger.info('Finished')
+      this._logger.info(res)
+      this._logger.info('Finished')
       return res
     } catch (err) {
-      this.logger.error('Fail to run `' + string + '`')
+      this._logger.error('Fail to run `' + string + '`')
       // this.logger.error(err)
       throw err
     }
@@ -149,7 +150,7 @@ class HexoCLI {
       await this.runcli(this.HEXO_ROOT, 'git', ['pull'])
     } catch (e) {
       if (e.message.indexOf('no tracking information' > 0)) {
-        this.logger.info('Local git reset')
+        this._logger.info('Local git reset')
       } else throw e
     }
   }
@@ -165,7 +166,7 @@ class HexoCLI {
       await this.runcli(this.HEXO_ROOT, 'git', ['push'])
     } catch (e) {
       if (e.message.indexOf('No configured push destination' > 0)) {
-        this.logger.info('Local git commit')
+        this._logger.info('Local git commit')
       } else throw e
     }
   }

@@ -16,17 +16,18 @@ const { v4: uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
 const { SHA1 } = require('crypto-js')
 const { IStorageService } = require('../base/storageService')
+const { ILogService } = require('../base/logService')
 
 class AuthService {
   constructor () {
     this._configService = DI.inject(IConfigService)
+    this._logger = DI.inject(ILogService).get('auth')
   }
 
   basicAuth (username, password) {
-    console.log(username, this._configService.get(AuthConfig.AUTH_USERNAME))
-    console.log(SHA1(password).toString(), this._configService.get(AuthConfig.AUTH_PASSWORD))
     if (username !== this._configService.get(AuthConfig.AUTH_USERNAME)) return false
     else if (SHA1(password).toString() !== this._configService.get(AuthConfig.AUTH_PASSWORD)) return false
+    this._logger.info('basic auth pass')
     return true
   }
 
@@ -45,7 +46,9 @@ class AuthService {
   }
 
   verifyToken (token) {
-    return jwt.verify(token, this._configService.get(AuthConfig.AUTH_SECRET))
+    const res = jwt.verify(token, this._configService.get(AuthConfig.AUTH_SECRET))
+    this._logger.debug('jwt auth pass')
+    return res
   }
 
   getUserInfo () {

@@ -3,6 +3,7 @@ require('./config')
 const { SHA1 } = require('crypto-js')
 const AuthConfig = require('../auth/config')
 const { IConfigService } = require('../base/configService')
+const { ILogService } = require('../base/logService')
 const HexoConfig = require('../hexo/core/config')
 const { IHexo } = require('../hexo/core/hexo')
 const DI = require('../util/di')
@@ -12,6 +13,7 @@ class InstallService {
   constructor () {
     this._configService = DI.inject(IConfigService)
     this._hexo = DI.inject(IHexo)
+    this._logger = DI.inject(ILogService).get('installer')
   }
 
   async install (options) {
@@ -25,10 +27,12 @@ class InstallService {
     this._configService.set(AuthConfig.AUTH_PASSWORD, SHA1(password).toString())
     this._configService.set(InstallConfig.INSTALLED, true)
     this._hexo.init()
+    this._logger.info('installed')
   }
 
   checkIsBlog (root) {
     this._hexo.checkIsBlog(root)
+    this._logger.info('checkIsBlog pass', root)
   }
 
   checkInstalled () {

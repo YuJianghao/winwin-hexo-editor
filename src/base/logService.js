@@ -38,6 +38,9 @@ class LogService {
     this.register(new LogDescriptor('http'))
     this.register(new LogDescriptor('di'))
     this.register(new LogDescriptor('server'))
+    this.register(new LogDescriptor('auth'))
+    this.register(new LogDescriptor('hexo'))
+    this.register(new LogDescriptor('installer', false))
     // #endregion
 
     // #region update log4js configuration

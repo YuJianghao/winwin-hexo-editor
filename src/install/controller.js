@@ -1,7 +1,6 @@
 const Joi = require('joi')
 const DI = require('../util/di')
 const { IInstallService } = require('./installService')
-const logger = require('log4js').getLogger('installer')
 exports.v = {
   install: Joi.object({
     root: Joi.string().required(),
@@ -30,7 +29,6 @@ exports.install = async (ctx, next) => {
   const { root, secret, expire, refresh, username, password } = ctx.request.body
   await installService.install({ root, secret, expire, refresh, username, password })
   ctx.status = 200
-  logger.info('installed')
 }
 exports.checkRoot = async (ctx, next) => {
   const installService = DI.inject(IInstallService)

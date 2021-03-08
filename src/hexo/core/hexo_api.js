@@ -6,6 +6,7 @@ const { restrictedKeys } = require('./util')
 const DI = require('../../util/di')
 const { IConfigService } = require('../../base/configService')
 const HexoConfig = require('./config')
+const { ILogService } = require('../../base/logService')
 /**
    * Transform categories to string[][]
    * @param {string | string[] | string[][]} categories
@@ -87,7 +88,7 @@ class HexoAPI {
   constructor () {
     this._configService = DI.inject(IConfigService)
     this.HEXO_ROOT = this._configService.get(HexoConfig.HEXO_ROOT)
-    this.logger = require('log4js').getLogger('hexo')
+    this._logger = DI.inject(ILogService).get('hexo')
     this.hexo = new Hexo(this.HEXO_ROOT, {
       debug: false,
       draft: true,
@@ -102,13 +103,13 @@ class HexoAPI {
   async freload () {
     await this.hexo.locals.invalidate()
     await this.hexo.load()
-    this.logger.info('Force reload')
+    this._logger.info('Force reload')
   }
 
   async reload () {
     await this.hexo.locals.invalidate()
     await this.hexo.load()
-    this.logger.info('Reload')
+    this._logger.info('Reload')
   }
 
   async init () {
@@ -118,28 +119,28 @@ class HexoAPI {
   async listPost () {
     await this.reload()
     const res = await this.hexo.locals.get('posts').toArray().map(postDocument2Object)
-    this.logger.info('List posts', res.length)
+    this._logger.info('List posts', res.length)
     return res
   }
 
   async listPage () {
     await this.reload()
     const res = await this.hexo.locals.get('pages').toArray().map(pageDocument2Object)
-    this.logger.info('List pages', res.length)
+    this._logger.info('List pages', res.length)
     return res
   }
 
   async listTag () {
     await this.reload()
     const res = await this.hexo.locals.get('tags').toArray().map(tagDocument2Object)
-    this.logger.info('List tags', res.length)
+    this._logger.info('List tags', res.length)
     return res
   }
 
   async listCategory () {
     await this.reload()
     const res = await this.hexo.locals.get('categories').toArray().map(categoryDocument2Object)
-    this.logger.info('List categories', res.length)
+    this._logger.info('List categories', res.length)
     return res
   }
 
