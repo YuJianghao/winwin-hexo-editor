@@ -5,8 +5,11 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const koaLogger = require('koa-logger')
 const cors = require('koa-cors')
-const log4js = require('log4js')
-const logger = log4js.getLogger('server')
+const DI = require('./util/di')
+const { ILogService, LogDescriptor } = require('./util/logger')
+const logService = DI.inject(ILogService)
+const serverLogger = logService.get('server')
+const httpLogger = logService.get('http')
 // #region services
 require('./auth/authService')
 require('./install/installService')
@@ -26,7 +29,7 @@ app.use(async (ctx, next) => {
     }
     if (ctx.status === 500) {
       ctx.body.message = 'server internal error. Fix problem and try again later. This can be caused by unexpected input or server error.'
-      logger.error(500, err)
+      serverLogger.error(500, err)
     }
   }
 })
@@ -42,7 +45,7 @@ app.use(json())
 app.use(koaLogger((str, args) => {
   // redirect koa logger to other output pipe
   // default is process.stdout(by console.log function)
-  log4js.getLogger('http').info(str)
+  httpLogger.info(str)
 }))
 
 app.use(require('koa-static')(require('path').resolve(__dirname, '../frontend/dist/pwa')))

@@ -1,11 +1,21 @@
 #!/usr/bin/env node
 
-/**
-  * logger
-  */
+// #region init logger
+const { ILogService, LogDescriptor, LogService } = require('../src/util/logger')
+const logService = new LogService()
+// #endregion
 
-require('../src/util/logger')
-const logger = require('log4js').getLogger('server')
+// #region init DI
+const DI = require('../src/util/di')
+DI.setLogger(logService.get('di'))
+const ctors = new Map()
+ctors.set(ILogService, LogService)
+const services = new Map()
+services.set(ILogService, logService)
+DI.from(ctors, services)
+// #endregion
+
+const logger = logService.get('server')
 logger.info('Starting server')
 /**
  * Module dependencies.
@@ -13,7 +23,6 @@ logger.info('Starting server')
 
 const app = require('../src/app')
 const http = require('http')
-const DI = require('../src/util/di')
 const { IStorageService } = require('../src/base/storageService')
 const { IHexo } = require('../src/hexo/core/hexo')
 

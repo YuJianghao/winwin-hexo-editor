@@ -1,5 +1,6 @@
 const AuthConfig = require('../auth/config')
 const HexoConfig = require('../hexo/core/config')
+const { InstallConfig } = require('../install/config')
 const DI = require('../util/di')
 const { IStorageService } = require('./storageService')
 
@@ -15,6 +16,7 @@ class ConfigService {
     this.register(AuthConfig.AUTH_EXPIRE, genDescriptor('1h', 'string'))
     this.register(AuthConfig.AUTH_REFRESH, genDescriptor('7d', 'string'))
     this.register(HexoConfig.HEXO_ROOT, genDescriptor('', 'string', true))
+    this.register(InstallConfig.INSTALLED, genDescriptor('installed', 'string', false))
   }
 
   getConfigDefs () {
