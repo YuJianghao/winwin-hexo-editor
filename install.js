@@ -1,4 +1,5 @@
-require('./bin/init')
+require('./src/init')
+require('./src/base')
 require('./src/install/config')
 const fs = require('fs')
 const chalk = require('chalk')

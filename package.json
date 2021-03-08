@@ -4,9 +4,9 @@
   "scripts": {
     "stop": "pm2 stop hexon",
     "restart": "pm2 restart hexon",
-    "start": "node bin/www",
-    "dev": "export DEBUG='hexo*' && export NODE_ENV='development' && npx nodemon -i ./data bin/www",
-    "prd": "pm2 start bin/www --name hexon -o log/pm2-log.log -e log/pm2-err.log",
+    "start": "node src/server.js",
+    "dev": "export DEBUG='hexo*' && export NODE_ENV='development' && npx nodemon -i ./data src/server.js",
+    "prd": "pm2 start src/server.js --name hexon -o log/pm2-log.log -e log/pm2-err.log",
     "test": "echo \"Error: no test specified\" && exit 1",
     "sub:fe": "cd frontend && git pull origin master"
   },
@@ -35,7 +35,6 @@
     "koa-bodyparser": "^4.3.0",
     "koa-compose": "^4.1.0",
     "koa-convert": "^1.2.0",
-    "koa-cors": "0.0.16",
     "koa-json": "^2.0.2",
     "koa-logger": "^3.2.1",
     "koa-mount": "^4.0.0",

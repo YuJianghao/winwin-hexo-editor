@@ -1,23 +1,16 @@
 #!/usr/bin/env node
 
 require('./init')
-
-// #region setup services
-require('../src/base')
-require('../src/auth/authService')
-require('../src/install/installService')
-require('../src/hexo/core')
-// then all services are available
-// #endregion
+require('./base')
 
 // #region  dependences
-const app = require('../src/app')
+const app = require('./app')
 const http = require('http')
-const DI = require('../src/util/di')
-const { IHexo } = require('../src/hexo/core/hexo')
-const { IConfigService } = require('../src/base/configService')
-const { InstallConfig } = require('../src/install/config')
-const { ILogService } = require('../src/base/logService')
+const DI = require('./util/di')
+const { IHexo } = require('./hexo/core/hexo')
+const { IConfigService } = require('./base/configService')
+const { InstallConfig } = require('./install/config')
+const { ILogService } = require('./base/logService')
 // #endregion
 
 // #endregion setup logger

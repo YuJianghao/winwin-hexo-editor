@@ -1,11 +1,11 @@
 // #region init logService
-const { ILogService, LogService } = require('../src/base/logService')
+const { ILogService, LogService } = require('./base/logService')
 const logService = new LogService()
 // then logService is available
 // #endregion
 
 // #region init DI
-const DI = require('../src/util/di')
+const DI = require('./util/di')
 DI.setLogger(logService.get('di'))
 const ctors = new Map()
 ctors.set(ILogService, LogService)

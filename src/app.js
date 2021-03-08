@@ -4,9 +4,13 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const koaLogger = require('koa-logger')
-const cors = require('koa-cors')
+
+require('../src/auth/authService')
+require('../src/install/installService')
+require('../src/hexo/core')
+
 const DI = require('./util/di')
-const { ILogService, LogDescriptor } = require('./base/logService')
+const { ILogService } = require('./base/logService')
 const logService = DI.inject(ILogService)
 const serverLogger = logService.get('server')
 const httpLogger = logService.get('http')
@@ -27,9 +31,6 @@ app.use(async (ctx, next) => {
     }
   }
 })
-
-// cors
-app.use(cors())
 
 // middlewares
 app.use(bodyparser({
