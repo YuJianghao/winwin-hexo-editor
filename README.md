@@ -1,6 +1,6 @@
 # This repo has been Archived for v0.1.0 ~ v0.6.x only
 
-## For v0.6.0+, please visit [Hexon](https://github.com/gethexon/hexon)
+## For latest version, please visit [Hexon](https://github.com/gethexon/hexon)
 
 ---
 
