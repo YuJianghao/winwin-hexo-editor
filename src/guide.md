@@ -6,31 +6,31 @@
 
 你需要在你的服务器中安装`Node.js`、`git`、`hexo`。
 
-> **没有Hexo和Node.js经验的同学可以查看[手把手教学](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
+> **没有 Hexo 和 Node.js 经验的同学可以查看[手把手教学](https://blog.yujianghao.cn/how-to-build-a-hexo-blog-from-scratch/)**
 
-### 配置hexo博客
+### 配置 hexo 博客
 
-你需要在你的服务器上部署你的hexo博客源码并且配置hexo和git的相关命令。
+你需要在你的服务器上部署你的 hexo 博客源码并且配置 hexo 和 git 的相关命令。
 
-> 本教程中假设你将hexo博客源码部署在了`~/myblog`目录。相应的，hexo配置文件应该在`~/myblog/_config.yml`。
+> 本教程中假设你将 hexo 博客源码部署在了`~/myblog`目录。相应的，hexo 配置文件应该在`~/myblog/_config.yml`。
 
 请确保以下命令可以在`~/myblog`路径运行成功：
 
-- `hexo generate`：生成hexo博客
-- `hexo deploy`: 生成hexo博客并部署
-- `git add . -all && git commit -m 'server updates'`: 将博客更改添加进git
+- `hexo generate`：生成 hexo 博客
+- `hexo deploy`: 生成 hexo 博客并部署
+- `git add . -all && git commit -m 'server updates'`: 将博客更改添加进 git
 - `git pull`: 从远端拉取博客内容
 - `git push`: 将本地博客内容推送到远端
 
 ::: tip 可选配置
-如果你不需要使用hexo的部署功能，则`hexo deploy`不用配置。如果你不需要远端的git存储，则`git pull`和`git push`不用配置。
+如果你不需要使用 hexo 的部署功能，则`hexo deploy`不用配置。如果你不需要远端的 git 存储，则`git pull`和`git push`不用配置。
 :::
 
 ## 安装
 
 ### 默认安装
 
-下载源码  
+下载源码
 
 > 本教程假设你将`winwin-hexo-editor`安装在`~/winwin-hexo-editor`目录
 
@@ -40,7 +40,7 @@ cd winwin-hexo-editor
 ```
 
 ::: warning 安全警告
-请不要将博客源码或`winwin-hexo-editor`部署到http服务的网站根目录下，例如`/www`或`/www/wwwroot/`。这很可能会导致一些安全问题。
+请不要将博客源码或`winwin-hexo-editor`部署到 http 服务的网站根目录下，例如`/www`或`/www/wwwroot/`。这很可能会导致一些安全问题。
 :::
 
 安装依赖
@@ -69,11 +69,11 @@ npm run prd
 
 然后用浏览器打开`http://localhost:5777`
 
-::: tip 如果你是windows用户
+::: tip 如果你是 windows 用户
 
-- 本程序未在windows环境下测试。理论上可以运行。
-- 推荐使用WSL，详见[适用于Linux的Windows子系统](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10 )
-:::
+- 本程序未在 windows 环境下测试。理论上可以运行。
+- 推荐使用 WSL，详见[适用于 Linux 的 Windows 子系统](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10)
+  :::
 
 ### 使用自定义服务器
 
@@ -81,7 +81,7 @@ npm run prd
 
 ### 使用域名
 
-你需要自行配置你的http服务器反向代理。
+你需要自行配置你的 http 服务器反向代理。
 
 <!-- TODO: 教学如何配置反向代理 -->
 
@@ -99,7 +99,7 @@ bash update.js
 
 ## 其他命令
 
-``` bash
+```bash
 # 停止
 npm run stop
 # 重启

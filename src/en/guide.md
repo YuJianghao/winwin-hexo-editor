@@ -8,7 +8,7 @@
 - `hexo`
 - `git`
 
-> **For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide](http://blog.yujianghao.cn/2020/03/16/rv13LtBZuoRgOPWy/)**
+> **For bigginers with no background knowledge about Hexo and Node.js, please visit [Hand by hand installation guide (zh-CN)](https://blog.yujianghao.cn/how-to-build-a-hexo-blog-from-scratch/)**
 
 ### Configurate hexo blog
 
@@ -35,7 +35,7 @@ If you do not need the deploy method from hexo, `hexo deploy` is unnecessary. If
 Download source code
 
 > We assumes that you will install `winwin-hexo-editor` in `~/winwin-hexo-editor`.
->
+
 ```bash
 git clone https://github.com/YuJianghao/winwin-hexo-editor
 cd winwin-hexo-editor
